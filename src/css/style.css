@@ -8,12 +8,6 @@ body {
   min-height: 100vh;
   background-color: black;
 }
-canvas {
-    margin: 0px;
-    padding: 0px;
-    border: 1px solid white;
-    background-color: lightgray;
-}
 h1{
   font-size: 2.5rem;
   color: white;
@@ -29,6 +23,10 @@ p {
     font-size: 10pt;
     color: white;
     padding: 0px 3px;
+}
+canvas{
+  border: 1px;
+  border-color: white;
 }
 
 button {

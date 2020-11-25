@@ -84,9 +84,16 @@ class Player extends Phaser.GameObjects.Sprite {
         this.body.offset.x = 16;
         this.body.offset.y = 32;
 
+        //this.body.setCollideWorldBounds(true);
+
+
+        //this.scaleX = 2;
+        //this.scaleY = 2;
+        //this.displayWidth = 100;
+
         this.goingRight = true;
         this.attcking = false;
-        this.speed = 160;
+        this.speed = 300;
         this.weapon = 0;
         this.attackNumber = 1;
         //player0.setBounce(0.2);
@@ -94,10 +101,12 @@ class Player extends Phaser.GameObjects.Sprite {
     }
 
 
-    Run(dir) {
+    Run(dir, delta) {
 
         if (!this.attcking) {
-            this.body.setVelocityX(dir * this.speed);
+            //this.body.setVelocityX(dir * this.speed);
+            //console.log(delta);
+            this.body.x += dir * this.speed * delta / 1000;
 
             if (dir == -1) {
                 this.goingRight = false;
@@ -177,7 +186,7 @@ class Player extends Phaser.GameObjects.Sprite {
             });
 
         } else {
-            this.body.setVelocityY(500);
+            this.body.setVelocityY(300);
 
             this.anims.play('attack2' + this.swordKey, true);
 
