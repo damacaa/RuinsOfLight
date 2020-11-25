@@ -1,14 +1,18 @@
-/*var canvas = document.getElementById("gameCanvas");
-var contexto = canvas.getContext("2d");*/
+
 var game;
 var config;
 window.onload = function () {
 
     config = {
         type: Phaser.AUTO,
-        width: 480,
-        height: 270,
         pixelArt: true,
+        roundPixels: false,
+        scale: {
+            mode: Phaser.Scale.FIT,// Phaser.Scale.RESIZE
+            parent: 'phaser-example',
+            width: 480,
+            height: 270
+        },
         physics: {
             default: 'arcade',
             arcade: {
@@ -16,14 +20,12 @@ window.onload = function () {
                 debug: false
             }
         },
-        fps:{
-            targert: 10,
-            forceSetTimeOut: true
-        },
-        scene: [ MainMenu, AltarRoom ]
+        scene: [ MainMenu,AltarRoom, Dungeons ]
     }
 
     game = new Phaser.Game(config);
+
+    game.set
 }
 
 function preload() {
@@ -45,7 +47,27 @@ function preload() {
     this.load.image('ground', '/resources/img/tiles/BrickWall.png');*/
 }
 
-var goingRight;
+/*function create(){
+    var FKey = this.input.keyboard.addKey('F');
+
+        FKey.on('down', function () {
+
+            if (this.scale.isFullscreen)
+            {
+                button.setFrame(0);
+                this.scale.stopFullscreen();
+            }
+            else
+            {
+                button.setFrame(1);
+                this.scale.startFullscreen();
+            }
+
+        }, this);
+}*/
+
+
+/*var goingRight;
 function create() {
 
     player0 = new Player({ scene: this, x: 32, y: 32 }, 'p0noWeapon','p0sword');
@@ -77,7 +99,7 @@ function update(time, delta) {
     var isDown = keyObj.isDown;
     var isUp = keyObj.isUp;
 
-    console.log(isDown);*/
+    console.log(isDown);
 
     cursors1 = this.input.keyboard.createCursorKeys();
     cursors0  = this.input.keyboard.addKeys(
@@ -118,6 +140,6 @@ function update(time, delta) {
        }
 
     //console.log(goingRight);
-}
+}*/
 
 
