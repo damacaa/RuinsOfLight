@@ -15,9 +15,10 @@ window.onload = function () {
         },
         physics: {
             default: 'arcade',
+            
             arcade: {
                 gravity: { y: 981 },
-                debug: false
+                debug: true
             }
         },
         scene: [ MainMenu,AltarRoom, Dungeons ]
