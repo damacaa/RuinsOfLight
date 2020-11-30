@@ -102,7 +102,7 @@ class GreatGorila extends Phaser.GameObjects.Sprite {
     this.destroy();
   }
 
-  FollowPlayer() {
+  Update() {
     if (this.canMove) {
       if (Math.abs(this.scene.player0.x - this.x) > 100) {
         if (this.scene.player0.x < this.x) {
@@ -126,20 +126,22 @@ class GreatGorila extends Phaser.GameObjects.Sprite {
           this.anims.play('smash', true);
 
           this.once('animationcomplete', () => {
+            this.fireball = new FireBall(this.scene, this.x, this.y+112, true);
+            this.fireball = new FireBall(this.scene, this.x, this.y+112, false);
             this.attacking = true;
             this.anims.play('explosionG', true);
             this.scene.cameras.main.shake(750, .05);
             this.once('animationcomplete', () => {
-              
+
               this.attacking = false;
 
-              if(this.health>0){
+              if (this.health > 0) {
                 this.canMove = true;
               }
             });
 
           });
-          
+
           this.scene.time.delayedCall(this.wait, function () { this.canAttack = true; }, [], this);
 
         } else {
@@ -149,16 +151,16 @@ class GreatGorila extends Phaser.GameObjects.Sprite {
     }
   }
 
-  CheckAttacking(){return this.attacking;}
+  CheckAttacking() { return this.attacking; }
 
 }
 
 class FireBall extends Phaser.GameObjects.Sprite {
   constructor(scene, x, y, dir) {
-    super(scene, x, y, "atlas", "fireball1");
+    super(scene, x, y, "hola");
 
 
-    this.speed = 80;
+    this.speed = 250;
 
     this.destroyCounter = 0;
 
@@ -172,28 +174,26 @@ class FireBall extends Phaser.GameObjects.Sprite {
     this.setOrigin(0.5, 0.5);
     this.body.setSize(12, 12, true);
 
-    scene.anims.create({
-      key: "fireball",
-      frames: scene.anims.generateFrameNames("atlas", {
-        prefix: "fireball",
-        start: 1,
-        end: 3
-      }),
-      frameRate: 20,
-      repeat: -1
+
+    this.scene.anims.create({
+      key: 'gorilaProjectileEvolution',
+      frames: this.scene.anims.generateFrameNumbers('gorilaProjectileKey', { start: 0, end: 2 }),
+      frameRate: 3,
+      repeat: 0
     });
 
-    this.play("fireball");
+    //this.play("gorilaProjectileEvolution");
+    this.anims.play('gorilaProjectileEvolution', true);
 
     if (dir) {
-      this.x += 38;
+      //this.x += 38;
       this.body.velocity.x = this.speed;
     } else {
-      this.x -= 38;
+      //this.x -= 38;
       this.body.velocity.x = -this.speed;
     }
 
-
+this.flipX = dir;
   }
 
   update() {
