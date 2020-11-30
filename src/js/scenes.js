@@ -144,6 +144,13 @@ class AltarRoom extends BaseScene {
             frameHeight: 256
         }
         );
+
+        this.load.spritesheet('gorilaProjectileKey',
+            '/resources/animations/enemies/GreatGorilaGuardian/ProyectilGorila.png', {
+            frameWidth: 64,
+            frameHeight: 32
+        }
+        );
     }
 
 
@@ -192,22 +199,21 @@ class AltarRoom extends BaseScene {
         //let a = this.player0.CheckAttacking();
 
         //this.physics.add.overlap(this.hitBox, this.enemies, this.hitEnemy, null, this);
-        this.physics.add.overlap(this.players, this.enemies, this.hurtPlayer, null, this);
-        //this.physics.add.overlap(this.player0, this.projectiles, this.hurtPlayer, null, this);
+        this.physics.add.overlap(this.players, this.enemies, this.MeleeDamage, null, this);
+        this.physics.add.overlap(this.players, this.projectiles, this.ProjectileDamage, null, this);
 
 
         //Configura la cámara
         this.camera = this.cameras.main;
         this.EnableFullScreen();
-        //this.camera.setZoom(3);
-        //this.camera.setOrigin(0, 0);
-        //this.cameras.main.setBounds(0, 0, 1000, 300);
-        //console.log(window.glob);
+        //this.camera.setZoom(.5);
+        this.camera.setOrigin(0.5, 0.5);
+
         this.camera.startFollow(this.player0, true);
 
     }
 
-    hurtPlayer(player, enemy) {
+    MeleeDamage(player, enemy) {
         if (player.CheckAttacking()) {
             enemy.DealDamage(10);
         }
@@ -218,6 +224,13 @@ class AltarRoom extends BaseScene {
             
         }
     }
+
+    ProjectileDamage(player, projectile){
+        //player.body.y-=20;
+        player.body.setVelocityY(-450);
+    }
+
+
 
     /*hitEnemy(hitbox, enemy) {
         if (this.player.isAttacking || this.player.isAirAttacking) {
@@ -235,11 +248,9 @@ class AltarRoom extends BaseScene {
     update(time, delta) {
 
         this.CheckInputs(delta);
-        if (this.door.Check()) {
-            // this.scene.start('dungeon');
-        }
-        this.gorila.FollowPlayer();
-        //this.UpdateCamera();
+        this.door.Check();
+
+        this.gorila.Update();
     }
 
 }
