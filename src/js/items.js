@@ -1,23 +1,23 @@
 class Door extends Phaser.GameObjects.Sprite {
-    constructor(config, player0, player1, sceneKey) {
-        super(config.scene, config.x, config.y, sceneKey+'Door');
-        this.player0 = player0;
-        this.player1 = player1;
+    constructor(scene, x, y, sceneKey) {
+        super(scene, x, y, 'puerta');
+        scene.add.existing(this);
+
+        this.scene = scene;
         this.sceneKey = sceneKey;
     }
 
     preload(){
-
     }
 
     create(){
-        
+       //this.add.sprite(this.x, this.y, 'puerta');
+       //this.anims.play('puerta', true);
     }
 
     Check() {
-
-        if (this.player0.x > 1000) {
-            console.log("Premio");
+        if (Math.abs(this.scene.player0.x - this.x )< 10  && Math.abs(this.scene.player0.y - this.y )< 10) {
+            this.scene.scene.start('dungeon');
             return true;
         }
         return false;
