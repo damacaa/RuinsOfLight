@@ -11,8 +11,7 @@ class Door extends Phaser.GameObjects.Sprite {
     }
 
     create(){
-       //this.add.sprite(this.x, this.y, 'puerta');
-       //this.anims.play('puerta', true);
+
     }
 
     Check() {

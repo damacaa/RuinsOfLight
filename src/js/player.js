@@ -39,6 +39,13 @@ class Player extends Phaser.GameObjects.Sprite {
             repeat: -1
         });
 
+        scene.anims.create({
+            key: 'getHurt',
+            frames: scene.anims.generateFrameNumbers(noWeaponKey, { start: 32, end: 32 }),
+            frameRate: 10,
+            repeat: 0
+        });
+
         //Animaciones espada
 
         scene.anims.create({
@@ -53,58 +60,60 @@ class Player extends Phaser.GameObjects.Sprite {
             frames: scene.anims.generateFrameNumbers(swordKey, { start: 6, end: 9 }),
             frameRate: 10,
             repeat: -1,
-            showOnStart: true
+            //showOnStart: true
         });
 
         scene.anims.create({
             key: 'jumpRight' + swordKey,
-            frames: scene.anims.generateFrameNumbers(swordKey, { start: 35, end: 36 }),
+            frames: scene.anims.generateFrameNumbers(swordKey, { start: 10, end: 11 }),
             frameRate: 10,
-            repeat: -1
+            repeat: 0
         });
 
         scene.anims.create({
             key: 'fallRight' + swordKey,
-            frames: scene.anims.generateFrameNumbers(swordKey, { start: 37, end: 38 }),
+            frames: scene.anims.generateFrameNumbers(swordKey, { start: 12, end: 13 }),
             frameRate: 10,
-            repeat: -1
+            repeat: 0
         });
 
         scene.anims.create({
             key: 'attack1' + swordKey,
-            frames: scene.anims.generateFrameNumbers(swordKey, { start: 20, end: 24 }),
-            frameRate: 10,
+            frames: scene.anims.generateFrameNumbers(swordKey, { start: 14, end: 18 }),
+            frameRate: 15,
             repeat: 0
         });
 
 
         scene.anims.create({
             key: 'attack2' + swordKey,
-            frames: scene.anims.generateFrameNumbers(swordKey, { start: 25, end: 28 }),
-            frameRate: 10,
+            frames: scene.anims.generateFrameNumbers(swordKey, { start: 19, end: 22 }),
+            frameRate: 15,
             repeat: 0
         });
 
         scene.anims.create({
             key: 'attack3' + swordKey,
-            frames: scene.anims.generateFrameNumbers(swordKey, { start: 29, end: 32 }),
-            frameRate: 10,
+            frames: scene.anims.generateFrameNumbers(swordKey, { start: 23, end: 26 }),
+            frameRate: 15,
             repeat: 0
         });
 
         scene.anims.create({
             key: 'fallingAttackRight',
-            frames: scene.anims.generateFrameNumbers(swordKey, { start: 43, end: 46 }),
-            frameRate: 12,
+            frames: scene.anims.generateFrameNumbers(swordKey, { start: 27, end: 30 }),
+            frameRate: 15,
             repeat: 0
         });
 
         scene.anims.create({
             key: 'explosion',
-            frames: scene.anims.generateFrameNumbers(swordKey, { start: 33, end: 34 }),
+            frames: scene.anims.generateFrameNumbers(swordKey, { start: 31, end: 34 }),
             frameRate: 10,
             repeat: 0
         });
+
+
 
 
 
@@ -128,6 +137,13 @@ class Player extends Phaser.GameObjects.Sprite {
         this.fallingAttack = false;
         this.canAttack = true;
         this.canMove = true;
+        this.isHurt = false;
+        this.combo = false;
+
+        this.jumping = false;
+        this.falling = false;
+
+        this.dealingDamage = false;
         //player0.setBounce(0.2);
         //body.setCollideWorldBounds(true);
 
@@ -158,7 +174,7 @@ class Player extends Phaser.GameObjects.Sprite {
     }
 
     EnableAttack() {
-        this.canAttack = true;
+        this.canAttack = this.canMove;
     }
 
     CheckAttacking() {
@@ -170,48 +186,58 @@ class Player extends Phaser.GameObjects.Sprite {
 
         if (this.canMove && !this.attacking) { this.body.setVelocityX(dir * this.speed); }
 
-        if (!this.attacking) {
+        if (!this.attacking && !this.isHurt) {
 
 
             if (dir == 0) {
+                //this.anims.play('idleRight' + this.name, true);
 
                 if (this.body.onFloor()) {
                     this.anims.play('idleRight' + this.name, true);
+                    this.falling = false;
                 } else {
                     if (this.body.velocity.y < 0) {
-                        this.anims.play('jumpRight' + this.name, true);
+                        if (!this.jumping) {
+                            this.anims.play('jumpRight' + this.name, true);
+                            this.jumping = true;
+                        }
+
+
                     } else {
-                        this.anims.play('fallRight' + this.name, true);
+                        this.jumping = false;
+                        if (!this.falling) {
+                            this.anims.play('fallRight' + this.name, true);
+                            this.falling = true;
+                        }
                     }
                 }
 
             } else {
 
                 if (dir == -1) {
-                    //if (this.goingRight) { this.x -= 16; }
-
-                    this.goingRight = false;
                     this.flipX = true;
-
-
-
                     this.ResetHitbox();
                 }
                 else if (dir == 1) {
-                    //if (!this.goingRight) { this.x += 16; }
-                    this.goingRight = true;
                     this.flipX = false;
-
                     this.ResetHitbox();
                 }
 
                 if (this.body.onFloor()) {
                     this.anims.play('right' + this.name, true);
+                    this.falling = false;
                 } else {
                     if (this.body.velocity.y < 0) {
-                        this.anims.play('jumpRight' + this.name, true);
+                        if (!this.jumping) {
+                            this.anims.play('jumpRight' + this.name, true);
+                            this.jumping = true;
+                        }
                     } else {
-                        this.anims.play('fallRight' + this.name, true);
+                        this.jumping = false;
+                        if (!this.falling) {
+                            this.anims.play('fallRight' + this.name, true);
+                            this.falling = true;
+                        }
                     }
                 }
             }
@@ -221,21 +247,37 @@ class Player extends Phaser.GameObjects.Sprite {
             if (this.body.onFloor() && this.fallingAttack) {
 
                 this.fallingAttack = false;
-                this.scene.cameras.main.shake(500, .01);
+                this.scene.cameras.main.shake(100, .01);
                 this.anims.play('explosion', true); //Sustituir por animacion de impacto contra el suelo
 
                 this.once('animationcomplete', () => {
                     this.attacking = false;
                     this.ResetHitbox();
                 });
-
             }
         }
     }
 
     Jump() {
-        if (!this.attacking && this.body.onFloor()) {
+        if (!this.attacking && this.body.onFloor() && this.canMove) {
             this.body.setVelocityY(-450);
+        }
+    }
+
+    Hurt() {
+
+        if (!this.isHurt) {
+            this.anims.play('getHurt', true);
+            this.isHurt = true;
+            this.canAttack = false;
+            this.canMove = false;
+            this.attacking = false;
+            this.fallingAttack = false;
+
+            this.body.setVelocityY(-300);
+            this.body.setVelocityX(0);
+
+            this.scene.time.delayedCall(2000, function () { this.canAttack = true; this.canMove = true; this.isHurt = false; this.ResetHitbox(); }, [], this);
         }
     }
 
@@ -246,50 +288,64 @@ class Player extends Phaser.GameObjects.Sprite {
                 this.name = this.noWeaponKey;
                 break;
             case 1:
+                this.scene.swordPlayer = this;
                 this.name = this.swordKey;
                 break;
             case 2:
-                this.name = '';
+                this.scene.bowPlayer = this;
+                this.name = this.noWeaponKey;
                 break;
             default:
-                this.name = '';
+                this.name = this.noWeaponKey; '';
         }
     }
 
     Attack() {
 
         if (this.canAttack) {
-            console.log("Ataca");
-            this.SetWeapon(1);
             this.canAttack = false;
-
-            //this. scene.anims.Attack(){ }
-
 
             switch (this.weapon) {
                 case 1:
                     //Espada
+
+
                     this.AttackHitbox();
                     this.body.setVelocityX(0);
-                    this.attacking = true;
+
 
                     if (this.body.blocked.down) {
-                        this.anims.play('attack' + this.attackNumber + this.swordKey, true);
+                        //Ataque en el suelo
+                        if (!this.attacking) {
+                            this.anims.play('attack' + this.attackNumber + this.swordKey, true);
+                            this.attacking = true;
 
-                        this.once('animationcomplete', () => {
-                            if (this.attackNumber < 3) {
-                                this.attackNumber++;
-                            } else {
-                                this.attackNumber = 1;
-                            }
-                            this.attacking = false;
-                            this.ResetHitbox();
-                        });
+                            this.once('animationcomplete', () => {
+                                if (this.combo && (this.attackNumber < 3)) {
+                                    this.attackNumber++;
+                                    this.canAttack = true;
+                                    this.attacking = false;
+                                    this.Attack();
+                                } else {
+                                    this.attackNumber = 1;
+                                    this.attacking = false;
+                                    this.ResetHitbox();
+                                }
+
+                                //this.attackNumber = 1;
+
+
+
+
+                                this.combo = false;
+
+                            });
+                        } else { this.combo = true; }
 
                     } else if (!this.fallingAttack) {
                         this.attacking = true;
                         this.fallingAttack = true;
-                        this.body.setVelocityY(200);
+                        this.body.velocity.y += 500;
 
                         this.AttackHitbox();
 
@@ -303,10 +359,6 @@ class Player extends Phaser.GameObjects.Sprite {
                 default:
                 //Puños?
             }
-
-
         }
     }
-
-
 }
