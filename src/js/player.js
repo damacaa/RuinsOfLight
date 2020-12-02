@@ -144,6 +144,8 @@ class Player extends Phaser.GameObjects.Sprite {
         this.falling = false;
 
         this.dealingDamage = false;
+
+        this.setDepth(1);
         //player0.setBounce(0.2);
         //body.setCollideWorldBounds(true);
 
