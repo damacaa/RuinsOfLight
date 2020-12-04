@@ -15,13 +15,12 @@ class BaseScene extends Phaser.Scene {
 
     CheckInputs(delta) {
 
-        let cursors1 = this.input.keyboard.createCursorKeys();
+
         let cursors0 = this.input.keyboard.addKeys({
             up: Phaser.Input.Keyboard.KeyCodes.W,
             down: Phaser.Input.Keyboard.KeyCodes.S,
             left: Phaser.Input.Keyboard.KeyCodes.A,
-            right: Phaser.Input.Keyboard.KeyCodes.D,
-            attack: Phaser.Input.Keyboard.KeyCodes.E
+            right: Phaser.Input.Keyboard.KeyCodes.D
         });
 
 
@@ -43,13 +42,16 @@ class BaseScene extends Phaser.Scene {
         }
 
         if (isDown) {
-            console.log("Attacking")
             this.player0.Attack();
+        }
+
+        if (isUp) {
+            this.player0.EnableAttack();
         }
 
 
 
-
+        let cursors1 = this.input.keyboard.createCursorKeys();
         if (cursors1.left.isDown) {
             this.player1.Run(-1, delta);
         } else if (cursors1.right.isDown) {
@@ -58,7 +60,7 @@ class BaseScene extends Phaser.Scene {
             this.player1.Run(0, delta);
         }
 
-        if (cursors1.up.isDown && this.player1.body.touching.down) {
+        if (cursors1.up.isDown) {
             this.player1.Jump();
         }
     }
@@ -83,22 +85,20 @@ class BaseScene extends Phaser.Scene {
                 this.scale.startFullscreen();
             }
 
-            this.cameras.main.shake(500);
-
         }, this);
     }
 
     PreloadPlayers() {
         this.load.spritesheet('p0noWeapon',
             '/resources/animations/players/p0noWeapon.png', {
-            frameWidth: 64,
+            frameWidth: 80,
             frameHeight: 64
         }
         );
 
         this.load.spritesheet('p0sword',
             '/resources/animations/players/p0Sword.png', {
-            frameWidth: 64,
+            frameWidth: 80,
             frameHeight: 64
         }
         );
@@ -121,46 +121,7 @@ class BaseScene extends Phaser.Scene {
 
 }
 
-class MainMenu extends BaseScene {
-    constructor() {
-        super('mainMenu');
-        //this.newScene = scene.scene.add('pato', config, false);
-    }
-
-    preload() {
-        this.load.image('mech', '/resources/img/tiles/BrickWall.png');
-    }
-
-    create() {
-        this.camera = this.cameras.main;
-        this.EnableFullScreen();
-
-        this.add.sprite(Phaser.Math.Between(300, 600), 300, 'mech');
-
-        this.add.text(240, 135, 'PRESS TO PLAY', {
-            fontFamily: '"Press Start 2P"',
-            fontSize: '20px'
-        }).setOrigin(0.5); //, stroke: '0f0f0f', strokeThickness: 20
-
-
-        this.input.once('pointerdown', function (event) {
-
-            //var newScene = scene.scene.add(key, sceneConfig, autoStart, data);
-            //let nextScene = game.scene.add('pato',config,true);
-            this.scene.start('altarRoom');
-
-        }, this);
-
-
-    }
-}
-
-
-
 class AltarRoom extends BaseScene {
-
-
-
     constructor() {
         super('altarRoom');
 
@@ -172,44 +133,55 @@ class AltarRoom extends BaseScene {
     preload() {
         this.PreloadPlayers();
 
+        this.load.image('puerta', '/resources/img/Items/Arcos de Paso/Arcos de Paso.png');
+
         this.load.image('ground', '/resources/img/tiles/BrickWall.png');
         this.load.image('background', '/resources/img/background.png');
+
+        this.load.spritesheet('gorilaKey',
+            '/resources/animations/enemies/GreatGorilaGuardian/GreatGorila.png', {
+            frameWidth: 256,
+            frameHeight: 256
+        }
+        );
+
+        this.load.spritesheet('gorilaProjectileKey',
+            '/resources/animations/enemies/GreatGorilaGuardian/ProyectilGorila.png', {
+            frameWidth: 64,
+            frameHeight: 32
+        }
+        );
     }
 
 
     create() {
+        this.projectiles = this.physics.add.group();
+        this.players = this.physics.add.group();
+        this.enemies = this.physics.add.group();
 
-        //this.scale.resize(2000, 270);
+        //Crea puertas
+        this.door = new Door(this, 700, 182, 'dungeon');
 
-        //this.bg = this.add.image(0, 0, 'background');
-        //this.game.Align.scaleToGameW(bg, 2);
-        //this.bg.setScrollFactor(0.5);
+        //Crea boses
+        this.gorila = new GreatGorila(this, 500, 86, 'greatGorila');
 
-        this.gorila = this.add.sprite(460, 86, 'greatGorila').setOrigin(0, 0.5);
+        this.gorila.WakeUp();
+
+
 
         //Crea jugadores
-        this.player0 = new Player({
-            scene: this,
-            x: 32,
-            y: 32
-        }, 'p0noWeapon', 'p0sword');
-        this.player1 = new Player({
-            scene: this,
-            x: 64,
-            y: 32
-        }, 'p1noWeapon', 'p0sword');
+        this.player0 = new Player(this, 300, 32, 'p0noWeapon', 'p0sword');
+        this.player1 = new Player(this, 64, 32, 'p1noWeapon', 'p0sword');
 
-        //player0.SetWeapon(1);
+        this.players.add(this.player0);
+        this.players.add(this.player1);
 
-       /* this.door = new Door({
-            scene: this,
-            x: 500,
-            y: 166
-        }, this.player0, this.player1, 'dungeon');
-*/
 
-        
-        
+        this.player0.SetWeapon(0);
+        this.player1.SetWeapon(0);
+
+
+
 
 
         this.platforms = this.physics.add.staticGroup();
@@ -221,28 +193,64 @@ class AltarRoom extends BaseScene {
             this.platforms.create(16 + (32 * i), 230, 'ground');
         }
 
-        this.physics.add.collider(this.player0, this.platforms);
-        this.physics.add.collider(this.player1, this.platforms);
+        this.physics.add.collider(this.players, this.platforms);
+        this.physics.add.collider(this.enemies, this.platforms);
+
+        //let a = this.player0.CheckAttacking();
+
+        //this.physics.add.overlap(this.hitBox, this.enemies, this.hitEnemy, null, this);
+        this.physics.add.overlap(this.players, this.enemies, this.MeleeDamage, null, this);
+        this.physics.add.overlap(this.players, this.projectiles, this.ProjectileDamage, null, this);
 
 
         //Configura la cámara
         this.camera = this.cameras.main;
         this.EnableFullScreen();
-        //this.camera.setZoom(3);
-        //this.camera.setOrigin(0, 0);
-        //this.cameras.main.setBounds(0, 0, 1000, 300);
-        //console.log(window.glob);
+        //this.camera.setZoom(.5);
+        this.camera.setOrigin(0.5, 0.5);
+
         this.camera.startFollow(this.player0, true);
 
     }
 
+    MeleeDamage(player, enemy) {
+        if (player.CheckAttacking()) {
+            enemy.DealDamage(10);
+        }
+
+        console.log(enemy.CheckAttacking());
+        if (enemy.CheckAttacking()) {
+            //player.body.addV
+            
+        }
+    }
+
+    ProjectileDamage(player, projectile){
+        //player.body.y-=20;
+        player.body.setVelocityY(-450);
+    }
+
+
+
+    /*hitEnemy(hitbox, enemy) {
+        if (this.player.isAttacking || this.player.isAirAttacking) {
+            var temp = new Enemydeath(this, enemy.x, enemy.y);
+            enemy.destroy();
+            this.audioKill.play();
+        }
+        if (this.player0.CheckAttacking()) {
+            //this.gorila.WakeUp();
+            this.gorila.DealDamage(10);
+        }
+        enemy.DealDamage(10);
+    }*/
+
     update(time, delta) {
 
         this.CheckInputs(delta);
-        /*if (this.door.Check()) {
-            this.scene.start('dungeon');
-        }*/
-        //this.UpdateCamera();
+        this.door.Check();
+
+        this.gorila.Update();
     }
 
 }
@@ -291,16 +299,8 @@ class Dungeons extends BaseScene {
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
 
 
-        this.player0 = new Player({
-            scene: this,
-            x: 32,
-            y: 32
-        }, 'p0noWeapon', 'p0sword');
-        this.player1 = new Player({
-            scene: this,
-            x: 64,
-            y: 32
-        }, 'p1noWeapon', 'p0sword');
+        this.player0 = new Player(this, 300, 32, 'p0noWeapon', 'p0sword');
+        this.player1 = new Player(this, 64, 32, 'p1noWeapon', 'p0sword');
 
         this.camera.startFollow(this.player0, true);
 
@@ -334,3 +334,55 @@ class Dungeons extends BaseScene {
         this.CheckInputs();
     }
 }
+
+class MainMenu extends Phaser.Scene {
+    constructor() {
+        super('mainMenu');
+        //this.newScene = scene.scene.add('pato', config, false);
+    }
+
+    preload() {
+        this.load.image('mech', '/resources/img/tiles/BrickWall.png');
+    }
+
+    create() {
+        this.camera = this.cameras.main;
+        this.EnableFullScreen();
+
+        this.add.sprite(Phaser.Math.Between(300, 600), 300, 'mech');
+
+        this.add.text(240, 135, 'PRESS TO PLAY', {
+            fontFamily: '"Press Start 2P"',
+            fontSize: '20px'
+        }).setOrigin(0.5); //, stroke: '0f0f0f', strokeThickness: 20
+
+
+        this.input.once('pointerdown', function (event) {
+
+            //var newScene = scene.scene.add(key, sceneConfig, autoStart, data);
+            //let nextScene = game.scene.add('pato',config,true);
+            this.scene.start('altarRoom');
+
+        }, this);
+
+
+    }
+
+    EnableFullScreen() {
+
+        var FKey = this.input.keyboard.addKey('F');
+
+        FKey.on('down', function () {
+
+            if (this.scale.isFullscreen) {
+                //button.setFrame(0);
+                this.scale.stopFullscreen();
+            }
+            else {
+                //button.setFrame(1);
+                this.scale.startFullscreen();
+            }
+
+        }, this);
+    }
+} 
