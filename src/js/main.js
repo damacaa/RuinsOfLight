@@ -1,8 +1,5 @@
-var game;
-var config;
-
 window.onload = function () {
-    config = {
+    var config = {
         type: Phaser.AUTO,
         pixelArt: true,
         roundPixels: false,
@@ -23,6 +20,6 @@ window.onload = function () {
         scene: [MainMenu,AltarRoom, Dungeons]
     }
 
-    game = new Phaser.Game(config);
+    var game = new Phaser.Game(config);
 }
 

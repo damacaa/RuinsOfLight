@@ -52,11 +52,11 @@ class GreatGorila extends Enemy {
             });
         }
 
-        this.health = 10000;
-        this.canMove = false;
-        this.attacking = false;
-        this.canAttack = false;
+        this.health = 1000;
         this.wait = 4000;
+
+        this.primaryTarget = this.scene.bowPlayer;
+        this.secondaryTarget = this.scene.swordPlayer;
     }
 
     WakeUp() {
@@ -71,22 +71,23 @@ class GreatGorila extends Enemy {
     }
 
     Die() {
-
+        this.awake = false;
         this.anims.play('gorilaSleep', true);
         this.canMove = false;
+        this.body.enable = false;
 
-        this.once('animationcomplete', () => {
+        /*this.once('animationcomplete', () => {
             this.destroy();
-        });
+        });*/
     }
 
     Update() {
         if (this.canMove) {
 
-            if (Math.abs(this.scene.swordPlayer.x - this.x) > 100) {
+            if (Math.abs(this.secondaryTarget.x - this.x) > 100) {
 
-                if (Math.abs(this.scene.bowPlayer.x - this.x) > 100) {
-                    if (this.scene.bowPlayer.x < this.x) {
+                if (Math.abs(this.primaryTarget.x - this.x) > 100) {
+                    if (this.primaryTarget.x < this.x) {
                         this.body.setVelocityX(-20);
                         this.flipX = false;
                         this.anims.play('walkLeft', true);
@@ -100,7 +101,7 @@ class GreatGorila extends Enemy {
                 } else {
                     this.body.setVelocityX(0);
 
-                    if (this.scene.bowPlayer.x < this.x) {
+                    if (this.primaryTarget.x < this.x) {
                         this.flipX = false;
                     } else {
                         this.flipX = true;
@@ -117,12 +118,11 @@ class GreatGorila extends Enemy {
             } else {
                 this.body.setVelocityX(0);
 
-                if (this.scene.swordPlayer.x < this.x) {
+                if (this.secondaryTarget.x < this.x) {
                     this.flipX = false;
                 } else {
                     this.flipX = true;
                 }
-
 
                 if (this.canAttack) {
                     this.Attack();
@@ -142,7 +142,7 @@ class GreatGorila extends Enemy {
 
         this.once('animationcomplete', () => {
             this.fireballLeft = new FireBall(this.scene, this.x, this.y + 112, true, this.flipX);
-            this.fireballRight = new FireBall(this.scene, this.x, this.y + 112, false,this.flipX);
+            this.fireballRight = new FireBall(this.scene, this.x, this.y + 112, false, this.flipX);
             //this.attacking = true;
             this.anims.play('explosionG', true);
             this.scene.cameras.main.shake(750, .01);
@@ -164,6 +164,7 @@ class GreatGorila extends Enemy {
 
 }
 
+
 class FireBall extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, dir, gorilaDir) {
         super(scene, x, y, "hola");
@@ -175,13 +176,13 @@ class FireBall extends Phaser.GameObjects.Sprite {
 
         this.scene = scene;
         scene.add.existing(this);
-        scene.projectiles.add(this);
+        scene.enemyProjectiles.add(this);
         this.body.setAllowGravity(false);
 
 
 
         // set setSize
-        
+
 
 
 
@@ -207,9 +208,9 @@ class FireBall extends Phaser.GameObjects.Sprite {
             this.body.offset.x = 0;
         }
 
-        if(gorilaDir){this.x += 32;}else{this.x -= 32;}
+        if (gorilaDir) { this.x += 32; } else { this.x -= 32; }
 
-        
+
 
         this.flipX = dir;
     }

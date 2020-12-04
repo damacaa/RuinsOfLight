@@ -7,13 +7,11 @@ class BaseScene extends Phaser.Scene {
         this.player1;
         this.swordPlayer;
         this.bowPlayer;
-        this.platforms;
-        this.map;
 
-        this.projectiles;
+        this.playerProjectiles;
+        this.enemyProjectiles;
         this.players;
         this.enemies;
-
     }
 
     preload() {
@@ -34,7 +32,14 @@ class BaseScene extends Phaser.Scene {
 
         this.load.spritesheet('p1noWeapon',
             '/resources/animations/players/p1noWeapon.png', {
-            frameWidth: 64,
+            frameWidth: 80,
+            frameHeight: 64
+        }
+        );
+
+        this.load.spritesheet('p1sword',
+            '/resources/animations/players/p1Sword.png', {
+            frameWidth: 80,
             frameHeight: 64
         }
         );
@@ -69,21 +74,22 @@ class BaseScene extends Phaser.Scene {
 
     create() {
         //Crea listas de entidades
-        this.projectiles = this.physics.add.group();
+        this.playerProjectiles = this.physics.add.group();
+        this.enemyProjectiles = this.physics.add.group();
         this.players = this.physics.add.group();
         this.enemies = this.physics.add.group();
 
 
-        //Crea jugadores
-        this.player0 = new Player(this, 300, 32, 'p0noWeapon', 'p0sword');
-        this.player1 = new Player(this, 64, 32, 'p1noWeapon', 'p0sword');
+
+        //Crea jugadores //Se deberían crear solo una vez en altares y mantener para todas las escenas --> Mover al CreateStage de altares
+        this.player0 = new Player(this, 128, 32, 'p0noWeapon', 'p0sword');
+        this.player1 = new Player(this, 64, 32, 'p1noWeapon', 'p1sword');
 
         this.players.add(this.player0);
         this.players.add(this.player1);
 
         this.player0.SetWeapon(1);
         this.player1.SetWeapon(2);
-
 
 
         //Configura la cámara
@@ -99,10 +105,22 @@ class BaseScene extends Phaser.Scene {
         this.physics.add.collider(this.players, this.platforms);
         this.physics.add.collider(this.enemies, this.platforms);
 
-        //this.physics.add.overlap(this.hitBox, this.enemies, this.hitEnemy, null, this);
-        this.physics.add.overlap(this.players, this.enemies, this.MeleeDamage, null, this);
-        this.physics.add.overlap(this.players, this.projectiles, this.ProjectileDamage, null, this);
-        //this.physics.add.overlap(this.enemies, this.projectiles, this.ProjectileDamage, null, this);//Habra que hacer otro array distinto de proyectiles de jugador?
+
+        this.physics.add.overlap(this.players, this.enemyProjectiles, this.ProjectileDamage, null, this);
+        this.physics.add.overlap(this.enemies, this.playerProjectiles, this.ProjectileDamage, null, this);
+        //this.physics.add.overlap(this.enemies, this.enemyProjectiles, this.ProjectileDamage, null, this);
+
+        this.physics.world.setFPS(60);
+
+        this.graphics = this.add.graphics();
+        this.graphics.lineStyle(1, 0x00ff00, 1);
+
+        this.text = this.add.text(10, 10, 'ExampleUI', {
+            fontFamily: '"Press Start 2P"',
+            fontSize: '20px'
+            , fill: '#ffffff'
+        }).setScrollFactor(0);
+
     }
 
     CheckInputs(delta) {
@@ -141,7 +159,7 @@ class BaseScene extends Phaser.Scene {
             this.player0.EnableAttack();
         }
 
-
+        //////////////////////////////////////////////////////////////////////
 
         let cursors1 = this.input.keyboard.createCursorKeys();
         if (cursors1.left.isDown) {
@@ -155,7 +173,28 @@ class BaseScene extends Phaser.Scene {
         if (cursors1.up.isDown) {
             this.player1.Jump();
         }
+
+        this.input.mouse.disableContextMenu();
+
+        this.input.on('pointerdown', function (pointer) {
+
+            this.player1.Attack(this.input.mousePointer.worldX, this.input.mousePointer.worldY);
+
+        }, this);
+
+        this.input.on('pointerup', function (pointer) {
+
+            this.player1.EnableAttack();
+
+        }, this);
     }
+
+    /*listener (sprite, pointer) {
+        var x = pointer.x;
+        var y = pointer.y;
+        
+        this.bowPlayer.Attack(x,y);
+      }*/
 
     EnableFullScreen() {
 
@@ -177,19 +216,21 @@ class BaseScene extends Phaser.Scene {
 
     CreateStage() { }
 
-    MeleeDamage(player, enemy) {
-        if (player.CheckAttacking()) {
+    MeleeDamage(weapon, target) {
+        /*if (player.CheckAttacking()) {
             enemy.Hurt(10);
         }
 
         if (enemy.CheckAttacking()) {
             player.Hurt();
-            player.body.setVelocityX((player.x - enemy.x) * 1);
-        }
+            //player.body.setVelocityX((player.x - enemy.x) * 1);
+        }*/
+
+        target.Hurt(10);
     }
 
-    ProjectileDamage(player, projectile) {
-        player.Hurt();
+    ProjectileDamage(target, projectile) {
+        target.Hurt(10);
         projectile.destroy();
     }
 }
@@ -197,9 +238,12 @@ class BaseScene extends Phaser.Scene {
 class AltarRoom extends BaseScene {
     constructor() {
         super('altarRoom');
+
+
     }
 
     CreateStage() {
+        this.camera.setOrigin(0.5, 0.75);
         //this.bg = this.add.image(0, 0, 'background');
 
         //Crea escenario
@@ -217,20 +261,18 @@ class AltarRoom extends BaseScene {
 
         //Crea enemigos
         this.gorila = new GreatGorila(this, 500, 86, 'greatGorila');
-        //this.gorila.WakeUp();
 
-        this.evillWall = new Parrot(this, 800, 0, 'greatParrot');
+        this.parrot = new Parrot(this, 800, 0, 'greatParrot');
+
+
     }
-
-
 
     update(time, delta) {
         this.CheckInputs(delta);
         this.door.Check();
         this.gorila.Update();
-        this.evillWall.Update();
+        this.parrot.Update();
     }
-
 }
 
 class Dungeons extends BaseScene {
@@ -247,7 +289,6 @@ class Dungeons extends BaseScene {
         //this.load.tilemapTiledJSON('map', 'resources/levels/SueloNivel1.json');
         //this.load.tilemapTiledJSON('map2', 'resources/levels/SueloNivel2.json');
         this.load.tilemapTiledJSON('map3', 'resources/levels/SueloNivel3.json');
-
     }
 
     CreateStage() {
@@ -255,13 +296,12 @@ class Dungeons extends BaseScene {
         this.groundTiles = this.map.addTilesetImage('Tile_sheet', 'atlas');
         this.groundLayer = this.map.createStaticLayer('Suelo', this.groundTiles, 0, 0);
 
-        
+
 
         //Colisiones
         this.groundLayer.setCollisionBetween(1, 27);
         this.physics.add.collider(this.player0, this.groundLayer);
         this.physics.add.collider(this.player1, this.groundLayer);
-
 
         this.input.once('pointerdown', function (event) {
 
@@ -273,9 +313,11 @@ class Dungeons extends BaseScene {
     update(time, delta) {
         this.CheckInputs();
     }
+
 }
 
 class MainMenu extends Phaser.Scene {
+
     constructor() {
         super('mainMenu');
         //this.newScene = scene.scene.add('pato', config, false);
@@ -288,8 +330,6 @@ class MainMenu extends Phaser.Scene {
     create() {
         this.camera = this.cameras.main;
         this.EnableFullScreen();
-
-        this.add.sprite(Phaser.Math.Between(300, 600), 300, 'mech');
 
         this.add.text(240, 135, 'PRESS TO PLAY', {
             fontFamily: '"Press Start 2P"',
@@ -304,8 +344,6 @@ class MainMenu extends Phaser.Scene {
             this.scene.start('altarRoom');
 
         }, this);
-
-
     }
 
     EnableFullScreen() {
@@ -325,4 +363,5 @@ class MainMenu extends Phaser.Scene {
 
         }, this);
     }
+
 } 
