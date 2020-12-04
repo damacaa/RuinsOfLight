@@ -3,14 +3,106 @@ class BaseScene extends Phaser.Scene {
     constructor(key) {
         super(key);
 
+        this.player0;
+        this.player1;
+        this.swordPlayer;
+        this.bowPlayer;
+        this.platforms;
+
+        this.projectiles;
+        this.players;
+        this.enemies;
+
     }
 
     preload() {
+        //Personajes
+        this.load.spritesheet('p0noWeapon',
+            '/resources/animations/players/p0noWeapon.png', {
+            frameWidth: 80,
+            frameHeight: 64
+        }
+        );
 
+        this.load.spritesheet('p0sword',
+            '/resources/animations/players/p0Sword.png', {
+            frameWidth: 80,
+            frameHeight: 64
+        }
+        );
+
+        this.load.spritesheet('p1noWeapon',
+            '/resources/animations/players/p1noWeapon.png', {
+            frameWidth: 64,
+            frameHeight: 64
+        }
+        );
+
+        //Enemigos
+        this.load.spritesheet('greatGorila',
+            '/resources/animations/enemies/Gorila/Gorila.png', {
+            frameWidth: 256,
+            frameHeight: 256
+        }
+        );
+
+        this.load.spritesheet('greatParrot',
+            '/resources/animations/enemies/Parrot/Parrot.png', {
+            frameWidth: 256,
+            frameHeight: 256
+        }
+        );
+
+        this.load.spritesheet('gorilaProjectileKey',
+            '/resources/animations/enemies/Gorila/GorilaProjectile.png', {
+            frameWidth: 64,
+            frameHeight: 32
+        }
+        );
+
+        //Escenario
+        this.load.image('puerta', '/resources/img/Items/Arcos de Paso/Arcos de Paso.png');
+
+        this.load.image('ground', '/resources/img/tiles/BrickWall.png');
+        this.load.image('background', '/resources/img/background.png');
     }
 
     create() {
+        //Crea listas de entidades
+        this.projectiles = this.physics.add.group();
+        this.players = this.physics.add.group();
+        this.enemies = this.physics.add.group();
 
+        
+        //Crea jugadores
+        this.player0 = new Player(this, 300, 32, 'p0noWeapon', 'p0sword');
+        this.player1 = new Player(this, 64, 32, 'p1noWeapon', 'p0sword');
+
+        this.players.add(this.player0);
+        this.players.add(this.player1);
+
+        this.player0.SetWeapon(1);
+        this.player1.SetWeapon(2);
+
+        
+
+        //Configura la cámara
+        this.camera = this.cameras.main;
+        this.EnableFullScreen();
+        //this.camera.setZoom(.5);
+        this.camera.setOrigin(0.5, 0.5);
+        this.camera.startFollow(this.player0, true);
+
+        this.CreateStage();
+
+//Añade colisiones
+this.physics.add.collider(this.players, this.platforms);
+this.physics.add.collider(this.enemies, this.platforms);
+
+//this.physics.add.overlap(this.hitBox, this.enemies, this.hitEnemy, null, this);
+this.physics.add.overlap(this.players, this.enemies, this.MeleeDamage, null, this);
+this.physics.add.overlap(this.players, this.projectiles, this.ProjectileDamage, null, this);
+//this.physics.add.overlap(this.enemies, this.projectiles, this.ProjectileDamage, null, this);//Habra que hacer otro array distinto de proyectiles de jugador?
     }
 
     CheckInputs(delta) {
@@ -65,11 +157,6 @@ class BaseScene extends Phaser.Scene {
         }
     }
 
-    UpdateCamera() {
-        this.camera.x = this.camera.x + ((240 - this.player0.x) * this.camera.zoom - this.camera.x) * 0.1;
-        this.camera.y = (135 - this.player0.y) * this.camera.zoom;
-    }
-
     EnableFullScreen() {
 
         var FKey = this.input.keyboard.addKey('F');
@@ -88,169 +175,64 @@ class BaseScene extends Phaser.Scene {
         }, this);
     }
 
-    PreloadPlayers() {
-        this.load.spritesheet('p0noWeapon',
-            '/resources/animations/players/p0noWeapon.png', {
-            frameWidth: 80,
-            frameHeight: 64
-        }
-        );
+    CreateStage(){}
 
-        this.load.spritesheet('p0sword',
-            '/resources/animations/players/p0Sword.png', {
-            frameWidth: 80,
-            frameHeight: 64
+    MeleeDamage(player, enemy) {
+        if (player.CheckAttacking()) {
+            enemy.Hurt(10);
         }
-        );
 
-        this.load.spritesheet('p1noWeapon',
-            '/resources/animations/players/p1noWeapon.png', {
-            frameWidth: 64,
-            frameHeight: 64
+        if (enemy.CheckAttacking()) {
+            player.Hurt();
+            player.body.setVelocityX((player.x - enemy.x) * 1);
         }
-        );
-
-        this.load.spritesheet('greatGorila',
-            '/resources/animations/enemies/GreatGorilaGuardian/GreatGorila.png', {
-            frameWidth: 256,
-            frameHeight: 256
-        }
-        );
     }
 
-
+    ProjectileDamage(player, projectile) {
+        player.Hurt();
+        projectile.destroy();
+    }
 }
 
 class AltarRoom extends BaseScene {
     constructor() {
         super('altarRoom');
-
-        this.player0;
-        this.player1;
-        this.platforms;
-    }
-
-    preload() {
-        this.PreloadPlayers();
-
-        this.load.image('puerta', '/resources/img/Items/Arcos de Paso/Arcos de Paso.png');
-
-        this.load.image('ground', '/resources/img/tiles/BrickWall.png');
-        this.load.image('background', '/resources/img/background.png');
-
-        this.load.spritesheet('gorilaKey',
-            '/resources/animations/enemies/GreatGorilaGuardian/GreatGorila.png', {
-            frameWidth: 256,
-            frameHeight: 256
-        }
-        );
-
-        this.load.spritesheet('gorilaProjectileKey',
-            '/resources/animations/enemies/GreatGorilaGuardian/ProyectilGorila.png', {
-            frameWidth: 64,
-            frameHeight: 32
-        }
-        );
     }
 
 
-    create() {
-        this.projectiles = this.physics.add.group();
-        this.players = this.physics.add.group();
-        this.enemies = this.physics.add.group();
+    CreateStage() {
+        //this.bg = this.add.image(0, 0, 'background');
 
-        //Crea puertas
-        this.door = new Door(this, 700, 182, 'dungeon');
-
-        //Crea boses
-        this.gorila = new GreatGorila(this, 500, 86, 'greatGorila');
-
-        this.gorila.WakeUp();
-
-
-
-        //Crea jugadores
-        this.player0 = new Player(this, 300, 32, 'p0noWeapon', 'p0sword');
-        this.player1 = new Player(this, 64, 32, 'p1noWeapon', 'p0sword');
-
-        this.players.add(this.player0);
-        this.players.add(this.player1);
-
-
-        this.player0.SetWeapon(0);
-        this.player1.SetWeapon(0);
-
-
-
-
-
+        //Crea escenario
         this.platforms = this.physics.add.staticGroup();
-
-        this.platforms.create(336, 166, 'ground');
+        this.platforms.create(366, 166, 'ground');
         this.platforms.create(400, 102, 'ground');
 
         for (let i = 0; i < 40; i++) {
             this.platforms.create(16 + (32 * i), 230, 'ground');
         }
 
-        this.physics.add.collider(this.players, this.platforms);
-        this.physics.add.collider(this.enemies, this.platforms);
-
-        //let a = this.player0.CheckAttacking();
-
-        //this.physics.add.overlap(this.hitBox, this.enemies, this.hitEnemy, null, this);
-        this.physics.add.overlap(this.players, this.enemies, this.MeleeDamage, null, this);
-        this.physics.add.overlap(this.players, this.projectiles, this.ProjectileDamage, null, this);
+        //Crea puertas
+        this.door = new Door(this, 1200, 182, 'dungeon');
 
 
-        //Configura la cámara
-        this.camera = this.cameras.main;
-        this.EnableFullScreen();
-        //this.camera.setZoom(.5);
-        this.camera.setOrigin(0.5, 0.5);
+        //Crea enemigos
+        this.gorila = new GreatGorila(this, 500, 86, 'greatGorila');
+        //this.gorila.WakeUp();
 
-        this.camera.startFollow(this.player0, true);
+        this.evillWall = new Parrot(this, 800, 0, 'greatParrot');
 
+
+        
     }
 
-    MeleeDamage(player, enemy) {
-        if (player.CheckAttacking()) {
-            enemy.DealDamage(10);
-        }
-
-        console.log(enemy.CheckAttacking());
-        if (enemy.CheckAttacking()) {
-            //player.body.addV
-            
-        }
-    }
-
-    ProjectileDamage(player, projectile){
-        //player.body.y-=20;
-        player.body.setVelocityY(-450);
-    }
-
-
-
-    /*hitEnemy(hitbox, enemy) {
-        if (this.player.isAttacking || this.player.isAirAttacking) {
-            var temp = new Enemydeath(this, enemy.x, enemy.y);
-            enemy.destroy();
-            this.audioKill.play();
-        }
-        if (this.player0.CheckAttacking()) {
-            //this.gorila.WakeUp();
-            this.gorila.DealDamage(10);
-        }
-        enemy.DealDamage(10);
-    }*/
+    
 
     update(time, delta) {
-
         this.CheckInputs(delta);
         this.door.Check();
-
         this.gorila.Update();
+        this.evillWall.Update();
     }
 
 }
@@ -262,32 +244,14 @@ class Dungeons extends BaseScene {
 
     constructor() {
         super('dungeon');
-        //this.newScene = scene.scene.add('pato', config, false);
         this.player0;
         this.player1;
     }
 
 
-    preload() {
-
-        this.PreloadPlayers();
-        this.load.image('background', '/resources/img/background.png');
-
-
-        this.load.tilemapTiledJSON('map', 'resources/levels/TestLevel.json');
-        this.load.image('tiles', 'resources/img/Tiles/BrickWall.png');
-
-    }
-
-    create() {
-        this.camera = this.cameras.main;
-
-
-
-
+    CreateStage() {
+ 
         //this.bg = this.add.image(0, 0, 'background');
-
-
 
         this.map = this.make.tilemap({ key: 'map' });
 
@@ -296,32 +260,10 @@ class Dungeons extends BaseScene {
         this.layer = this.map.createStaticLayer(0, this.tiles, 0, 0);
 
 
-        this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+        this.camera.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
 
 
-        this.player0 = new Player(this, 300, 32, 'p0noWeapon', 'p0sword');
-        this.player1 = new Player(this, 64, 32, 'p1noWeapon', 'p0sword');
 
-        this.camera.startFollow(this.player0, true);
-
-        /*var controlConfig = {
-            camera: this.cameras.main,
-            left: cursors.left,
-            right: cursors.right,
-            up: cursors.up,
-            down: cursors.down,
-            speed: 0.5
-        };
-    
-        controls = new Phaser.Cameras.Controls.FixedKeyControl(controlConfig);
-    
-        //  Every time you click, shake the camera
-    
-        this.input.on('pointerdown', function () {
-    
-            
-    
-        }, this);*/
 
         this.input.once('pointerdown', function (event) {
 
