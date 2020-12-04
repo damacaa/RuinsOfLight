@@ -6,7 +6,6 @@ class Player extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         this.noWeaponKey = noWeaponKey;
         this.swordKey = swordKey;
-        this.config = config;
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
@@ -100,25 +99,31 @@ class Player extends Phaser.GameObjects.Sprite {
         });
 
         scene.anims.create({
-            key: 'fallingAttackRight',
+            key: 'fallingAttackRight'+swordKey,
             frames: scene.anims.generateFrameNumbers(swordKey, { start: 27, end: 30 }),
             frameRate: 15,
             repeat: 0
         });
 
         scene.anims.create({
-            key: 'explosion',
+            key: 'explosion'+swordKey,
             frames: scene.anims.generateFrameNumbers(swordKey, { start: 31, end: 34 }),
             frameRate: 10,
             repeat: 0
         });
 
+        scene.anims.create({
+            key: 'getHurt' + swordKey,
+            frames: scene.anims.generateFrameNumbers(swordKey, { start: 35, end: 36 }),
+            frameRate: 10,
+            repeat: 0
+        });
 
 
-
-
-
-        this.ResetHitbox();
+        this.body.setSize(16, 32);
+        this.body.offset.x = 32;
+        this.body.offset.y = 32;
+        this.hitBox;
 
         //this.body.setCollideWorldBounds(true);
 
@@ -152,27 +157,16 @@ class Player extends Phaser.GameObjects.Sprite {
     }
 
     ResetHitbox() {
-        if (this.flipX) {
-            this.body.setSize(16, 32);
-            this.body.offset.x = 32;
-            this.body.offset.y = 32;
-        } else {
-            this.body.setSize(16, 32);
-            this.body.offset.x = 32;
-            this.body.offset.y = 32;
-        }
+        this.attacking = false;
+        this.fallingAttack = false;
+        this.hitBox.body.enable = false;
     }
 
     AttackHitbox() {
-        if (this.flipX) {
-            this.body.setSize(48, 32);
-            this.body.offset.x = 0;
-            this.body.offset.y = 32;
-        } else {
-            this.body.setSize(48, 32);
-            this.body.offset.x = 32;
-            this.body.offset.y = 32;
-        }
+        this.hitBox.body.enable = true;
+        this.hitBox.x = (this.flipX) ? this.x - 20 : this.x + 20;
+        this.hitBox.y = this.y + 16;
+        this.hitBox.setSize(20, 10);
     }
 
     EnableAttack() {
@@ -189,8 +183,6 @@ class Player extends Phaser.GameObjects.Sprite {
         if (this.canMove && !this.attacking) { this.body.setVelocityX(dir * this.speed); }
 
         if (!this.attacking && !this.isHurt) {
-
-
             if (dir == 0) {
                 //this.anims.play('idleRight' + this.name, true);
 
@@ -218,11 +210,9 @@ class Player extends Phaser.GameObjects.Sprite {
 
                 if (dir == -1) {
                     this.flipX = true;
-                    this.ResetHitbox();
                 }
                 else if (dir == 1) {
                     this.flipX = false;
-                    this.ResetHitbox();
                 }
 
                 if (this.body.onFloor()) {
@@ -245,31 +235,38 @@ class Player extends Phaser.GameObjects.Sprite {
             }
 
 
-        } else {
-            if (this.body.onFloor() && this.fallingAttack) {
+        } else if (this.fallingAttack) {
+            this.hitBox.y = this.y + 16;
 
+            if (this.body.onFloor()) {
+
+                this.jumping = false;
+                this.falling = false;
                 this.fallingAttack = false;
                 this.scene.cameras.main.shake(100, .01);
-                this.anims.play('explosion', true); //Sustituir por animacion de impacto contra el suelo
+                this.anims.play('explosion'+this.name, true); //Sustituir por animacion de impacto contra el suelo
 
                 this.once('animationcomplete', () => {
                     this.attacking = false;
-                    this.ResetHitbox();
+                    this.fallingAttack = false;
+                    this.hitBox.body.enable = false;
                 });
+
+
             }
         }
     }
 
     Jump() {
-        if (!this.attacking && this.body.onFloor() && this.canMove) {
+        console.log("jump");
+        if (!this.attacking && this.body.blocked.down && this.canMove) {
             this.body.setVelocityY(-450);
         }
     }
 
     Hurt() {
-
         if (!this.isHurt) {
-            this.anims.play('getHurt', true);
+            this.anims.play('getHurt' + this.name, true);
             this.isHurt = true;
             this.canAttack = false;
             this.canMove = false;
@@ -279,7 +276,17 @@ class Player extends Phaser.GameObjects.Sprite {
             this.body.setVelocityY(-300);
             this.body.setVelocityX(0);
 
-            this.scene.time.delayedCall(2000, function () { this.canAttack = true; this.canMove = true; this.isHurt = false; this.ResetHitbox(); }, [], this);
+            this.fallingAttack = false;
+            //this.hitBox.body.enable = false;
+
+            this.attacking = false;
+            this.fallingAttack = false;
+            //this.hitBox.body.enable = false;
+
+            this.scene.time.delayedCall(1000, function () {
+                this.canAttack = true; this.canMove = true; this.isHurt = false;
+
+            }, [], this);
         }
     }
 
@@ -292,6 +299,13 @@ class Player extends Phaser.GameObjects.Sprite {
             case 1:
                 this.scene.swordPlayer = this;
                 this.name = this.swordKey;
+
+                this.hitBox = this.scene.physics.add.image(this.x, this.y, null);
+                this.hitBox.visible = false;
+                this.hitBox.setSize(10, 10);
+                this.hitBox.body.setAllowGravity(false);
+                this.scene.physics.add.overlap(this.hitBox, this.scene.enemies, this.scene.MeleeDamage, null, this.scene);
+
                 break;
             case 2:
                 this.scene.bowPlayer = this;
@@ -302,7 +316,7 @@ class Player extends Phaser.GameObjects.Sprite {
         }
     }
 
-    Attack() {
+    Attack(x, y) {
 
         if (this.canAttack) {
             this.canAttack = false;
@@ -310,17 +324,35 @@ class Player extends Phaser.GameObjects.Sprite {
             switch (this.weapon) {
                 case 1:
                     //Espada
-
-
                     this.AttackHitbox();
                     this.body.setVelocityX(0);
-
 
                     if (this.body.blocked.down) {
                         //Ataque en el suelo
                         if (!this.attacking) {
                             this.anims.play('attack' + this.attackNumber + this.swordKey, true);
                             this.attacking = true;
+
+
+                            switch (this.attackNumber) {
+                                case 1:
+                                    break;
+                                case 2:
+                                    (this.flipX) ? this.body.setVelocityX(-500) : this.body.setVelocityX(500);
+                                    this.scene.time.delayedCall(50, function () {
+                                        this.body.setVelocityX(0)
+                                    }, [], this);
+                                    this.hitBox.x = (this.flipX) ? this.x - 50 : this.x + 50;
+
+                                    break;
+                                case 3:
+                                    (this.flipX) ? this.body.setVelocityX(250) : this.body.setVelocityX(-250);
+                                    this.scene.time.delayedCall(25, function () {
+                                        this.body.setVelocityX(0)
+                                    }, [], this);
+                                    break;
+                                default:
+                            }
 
                             this.once('animationcomplete', () => {
                                 if (this.combo && (this.attackNumber < 3)) {
@@ -331,13 +363,10 @@ class Player extends Phaser.GameObjects.Sprite {
                                 } else {
                                     this.attackNumber = 1;
                                     this.attacking = false;
-                                    this.ResetHitbox();
+                                    this.attacking = false;
+                                    this.fallingAttack = false;
+                                    this.hitBox.body.enable = false;
                                 }
-
-                                //this.attackNumber = 1;
-
-
-
 
                                 this.combo = false;
 
@@ -349,18 +378,69 @@ class Player extends Phaser.GameObjects.Sprite {
                         this.fallingAttack = true;
                         this.body.velocity.y += 500;
 
-                        this.AttackHitbox();
-
-                        this.anims.play('fallingAttackRight', true);
+                        this.anims.play('fallingAttackRight'+this.name, true);
 
                     }
                     break;
                 case 2:
                     //Arco
+                    if (!x || !y) {
+                        this.arrow = new Arrow(this.scene, this.x, this.y - 16, 1, 0);
+                    } else {
+                        let dirX = x - this.x;
+                        let dirY = y - 16 - this.y;
+                        let sum = Math.abs(-dirX + dirY);
+                        dirX /=sum;
+                        dirY/=sum;
+
+                        this.arrow = new Arrow(this.scene, this.x+16, this.y + 16, dirX, dirY);
+                    }
+
                     break;
                 default:
                 //Puños?
             }
         }
     }
+}
+
+class Arrow extends Phaser.GameObjects.Sprite {
+    constructor(scene, x, y, dirX, dirY) {
+        super(scene, x, y, "p0noWeapon");
+
+
+        this.speed = 1000;
+
+        this.destroyCounter = 0;
+
+        this.scene = scene;
+        scene.add.existing(this);
+        scene.playerProjectiles.add(this);
+        this.body.setAllowGravity(true);
+
+        this.body.setSize(4, 4);
+        this.body.velocity.x = dirX * this.speed;
+        this.body.velocity.y = dirY * this.speed;
+
+        //scene.graphics.lineBetween(x, y, x+(dirX*100), y+(dirY*100));
+
+        this.setOrigin(0.5,0.7);
+
+        scene.tweens.add({
+            targets: this,
+            duration: 500,
+            angle: 360,
+            //ease: 'Quad.easeInOut',
+            repeat: -1,
+            yoyo: false
+        });
+
+        this.scene.time.delayedCall(1000, function () {
+            this.destroy();
+
+        }, [], this);
+    }
+
+    
+
 }

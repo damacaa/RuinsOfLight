@@ -5,6 +5,8 @@ class Door extends Phaser.GameObjects.Sprite {
 
         this.scene = scene;
         this.sceneKey = sceneKey;
+
+        this.setDepth(-2);
     }
 
     preload(){

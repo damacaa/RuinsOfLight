@@ -17,6 +17,11 @@ class Enemy extends Phaser.GameObjects.Sprite {
     this.canAttack;
     this.wait = 2000;
     this.awake = false;
+
+    this.primaryTarget;
+    this.secondaryTarget;
+
+    this.setDepth(-1);
   }
 
   WakeUp() {
@@ -30,21 +35,46 @@ class Enemy extends Phaser.GameObjects.Sprite {
   Die() {
     this.canMove = false;
     this.canAttack = false;
-
+    this.body.enable = false;
     this.scene.time.delayedCall(this.wait, this.destroy, [], this);
 
   }
 
   Hurt(amount) {
-    if (!this.awake) { this.WakeUp() };
-
-    if (this.health <= 0) {
+    /*if (!this.awake && this.health > 0) {
+      this.WakeUp()
+      console.log("Despierta");
+    } else if (this.awake && this.health <= 0) {
       this.Die();
+      console.log("Muere");
+
     } else {
       this.setTintFill(0xffd7b1);
       this.scene.time.delayedCall(25, function () { this.clearTint(); }, [], this);
       this.health -= amount;
+      this.Flinch();
+      console.log("Ouch");
+
+    }*/
+
+    if (this.health >= 1) {
+      if (this.awake) {
+        this.setTintFill(0xffd7b1);
+        this.scene.time.delayedCall(25, function () { this.clearTint(); }, [], this);
+        this.health -= amount;
+        this.Flinch();
+        console.log("Ouch");
+      } else {
+        this.WakeUp()
+        console.log("Despierta");
+      }
+
+    } else if(this.awake){
+      this.Die();
+      console.log("Muere");
     }
+
+
   }
 
   Update() {
@@ -71,4 +101,6 @@ class Enemy extends Phaser.GameObjects.Sprite {
   }
 
   CheckAttacking() { return this.attacking; }
+
+  Flinch() { }
 }
