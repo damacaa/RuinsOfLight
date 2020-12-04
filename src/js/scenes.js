@@ -8,6 +8,7 @@ class BaseScene extends Phaser.Scene {
         this.swordPlayer;
         this.bowPlayer;
         this.platforms;
+        this.map;
 
         this.projectiles;
         this.players;
@@ -62,7 +63,6 @@ class BaseScene extends Phaser.Scene {
 
         //Escenario
         this.load.image('puerta', '/resources/img/Items/Arcos de Paso/Arcos de Paso.png');
-
         this.load.image('ground', '/resources/img/tiles/BrickWall.png');
         this.load.image('background', '/resources/img/background.png');
     }
@@ -73,7 +73,7 @@ class BaseScene extends Phaser.Scene {
         this.players = this.physics.add.group();
         this.enemies = this.physics.add.group();
 
-        
+
         //Crea jugadores
         this.player0 = new Player(this, 300, 32, 'p0noWeapon', 'p0sword');
         this.player1 = new Player(this, 64, 32, 'p1noWeapon', 'p0sword');
@@ -84,7 +84,7 @@ class BaseScene extends Phaser.Scene {
         this.player0.SetWeapon(1);
         this.player1.SetWeapon(2);
 
-        
+
 
         //Configura la cámara
         this.camera = this.cameras.main;
@@ -95,14 +95,14 @@ class BaseScene extends Phaser.Scene {
 
         this.CreateStage();
 
-//Añade colisiones
-this.physics.add.collider(this.players, this.platforms);
-this.physics.add.collider(this.enemies, this.platforms);
+        //Añade colisiones
+        this.physics.add.collider(this.players, this.platforms);
+        this.physics.add.collider(this.enemies, this.platforms);
 
-//this.physics.add.overlap(this.hitBox, this.enemies, this.hitEnemy, null, this);
-this.physics.add.overlap(this.players, this.enemies, this.MeleeDamage, null, this);
-this.physics.add.overlap(this.players, this.projectiles, this.ProjectileDamage, null, this);
-//this.physics.add.overlap(this.enemies, this.projectiles, this.ProjectileDamage, null, this);//Habra que hacer otro array distinto de proyectiles de jugador?
+        //this.physics.add.overlap(this.hitBox, this.enemies, this.hitEnemy, null, this);
+        this.physics.add.overlap(this.players, this.enemies, this.MeleeDamage, null, this);
+        this.physics.add.overlap(this.players, this.projectiles, this.ProjectileDamage, null, this);
+        //this.physics.add.overlap(this.enemies, this.projectiles, this.ProjectileDamage, null, this);//Habra que hacer otro array distinto de proyectiles de jugador?
     }
 
     CheckInputs(delta) {
@@ -129,7 +129,7 @@ this.physics.add.overlap(this.players, this.projectiles, this.ProjectileDamage, 
             this.player0.Run(0, delta);
         }
 
-        if (cursors0.up.isDown && this.player0.body.touching.down) {
+        if (cursors0.up.isDown) {
             this.player0.Jump();
         }
 
@@ -175,7 +175,7 @@ this.physics.add.overlap(this.players, this.projectiles, this.ProjectileDamage, 
         }, this);
     }
 
-    CreateStage(){}
+    CreateStage() { }
 
     MeleeDamage(player, enemy) {
         if (player.CheckAttacking()) {
@@ -199,7 +199,6 @@ class AltarRoom extends BaseScene {
         super('altarRoom');
     }
 
-
     CreateStage() {
         //this.bg = this.add.image(0, 0, 'background');
 
@@ -221,12 +220,9 @@ class AltarRoom extends BaseScene {
         //this.gorila.WakeUp();
 
         this.evillWall = new Parrot(this, 800, 0, 'greatParrot');
-
-
-        
     }
 
-    
+
 
     update(time, delta) {
         this.CheckInputs(delta);
@@ -244,25 +240,27 @@ class Dungeons extends BaseScene {
 
     constructor() {
         super('dungeon');
-        this.player0;
-        this.player1;
     }
 
+    preload() {
+        this.load.image('atlas', 'resources/levels/Tile_sheet.png');
+        //this.load.tilemapTiledJSON('map', 'resources/levels/SueloNivel1.json');
+        //this.load.tilemapTiledJSON('map2', 'resources/levels/SueloNivel2.json');
+        this.load.tilemapTiledJSON('map3', 'resources/levels/SueloNivel3.json');
+
+    }
 
     CreateStage() {
- 
-        //this.bg = this.add.image(0, 0, 'background');
+        this.map = this.make.tilemap({ key: 'map3' });
+        this.groundTiles = this.map.addTilesetImage('Tile_sheet', 'atlas');
+        this.groundLayer = this.map.createStaticLayer('Suelo', this.groundTiles, 0, 0);
 
-        this.map = this.make.tilemap({ key: 'map' });
+        
 
-        this.tiles = this.map.addTilesetImage('cybernoid', 'tiles');
-
-        this.layer = this.map.createStaticLayer(0, this.tiles, 0, 0);
-
-
-        this.camera.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-
-
+        //Colisiones
+        this.groundLayer.setCollisionBetween(1, 27);
+        this.physics.add.collider(this.player0, this.groundLayer);
+        this.physics.add.collider(this.player1, this.groundLayer);
 
 
         this.input.once('pointerdown', function (event) {

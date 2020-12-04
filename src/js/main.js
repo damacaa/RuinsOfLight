@@ -20,7 +20,7 @@ window.onload = function () {
                 //debug: true
             }
         },
-        scene: [ MainMenu,AltarRoom, Dungeons ]
+        scene: [MainMenu,AltarRoom, Dungeons]
     }
 
     game = new Phaser.Game(config);
