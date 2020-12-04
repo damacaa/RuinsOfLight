@@ -286,8 +286,8 @@ class Dungeons extends BaseScene {
 
     preload() {
         this.load.image('atlas', 'resources/levels/Tile_sheet.png');
-        //this.load.tilemapTiledJSON('map', 'resources/levels/SueloNivel1.json');
-        //this.load.tilemapTiledJSON('map2', 'resources/levels/SueloNivel2.json');
+        this.load.tilemapTiledJSON('map', 'resources/levels/SueloNivel1.json');
+        this.load.tilemapTiledJSON('map2', 'resources/levels/SueloNivel2.json');
         this.load.tilemapTiledJSON('map3', 'resources/levels/SueloNivel3.json');
     }
 
