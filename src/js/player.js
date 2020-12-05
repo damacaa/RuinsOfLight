@@ -1,11 +1,12 @@
 class Player extends Phaser.GameObjects.Sprite {
 
 
-    constructor(scene, x, y, noWeaponKey, swordKey) {
+    constructor(scene, x, y, noWeaponKey, swordKey, bowKey) {
         super(scene, x, y, noWeaponKey);
         this.scene = scene;
         this.noWeaponKey = noWeaponKey;
         this.swordKey = swordKey;
+        this.bowKey = bowKey;
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
@@ -258,7 +259,6 @@ class Player extends Phaser.GameObjects.Sprite {
     }
 
     Jump() {
-        console.log("jump");
         if (!this.attacking && this.body.blocked.down && this.canMove) {
             this.body.setVelocityY(-450);
         }
@@ -309,10 +309,11 @@ class Player extends Phaser.GameObjects.Sprite {
                 break;
             case 2:
                 this.scene.bowPlayer = this;
+                //this.name = this.bowKey;
                 this.name = this.noWeaponKey;
                 break;
             default:
-                this.name = this.noWeaponKey; '';
+                this.name = this.noWeaponKey;
         }
     }
 

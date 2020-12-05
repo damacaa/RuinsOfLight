@@ -7,6 +7,8 @@ class Enemy extends Phaser.GameObjects.Sprite {
     this.scene.physics.add.existing(this);
     this.scene.enemies.add(this);
 
+    this.scene.entities.push(this);
+
     //this.body.setAllowDrag(true)
     //this.body.setDrag(1000, 0)
     //this.body.setFriction(  50, 0)
