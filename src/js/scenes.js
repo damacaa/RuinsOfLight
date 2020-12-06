@@ -85,7 +85,7 @@ class BaseScene extends Phaser.Scene {
         this.load.spritesheet('ball',
         '/resources/animations/enemies/Ball/Ball.png', {
         frameWidth: 64,
-        frameHeight: 38
+        frameHeight: 63
     }
     );
 
