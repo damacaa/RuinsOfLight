@@ -82,6 +82,13 @@ class BaseScene extends Phaser.Scene {
         }
         );
 
+        this.load.spritesheet('ball',
+        '/resources/animations/enemies/Ball/Ball.png', {
+        frameWidth: 64,
+        frameHeight: 38
+    }
+    );
+
         //Escenario
         this.load.image('puerta', '/resources/img/Items/Arcos de Paso/Arcos de Paso.png');
         this.load.image('ground', '/resources/img/tiles/BrickWall.png');
@@ -278,6 +285,9 @@ class AltarRoom extends BaseScene {
         this.gorila = new GreatGorila(this, 500, 86, 'greatGorila');
 
         this.parrot = new Parrot(this, 800, 0, 'greatParrot');
+
+        this.ball = new Ball(this, 450, 100, 'ball');
+        this.ball.WakeUp();
     }
 }
 
