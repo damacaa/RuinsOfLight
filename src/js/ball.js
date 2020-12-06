@@ -3,7 +3,7 @@ class Ball extends Enemy {
         super(scene, x, y, ballKey);
         this.body.setSize(25, 25);
         this.body.offset.x = 19;
-        this.body.offset.y = 13;
+        this.body.offset.y = 19;
 
         {
             this.scene.anims.create({
@@ -37,14 +37,14 @@ class Ball extends Enemy {
             this.scene.anims.create({
                 key: 'ballAttack',
                 frames: this.scene.anims.generateFrameNumbers(ballKey, { start: 10, end: 13 }),
-                frameRate: 4,
+                frameRate: 5,
                 repeat: 0
             });
 
             this.scene.anims.create({
                 key: 'explosionB',
                 frames: this.scene.anims.generateFrameNumbers(ballKey, { start: 14, end: 17 }),
-                frameRate: 8,
+                frameRate: 10,
                 repeat: 0
             });
         }
@@ -83,7 +83,7 @@ class Ball extends Enemy {
         this.anims.play('explosionB', true);
         this.canMove = false;
         this.body.setVelocityX(0);
-        
+
         this.once('animationcomplete', () => {
             console.log("hola");
             this.destroy();
@@ -97,7 +97,7 @@ class Ball extends Enemy {
 
             if (Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x)) {
 
-                if (Math.abs(this.scene.bowPlayer.x - this.x) > 100) {
+                if (Math.abs(this.scene.bowPlayer.x - this.x) > 85) {
                     if (this.scene.bowPlayer.x < this.x) {
                         this.body.setVelocityX(-this.speed);
                         this.flipX = false;
@@ -127,7 +127,7 @@ class Ball extends Enemy {
 
 
             } else {
-                if (Math.abs(this.scene.swordPlayer.x - this.x) > 100) {
+                if (Math.abs(this.scene.swordPlayer.x - this.x) > 85) {
                     if (this.scene.swordPlayer.x < this.x) {
                         this.body.setVelocityX(-this.speed);
                         this.flipX = false;
@@ -177,7 +177,7 @@ class Ball extends Enemy {
             
             if (this.health>0) {
                 this.hitBox = this.scene.physics.add.image(this.x, this.y, null);
-                this.hitBox.setCircle(26, -14, -5);
+                this.hitBox.setCircle(28, -15, -6);
                 this.hitBox.visible = false;
                 this.hitBox.body.setAllowGravity(false);
                 this.hitBox.body.enable = true;
