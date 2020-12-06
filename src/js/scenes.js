@@ -84,8 +84,8 @@ class BaseScene extends Phaser.Scene {
 
         this.load.spritesheet('ball',
         '/resources/animations/enemies/Ball/Ball.png', {
-        frameWidth: 48,
-        frameHeight: 30
+        frameWidth: 64,
+        frameHeight: 38
     }
     );
 
@@ -287,6 +287,7 @@ class AltarRoom extends BaseScene {
         this.parrot = new Parrot(this, 800, 0, 'greatParrot');
 
         this.ball = new Ball(this, 450, 100, 'ball');
+        this.ball.WakeUp();
     }
 }
 
