@@ -24,7 +24,7 @@ class Enemy extends Phaser.GameObjects.Sprite {
     this.primaryTarget;
     this.secondaryTarget;
 
-    this.setDepth(-1);
+    this.setDepth(1);
   }
 
   WakeUp() {
@@ -39,6 +39,15 @@ class Enemy extends Phaser.GameObjects.Sprite {
     this.canMove = false;
     this.canAttack = false;
     this.body.enable = false;
+
+    console.log(this.scene.entities.length);
+
+    const index = this.scene.entities.indexOf(this);
+    if (index > -1) {
+      this.scene.entities.splice(index, 1);
+    }
+
+    console.log(this.scene.entities.length);
     this.scene.time.delayedCall(this.wait, this.destroy, [], this);
 
   }
@@ -83,9 +92,13 @@ class Enemy extends Phaser.GameObjects.Sprite {
   Update() {
     if (this.active) {
       if (this.canMove) {
-        if (this.body.onFloor()) {
-          this.body.setVelocityY(-250);
+        if (this.body.onFloor() &&  this.primaryTarget.y < this.y-16) {
+          this.body.setVelocityY(-500);
         }
+
+        let dir = this.primaryTarget.x-this.x;
+        dir = dir / Math.abs(dir);
+        this.body.setVelocityX(dir*100);
       }
 
       if (this.canAttack) {
@@ -106,4 +119,8 @@ class Enemy extends Phaser.GameObjects.Sprite {
   CheckAttacking() { return this.attacking; }
 
   Flinch() { }
+
+  /*Jump(){
+    this.body.setVelocityY(-100);
+  }*/
 }
