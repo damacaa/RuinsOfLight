@@ -83,11 +83,11 @@ class BaseScene extends Phaser.Scene {
         );
 
         this.load.spritesheet('ball',
-        '/resources/animations/enemies/Ball/Ball.png', {
-        frameWidth: 64,
-        frameHeight: 63
-    }
-    );
+            '/resources/animations/enemies/Ball/Ball.png', {
+            frameWidth: 63,
+            frameHeight: 63
+        }
+        );
 
         //Escenario
         this.load.image('puerta', '/resources/img/Items/Arcos de Paso/Arcos de Paso.png');
@@ -101,8 +101,6 @@ class BaseScene extends Phaser.Scene {
         this.enemyProjectiles = this.physics.add.group();
         this.players = this.physics.add.group();
         this.enemies = this.physics.add.group();
-
-
 
         //Crea jugadores //Se deberían crear solo una vez en altares y mantener para todas las escenas --> Mover al CreateStage de altares
         this.player0 = new Player(this, 128, 32, 'p0noWeapon', 'p0sword', 'p0bow');
@@ -233,15 +231,6 @@ class BaseScene extends Phaser.Scene {
     CreateStage() { }
 
     MeleeDamage(weapon, target) {
-        /*if (player.CheckAttacking()) {
-            enemy.Hurt(10);
-        }
-
-        if (enemy.CheckAttacking()) {
-            player.Hurt();
-            //player.body.setVelocityX((player.x - enemy.x) * 1);
-        }*/
-
         target.Hurt(10);
     }
 
@@ -252,16 +241,17 @@ class BaseScene extends Phaser.Scene {
 
     update(time, delta) {
         this.entities.forEach(element => element.Update());
-
         this.CheckInputs(delta);
+    }
+
+    LoadScene(key) {
+        this.scene.start(key);
     }
 }
 
 class AltarRoom extends BaseScene {
     constructor() {
         super('altarRoom');
-
-
     }
 
     CreateStage() {
@@ -278,19 +268,17 @@ class AltarRoom extends BaseScene {
         }
 
         //Crea puertas
-        this.door = new Door(this, 1200, 182, 'dungeon');
+        this.door = new SceneDoor(this, 1200, 182, 'dungeon');
 
 
         //Crea enemigos
         this.gorila = new GreatGorila(this, 500, 86, 'greatGorila');
-
         this.parrot = new Parrot(this, 800, 0, 'greatParrot');
-
-        this.ball = new Ball(this, 450, 100, 'ball');
-        this.ball.WakeUp();
     }
 }
 
+let levelX = 1;
+let levelY = 1;
 class Dungeons extends BaseScene {
     //https://www.youtube.com/watch?v=2_x1dOvgF1E
     //https://phaser.io/examples/v3/view/game-objects/tilemap/collision/multiple-tile-sizes
@@ -298,53 +286,142 @@ class Dungeons extends BaseScene {
 
     constructor() {
         super('dungeon');
+        this.canSpawnEnemies = false;
+        this.nextSpawnTime = 10000;
+        this.spawnWait = 5000;
+        
     }
 
     preload() {
         this.load.image('atlas', 'resources/levels/Tile_sheet.png');
-        this.load.tilemapTiledJSON('map', 'resources/levels/SueloNivel1.json');
-        this.load.tilemapTiledJSON('map2', 'resources/levels/SueloNivel2.json');
-        this.load.tilemapTiledJSON('map3', 'resources/levels/SueloNivel3.json');
+        this.load.tilemapTiledJSON('map1_1', 'resources/levels/SueloNivel1.json');
+        this.load.tilemapTiledJSON('map2_1', 'resources/levels/SueloNivel2.json');
+        this.load.tilemapTiledJSON('map2_2', 'resources/levels/SueloNivel3.json');
     }
 
     CreateStage() {
-        this.map = this.make.tilemap({ key: 'map3' });
+        ////https://www.html5gamedevs.com/topic/41691-cant-get-group-to-work/
+
+        this.levelId = levelX + "_" + levelY;
+
+        console.log(this.levelId);
+
+
+       // console.log(this.entities);
+
+        this.map = this.make.tilemap({ key: 'map' + this.levelId });
         this.groundTiles = this.map.addTilesetImage('Tile_sheet', 'atlas');
         this.groundLayer = this.map.createStaticLayer('Suelo', this.groundTiles, 0, 0);
 
-
+       // console.log(this.map.width * 32);
 
         //Colisiones
-        this.groundLayer.setCollisionBetween(1, 27);
-        this.physics.add.collider(this.player0, this.groundLayer);
-        this.physics.add.collider(this.player1, this.groundLayer);
+        this.groundLayer.setCollisionBetween(1, 29);
+        //this.groundLayer.setCollision(2);
+
+        this.physics.add.collider(this.players, this.groundLayer);
         this.physics.add.collider(this.enemies, this.groundLayer);
 
+        this.camera.setBounds(0, 0, this.map.width * 32, this.map.height * 32);
+        /*new DungeonDoor(this,10*32,6*32,'dungeon',"2_1");
+                new DungeonDoor(this,14*32,6*32,'dungeon',"2_2");*/
 
-        this.input.once('pointerdown', function (event) {
+        switch (levelX) {
+            case 1:
+                //1.1
+                new DungeonDoor(this, 7 * 32, 15 * 32, "2_1");
+                new DungeonDoor(this, 65 * 32, 9 * 32, "2_2");
+                break;
 
-            this.scene.start('mainMenu');
+            case 2:
+                switch (levelY) {
+                    case 1:
+                        //2.1
+                        new SceneDoor(this, 3 * 32, 13 * 32, 'mainMenu');
+                        break;
 
-        }, this);
+                    case 2:
+                        //2.2
+                        new SceneDoor(this, 51 * 32, 23 * 32, 'mainMenu');
+                        break;
 
-        for (let index = 0; index < 10; index++) {
-            this.randomEnemy = new Enemy(this, 100*index+100, 50, '');
+                    default:
+                        break;
+                }
+                break;
 
+            default:
+                console.log(levelX + "_" + levelY);
+                //new SceneDoor(this, 10 * 32, 6 * 32, 'mainMenu');
+                break;
         }
 
+        //level++;
+
+
+        /*this.input.once('pointerdown', function (event) {
+
+            if (level < 3) {
+                this.scene.start('dungeon');
+            } else {
+                level = 1;
+                this.scene.start('mainMenu');
+            }
+
+
+        }, this);*/
     }
 
+    /*ChangeStage() {
+        this.map.destroy();
+        //this.groundTiles.destroy();
+        //this.groundLayer.destroy();
+
+        this.map = this.make.tilemap({ key: 'map' + level });
+        this.groundTiles = this.map.addTilesetImage('Tile_sheet', 'atlas');
+        this.groundLayer = this.map.createStaticLayer('Suelo', this.groundTiles, 0, 0);
+
+        level++;
+    }*/
+
+    update(time, delta) {
+        this.entities.forEach(element => element.Update());
+        this.CheckInputs(delta);
+
+        if (this.canSpawnEnemies) {
+
+            let x = this.player0.x + 300;
+            if (x < this.map.width * 32) {
+                this.randomEnemy = new Ball(this, x, this.player0.y - 32, 'ball');
+                this.randomEnemy.primaryTarget = this.player0;
+                this.randomEnemy.WakeUp();
+            }
+
+
+            x = this.player0.x - 300;
+            if (x > 32) {
+                this.randomEnemy = new Ball(this, x, this.player0.y - 32, 'ball');
+                this.randomEnemy.primaryTarget = this.player0;
+                this.randomEnemy.WakeUp();
+            }
+
+            this.nextSpawnTime = time + this.spawnWait;
+            this.canSpawnEnemies = false;
+
+            this.spawnWait *= .99;
+        } else if (this.nextSpawnTime <= time && this.entities.length < 100) {
+            this.canSpawnEnemies = true;
+        }
+    }
 }
 
 class MainMenu extends Phaser.Scene {
 
     constructor() {
         super('mainMenu');
-        //this.newScene = scene.scene.add('pato', config, false);
     }
 
     preload() {
-        this.load.image('mech', '/resources/img/tiles/BrickWall.png');
     }
 
     create() {
@@ -359,8 +436,6 @@ class MainMenu extends Phaser.Scene {
 
         this.input.once('pointerdown', function (event) {
 
-            //var newScene = scene.scene.add(key, sceneConfig, autoStart, data);
-            //let nextScene = game.scene.add('pato',config,true);
             this.scene.start('altarRoom');
 
         }, this);
@@ -373,11 +448,9 @@ class MainMenu extends Phaser.Scene {
         FKey.on('down', function () {
 
             if (this.scale.isFullscreen) {
-                //button.setFrame(0);
                 this.scale.stopFullscreen();
             }
             else {
-                //button.setFrame(1);
                 this.scale.startFullscreen();
             }
 
