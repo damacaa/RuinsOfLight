@@ -92,7 +92,7 @@ class BaseScene extends Phaser.Scene {
         //Escenario
         this.load.image('puerta', '/resources/img/Items/Arcos de Paso/Arcos de Paso.png');
         this.load.image('escalerasL', '/resources/img/Items/Escaleras/escaleras_laterales.png');
-        this.load.image('ground', '/resources/img/tiles/BrickWall.png');
+        this.load.image('wall', '/resources/img/tiles/BrickWall.png');
         this.load.image('background', '/resources/img/background.png');
     }
 
@@ -119,13 +119,14 @@ class BaseScene extends Phaser.Scene {
         this.EnableFullScreen();
         //this.camera.setZoom(.5);
         this.camera.setOrigin(0.5, 0.5);
-        this.camera.startFollow(this.bowPlayer, true);
+        this.camera.startFollow(this.player0, true);
 
         this.CreateStage();
 
         //Añade colisiones
 
-
+        this.physics.add.collider(this.players, this.platforms);
+        this.physics.add.collider(this.enemies, this.platforms);
 
         this.physics.add.overlap(this.players, this.enemyProjectiles, this.ProjectileDamage, null, this);
         this.physics.add.overlap(this.enemies, this.playerProjectiles, this.ProjectileDamage, null, this);
@@ -232,6 +233,9 @@ class BaseScene extends Phaser.Scene {
 
     MeleeDamage(weapon, target) {
         target.Hurt(10);
+
+        //let dir = target.x - weapon.x;
+        //target.body.setVelocityX(dir);
     }
 
     ProjectileDamage(target, projectile) {
@@ -263,7 +267,7 @@ class BossRoom extends BaseScene {
         this.platforms = this.physics.add.staticGroup();
 
         for (let i = 0; i < 40; i++) {
-            this.platforms.create(16 + (32 * i), 230, 'ground');
+            this.platforms.create(16 + (32 * i), 230, 'wall');
         }
 
         //Crea puertas
@@ -274,8 +278,7 @@ class BossRoom extends BaseScene {
         this.gorila = new GreatGorila(this, 500, 86, 'greatGorila');
         this.parrot = new Parrot(this, 800, 0, 'greatParrot');
 
-        this.physics.add.collider(this.players, this.platforms);
-        this.physics.add.collider(this.enemies, this.platforms);
+        
 
         if (hasRelic) {
             this.player0.x = this.door.x-80;
@@ -319,6 +322,8 @@ class Dungeons extends BaseScene {
 
     CreateStage() {
         ////https://www.html5gamedevs.com/topic/41691-cant-get-group-to-work/
+        this.platforms = this.physics.add.staticGroup();
+
         this.levelId = levelX + "_" + levelY;
 
         this.map = this.make.tilemap({ key: 'map' + this.levelId });
@@ -327,7 +332,6 @@ class Dungeons extends BaseScene {
 
         //Colisiones
         this.groundLayer.setCollisionBetween(1, 29);
-        //this.groundLayer.setCollision(2);
 
         this.physics.add.collider(this.players, this.groundLayer);
         this.physics.add.collider(this.enemies, this.groundLayer);
@@ -436,16 +440,21 @@ class MainMenu extends Phaser.Scene {
     }
 
     preload() {
+        this.load.image('title', '/resources/img/Interfaz/Menu/Title.png');
+        this.load.image('menuBackground', '/resources/img/Interfaz/Menu/menuBackground.png');
     }
 
     create() {
         this.camera = this.cameras.main;
         this.EnableFullScreen();
 
-        this.add.text(240, 135, 'PRESS TO PLAY', {
-            fontFamily: '"Press Start 2P"',
-            fontSize: '20px'
-        }).setOrigin(0.5); //, stroke: '0f0f0f', strokeThickness: 20
+        this.add.text(240, 250, 'PRESS TO PLAY', {
+            fontFamily: '"CambriaB"',
+            fontSize: '12px'
+        }).setOrigin(0.5).setDepth(10);; //, stroke: '0f0f0f', strokeThickness: 20
+
+        let title = this.add.image(240, 40, 'title').setOrigin(0.5,0.5).setDepth(10);
+        this.bg = this.add.image(240, 135, 'menuBackground').setOrigin(0.5,0.5);
 
 
         this.input.once('pointerdown', function (event) {
