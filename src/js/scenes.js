@@ -94,6 +94,7 @@ class BaseScene extends Phaser.Scene {
         this.load.image('escalerasL', '/resources/img/Items/Escaleras/escaleras_laterales.png');
         this.load.image('wall', '/resources/img/tiles/BrickWall.png');
         this.load.image('background', '/resources/img/background.png');
+        this.load.image('relic', '/resources/img/Items/Reliquia/Reliquia.png')
     }
 
     create() {
@@ -117,9 +118,9 @@ class BaseScene extends Phaser.Scene {
         //Configura la cámara
         this.camera = this.cameras.main;
         this.EnableFullScreen();
-        //this.camera.setZoom(.5);
+        this.camera.setZoom(.5);
         this.camera.setOrigin(0.5, 0.5);
-        this.camera.startFollow(this.player0, true);
+        this.camera.startFollow(this.swordPlayer, true);
 
         this.CreateStage();
 
@@ -254,6 +255,7 @@ class BaseScene extends Phaser.Scene {
 }
 
 let hasRelic = false;
+var defeatedBosses = 0;
 class BossRoom extends BaseScene {
     constructor() {
         super('bossRoom');
@@ -276,19 +278,36 @@ class BossRoom extends BaseScene {
 
         //Crea enemigos
         this.gorila = new GreatGorila(this, 500, 86, 'greatGorila');
-        this.parrot = new Parrot(this, 800, 0, 'greatParrot');
-
-        
+        this.parrot = new Parrot(this, 800, 165, 'greatParrot');
 
         if (hasRelic) {
-            this.player0.x = this.door.x-80;
-            this.player1.x = this.door.x-48;
-
+            this.player0.x = this.door.x - 80;
+            this.player1.x = this.door.x - 48;
             //this.player0.y = this.door1.y;
             //this.player1.y = this.door1.y;
 
             this.player0.flipX = true;
             this.player1.flipX = true;
+
+            //Dependiendo del número de bosses derrotados se activa el siguiente boss
+            switch (defeatedBosses) {
+                case 0:
+                    this.gorila.WakeUp();
+                    break;
+
+                case 1:
+                    this.parrot.WakeUp();
+                    break;
+                case 2:
+                    this.gorila.WakeUp();
+                    this.parrot.WakeUp();
+                    break;
+
+                default:
+                    break;
+            }
+
+
 
             hasRelic = false;
         }
@@ -338,10 +357,13 @@ class Dungeons extends BaseScene {
 
         this.camera.setBounds(0, 0, this.map.width * 32, this.map.height * 32);
 
+        //Añade a cada nivel los items
         switch (levelX) {
             case 1:
                 //1.1
                 this.stairs = new SceneStairs(this, 64, 6 * 32, 'bossRoom');
+
+                //new Relic(this, 400, 6 * 32);
 
                 this.door1 = new DungeonDoor(this, 7 * 32, 15 * 32, "2_1");
                 this.door2 = new DungeonDoor(this, 65 * 32, 9 * 32, "2_2");
@@ -352,13 +374,13 @@ class Dungeons extends BaseScene {
                     case 1:
                         //2.1
                         this.stairs = new DungeonStairs(this, 64, 6 * 32, "1_1");
-                        new SceneDoor(this, 3 * 32, 13 * 32, 'mainMenu');
+                        new Relic(this, 3 * 32, 13 * 32);
                         break;
 
                     case 2:
                         //2.2
-                        this.stairs = new DungeonStairs(this, 1 * 32, 8 * 32, "1_1");
-                        new SceneDoor(this, 51 * 32, 23 * 32, 'mainMenu');
+                        this.stairs = new DungeonStairs(this, 1 * 32, 7 * 32, "1_1");
+                        new Relic(this, 51 * 32, 23 * 32);
                         break;
 
                     default:
@@ -372,7 +394,7 @@ class Dungeons extends BaseScene {
                 break;
         }
 
-
+        //Dependiendo de de qué nivel vengan, los jugadores aparecen en un sitio u otro
         switch (whereAreTheyComingFrom) {
             case 0:
                 //Aparecer en escaleras
@@ -401,6 +423,8 @@ class Dungeons extends BaseScene {
             default:
                 break;
         }
+
+
     }
 
     update(time, delta) {
@@ -453,8 +477,8 @@ class MainMenu extends Phaser.Scene {
             fontSize: '12px'
         }).setOrigin(0.5).setDepth(10);; //, stroke: '0f0f0f', strokeThickness: 20
 
-        let title = this.add.image(240, 40, 'title').setOrigin(0.5,0.5).setDepth(10);
-        this.bg = this.add.image(240, 135, 'menuBackground').setOrigin(0.5,0.5);
+        let title = this.add.image(240, 40, 'title').setOrigin(0.5, 0.5).setDepth(10);
+        this.bg = this.add.image(240, 135, 'menuBackground').setOrigin(0.5, 0.5);
 
 
         this.input.once('pointerdown', function (event) {
