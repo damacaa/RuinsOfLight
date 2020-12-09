@@ -69,6 +69,10 @@ class Parrot extends Enemy {
     }
 
     Die() {
+        this.awake = false;
+
+        defeatedBosses++;
+
         this.body.setSize(110, 70);
         this.body.offset.x = 78;
         this.body.offset.y = 109;
@@ -87,56 +91,54 @@ class Parrot extends Enemy {
     }
 
     Update() {
+        if (this.scene) {
 
+            if (this.awake) {
+                this.hitBox.x = this.x;
+                this.hitBox.y = this.y + 50;
+                if (this.canMove) {
+                    if (this.body.y < -20) {
+                        this.body.y = -19;
+                        this.body.setAccelerationY(0);
+                        this.body.velocity.x = 0;
+                        this.body.velocity.y = 0;
+                        this.scene.time.delayedCall(this.wait, function () { this.canAttack = true; }, [], this);
+                    }
 
-
-        if (this.scene && this.awake) {
-            this.hitBox.x = this.x;
-            this.hitBox.y = this.y + 50;
-            if (this.canMove) {
-                if (this.body.y < -20) {
-                    this.body.y = -19;
-                    this.body.setAccelerationY(0);
-                    this.body.velocity.x = 0;
-                    this.body.velocity.y = 0;
-                    this.scene.time.delayedCall(this.wait, function () { this.canAttack = true; }, [], this);
-                }
-
-                if (this.primaryTarget.x - 250 > this.x) {
-                    this.body.velocity.x = 100;
-                    this.flipX = true;
-                } else if (this.primaryTarget.x + 250 < this.x) {
-                    this.body.velocity.x = -100;
-                    this.flipX = false;
-                } else if (this.canAttack) {
-                    this.Attack();
-                } else {
-                    this.body.velocity.x = 0;
-                    if (this.primaryTarget.x > this.x) {
+                    if (this.primaryTarget.x - 250 > this.x) {
+                        this.body.velocity.x = 100;
                         this.flipX = true;
-                    } else {
+                    } else if (this.primaryTarget.x + 250 < this.x) {
+                        this.body.velocity.x = -100;
                         this.flipX = false;
+                    } else if (this.canAttack) {
+                        this.Attack();
+                    } else {
+                        this.body.velocity.x = 0;
+                        if (this.primaryTarget.x > this.x) {
+                            this.flipX = true;
+                        } else {
+                            this.flipX = false;
+                        }
                     }
                 }
-            }
 
-            if (this.body.blocked.down && this.attacking) {
-                this.anims.play('parrotIdle', true);
-                this.hitBox.body.enable = false;
-                this.canMove = true;
-                this.attacking = false;
-                this.body.setAccelerationY(-500);
-                this.scene.cameras.main.shake(750, .01);
-            }
+                if (this.body.blocked.down && this.attacking) {
+                    this.anims.play('parrotIdle', true);
+                    this.hitBox.body.enable = false;
+                    this.canMove = true;
+                    this.attacking = false;
+                    this.body.setAccelerationY(-500);
+                    this.scene.cameras.main.shake(750, .01);
+                }
 
-            if (this.health <= 0 && this.body.blocked.down) {
-                this.awake = false;
-                this.anims.play('parrotSleep', true);
-                this.once('animationcomplete', () => {
-                    this.body.enable = false;
-                });
-                //
-                //console.log("Dead");
+            } else {
+                if (this.body.blocked.down && this.body.enable) {
+                    this.anims.play('parrotSleep', true);
+                    this.once('animationcomplete', () => {
+                        this.body.enable = false;
+                    });
+                }
             }
         }
 

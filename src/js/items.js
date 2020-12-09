@@ -130,3 +130,22 @@ class DungeonStairs extends Phaser.GameObjects.Sprite {
 
     }
 }
+
+class Relic extends Phaser.GameObjects.Sprite {
+
+    constructor(scene, x, y) {
+        super(scene, x, y, 'relic');
+        scene.add.existing(this);
+        this.scene.physics.add.existing(this);
+
+        this.body.setAllowGravity(false);
+
+        this.setDepth(-2);
+        this.scene.physics.add.overlap(this, scene.players, this.GetRelic, null, scene);
+    }
+
+    GetRelic(relic) {
+        relic.destroy();
+        hasRelic = true;
+    }
+}

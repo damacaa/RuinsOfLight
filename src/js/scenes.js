@@ -1,4 +1,7 @@
 //https://www.youtube.com/watch?v=1P8jvnj85e4
+let p0Health = 6;
+let p1Health = 6;
+
 class BaseScene extends Phaser.Scene {
     constructor(key) {
         super(key);
@@ -12,6 +15,7 @@ class BaseScene extends Phaser.Scene {
         this.enemyProjectiles;
         this.players;
         this.enemies;
+        this.health;
 
         this.entities = [];
     }
@@ -94,6 +98,15 @@ class BaseScene extends Phaser.Scene {
         this.load.image('escalerasL', '/resources/img/Items/Escaleras/escaleras_laterales.png');
         this.load.image('wall', '/resources/img/tiles/BrickWall.png');
         this.load.image('background', '/resources/img/background.png');
+        this.load.image('relic', '/resources/img/Items/Reliquia/Reliquia.png')
+
+        //Interfaz
+        this.load.spritesheet('vidas',
+            '/resources/img/Interfaz/Vida2.png', {
+            frameWidth: 154,
+            frameHeight: 8
+        }
+        );
     }
 
     create() {
@@ -104,8 +117,9 @@ class BaseScene extends Phaser.Scene {
         this.enemies = this.physics.add.group();
 
         //Crea jugadores //Se deberían crear solo una vez en altares y mantener para todas las escenas --> Mover al CreateStage de altares
-        this.player0 = new Player(this, 128, 32, 'p0noWeapon', 'p0sword', 'p0bow');
-        this.player1 = new Player(this, 64, 32, 'p1noWeapon', 'p1sword', 'p1bow');
+        console.log(p0Health);
+        this.player0 = new Player(this, 128, 32, 'p0noWeapon', 'p0sword', 'p0bow', p0Health);
+        this.player1 = new Player(this, 64, 32, 'p1noWeapon', 'p1sword', 'p1bow', p1Health);
 
         this.players.add(this.player0);
         this.players.add(this.player1);
@@ -119,7 +133,7 @@ class BaseScene extends Phaser.Scene {
         this.EnableFullScreen();
         //this.camera.setZoom(.5);
         this.camera.setOrigin(0.5, 0.5);
-        this.camera.startFollow(this.player0, true);
+        this.camera.startFollow(this.swordPlayer, true);
 
         this.CreateStage();
 
@@ -133,15 +147,17 @@ class BaseScene extends Phaser.Scene {
         //this.physics.add.overlap(this.enemies, this.enemyProjectiles, this.ProjectileDamage, null, this);
 
         this.physics.world.setFPS(60);
-
+        /*
         this.graphics = this.add.graphics();
-        this.graphics.lineStyle(1, 0x00ff00, 1);
-
+        //this.graphics.lineStyle(1, 0x00ff00, 1);
+        
         this.text = this.add.text(10, 10, 'ExampleUI', {
             fontFamily: '"Press Start 2P"',
             fontSize: '20px'
             , fill: '#ffffff'
         }).setScrollFactor(0);
+        */
+        this.health = new Health(this, 100, 20, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0.5, 0.5);
 
     }
 
@@ -159,7 +175,6 @@ class BaseScene extends Phaser.Scene {
         var keyObj = this.input.keyboard.addKey('E'); // Get key object
         var isDown = keyObj.isDown;
         var isUp = keyObj.isUp;
-
 
         if (cursors0.left.isDown) {
             this.player0.Run(-1, delta);
@@ -209,6 +224,7 @@ class BaseScene extends Phaser.Scene {
             this.player1.EnableAttack();
 
         }, this);
+
     }
 
     EnableFullScreen() {
@@ -249,11 +265,14 @@ class BaseScene extends Phaser.Scene {
     }
 
     LoadScene(key) {
+        p0Health = this.player0.health;
+        p1Health = this.player1.health;
         this.scene.start(key);
     }
 }
 
 let hasRelic = false;
+var defeatedBosses = 0;
 class BossRoom extends BaseScene {
     constructor() {
         super('bossRoom');
@@ -276,19 +295,36 @@ class BossRoom extends BaseScene {
 
         //Crea enemigos
         this.gorila = new GreatGorila(this, 500, 86, 'greatGorila');
-        this.parrot = new Parrot(this, 800, 0, 'greatParrot');
-
-        
+        this.parrot = new Parrot(this, 800, 165, 'greatParrot');
 
         if (hasRelic) {
-            this.player0.x = this.door.x-80;
-            this.player1.x = this.door.x-48;
-
+            this.player0.x = this.door.x - 80;
+            this.player1.x = this.door.x - 48;
             //this.player0.y = this.door1.y;
             //this.player1.y = this.door1.y;
 
             this.player0.flipX = true;
             this.player1.flipX = true;
+
+            //Dependiendo del número de bosses derrotados se activa el siguiente boss
+            switch (defeatedBosses) {
+                case 0:
+                    this.gorila.WakeUp();
+                    break;
+
+                case 1:
+                    this.parrot.WakeUp();
+                    break;
+                case 2:
+                    this.gorila.WakeUp();
+                    this.parrot.WakeUp();
+                    break;
+
+                default:
+                    break;
+            }
+
+
 
             hasRelic = false;
         }
@@ -338,10 +374,13 @@ class Dungeons extends BaseScene {
 
         this.camera.setBounds(0, 0, this.map.width * 32, this.map.height * 32);
 
+        //Añade a cada nivel los items
         switch (levelX) {
             case 1:
                 //1.1
                 this.stairs = new SceneStairs(this, 64, 6 * 32, 'bossRoom');
+
+                //new Relic(this, 400, 6 * 32);
 
                 this.door1 = new DungeonDoor(this, 7 * 32, 15 * 32, "2_1");
                 this.door2 = new DungeonDoor(this, 65 * 32, 9 * 32, "2_2");
@@ -352,13 +391,13 @@ class Dungeons extends BaseScene {
                     case 1:
                         //2.1
                         this.stairs = new DungeonStairs(this, 64, 6 * 32, "1_1");
-                        new SceneDoor(this, 3 * 32, 13 * 32, 'mainMenu');
+                        new Relic(this, 3 * 32, 13 * 32);
                         break;
 
                     case 2:
                         //2.2
-                        this.stairs = new DungeonStairs(this, 1 * 32, 8 * 32, "1_1");
-                        new SceneDoor(this, 51 * 32, 23 * 32, 'mainMenu');
+                        this.stairs = new DungeonStairs(this, 1 * 32, 7 * 32, "1_1");
+                        new Relic(this, 51 * 32, 23 * 32);
                         break;
 
                     default:
@@ -372,7 +411,7 @@ class Dungeons extends BaseScene {
                 break;
         }
 
-
+        //Dependiendo de de qué nivel vengan, los jugadores aparecen en un sitio u otro
         switch (whereAreTheyComingFrom) {
             case 0:
                 //Aparecer en escaleras
@@ -401,6 +440,8 @@ class Dungeons extends BaseScene {
             default:
                 break;
         }
+
+
     }
 
     update(time, delta) {
@@ -453,8 +494,8 @@ class MainMenu extends Phaser.Scene {
             fontSize: '12px'
         }).setOrigin(0.5).setDepth(10);; //, stroke: '0f0f0f', strokeThickness: 20
 
-        let title = this.add.image(240, 40, 'title').setOrigin(0.5,0.5).setDepth(10);
-        this.bg = this.add.image(240, 135, 'menuBackground').setOrigin(0.5,0.5);
+        let title = this.add.image(240, 40, 'title').setOrigin(0.5, 0.5).setDepth(10);
+        this.bg = this.add.image(240, 135, 'menuBackground').setOrigin(0.5, 0.5);
 
 
         this.input.once('pointerdown', function (event) {
