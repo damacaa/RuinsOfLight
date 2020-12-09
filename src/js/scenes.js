@@ -1,4 +1,7 @@
 //https://www.youtube.com/watch?v=1P8jvnj85e4
+let p0Health = 6;
+let p1Health = 6;
+
 class BaseScene extends Phaser.Scene {
     constructor(key) {
         super(key);
@@ -12,6 +15,7 @@ class BaseScene extends Phaser.Scene {
         this.enemyProjectiles;
         this.players;
         this.enemies;
+        this.health;
 
         this.entities = [];
     }
@@ -95,6 +99,14 @@ class BaseScene extends Phaser.Scene {
         this.load.image('wall', '/resources/img/tiles/BrickWall.png');
         this.load.image('background', '/resources/img/background.png');
         this.load.image('relic', '/resources/img/Items/Reliquia/Reliquia.png')
+
+        //Interfaz
+        this.load.spritesheet('vidas',
+            '/resources/img/Interfaz/Vida2.png', {
+            frameWidth: 154,
+            frameHeight: 8
+        }
+        );
     }
 
     create() {
@@ -105,8 +117,9 @@ class BaseScene extends Phaser.Scene {
         this.enemies = this.physics.add.group();
 
         //Crea jugadores //Se deberían crear solo una vez en altares y mantener para todas las escenas --> Mover al CreateStage de altares
-        this.player0 = new Player(this, 128, 32, 'p0noWeapon', 'p0sword', 'p0bow');
-        this.player1 = new Player(this, 64, 32, 'p1noWeapon', 'p1sword', 'p1bow');
+        console.log(p0Health);
+        this.player0 = new Player(this, 128, 32, 'p0noWeapon', 'p0sword', 'p0bow', p0Health);
+        this.player1 = new Player(this, 64, 32, 'p1noWeapon', 'p1sword', 'p1bow', p1Health);
 
         this.players.add(this.player0);
         this.players.add(this.player1);
@@ -118,7 +131,7 @@ class BaseScene extends Phaser.Scene {
         //Configura la cámara
         this.camera = this.cameras.main;
         this.EnableFullScreen();
-        this.camera.setZoom(.5);
+        //this.camera.setZoom(.5);
         this.camera.setOrigin(0.5, 0.5);
         this.camera.startFollow(this.swordPlayer, true);
 
@@ -134,15 +147,17 @@ class BaseScene extends Phaser.Scene {
         //this.physics.add.overlap(this.enemies, this.enemyProjectiles, this.ProjectileDamage, null, this);
 
         this.physics.world.setFPS(60);
-
+        /*
         this.graphics = this.add.graphics();
-        this.graphics.lineStyle(1, 0x00ff00, 1);
-
+        //this.graphics.lineStyle(1, 0x00ff00, 1);
+        
         this.text = this.add.text(10, 10, 'ExampleUI', {
             fontFamily: '"Press Start 2P"',
             fontSize: '20px'
             , fill: '#ffffff'
         }).setScrollFactor(0);
+        */
+        this.health = new Health(this, 100, 20, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0.5, 0.5);
 
     }
 
@@ -160,7 +175,6 @@ class BaseScene extends Phaser.Scene {
         var keyObj = this.input.keyboard.addKey('E'); // Get key object
         var isDown = keyObj.isDown;
         var isUp = keyObj.isUp;
-
 
         if (cursors0.left.isDown) {
             this.player0.Run(-1, delta);
@@ -210,6 +224,7 @@ class BaseScene extends Phaser.Scene {
             this.player1.EnableAttack();
 
         }, this);
+
     }
 
     EnableFullScreen() {
@@ -250,6 +265,8 @@ class BaseScene extends Phaser.Scene {
     }
 
     LoadScene(key) {
+        p0Health = this.player0.health;
+        p1Health = this.player1.health;
         this.scene.start(key);
     }
 }
