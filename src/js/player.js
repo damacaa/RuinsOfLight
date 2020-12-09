@@ -137,7 +137,7 @@ class Player extends Phaser.GameObjects.Sprite {
 
         this.goingRight = true;
         this.attacking = false;
-        this.speed = 200;
+        this.speed = 200;//200
         this.weapon = 0;
         this.attackNumber = 1;
         this.fallingAttack = false;
@@ -151,7 +151,7 @@ class Player extends Phaser.GameObjects.Sprite {
 
         this.dealingDamage = false;
 
-        this.setDepth(1);
+        this.setDepth(2);
         //player0.setBounce(0.2);
         //body.setCollideWorldBounds(true);
 
@@ -417,7 +417,7 @@ class Arrow extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         scene.add.existing(this);
         scene.playerProjectiles.add(this);
-        this.body.setAllowGravity(true);
+        this.body.setAllowGravity(false);
 
         this.body.setSize(4, 4);
         this.body.velocity.x = dirX * this.speed;
@@ -427,14 +427,14 @@ class Arrow extends Phaser.GameObjects.Sprite {
 
         this.setOrigin(0.5,0.7);
 
-        scene.tweens.add({
+        /*scene.tweens.add({
             targets: this,
             duration: 500,
             angle: 360,
             //ease: 'Quad.easeInOut',
             repeat: -1,
             yoyo: false
-        });
+        });*/
 
         this.scene.time.delayedCall(1000, function () {
             this.destroy();

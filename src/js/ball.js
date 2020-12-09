@@ -53,9 +53,11 @@ class Ball extends Enemy {
         this.canMove = false;
         this.attacking = false;
         this.canAttack = false;
-        this.wait = 400;
+        this.wait = 200;
         this.timer = null;
-        this.speed = 200;
+        this.speed = 300;
+        this.body.setBounce(0.1);
+        this.range = 50;
 
     }
 
@@ -64,7 +66,6 @@ class Ball extends Enemy {
         this.anims.play('ballWakeUp', true);
 
         this.once('animationcomplete', () => {
-            this.anims.play('explosionB', true);
             this.canMove = true;
             this.canAttack = true;
         });
@@ -80,36 +81,52 @@ class Ball extends Enemy {
 
     Die() {
 
-        this.anims.play('explosionB', true);
         this.canMove = false;
         this.body.setVelocityX(0);
 
-        this.once('animationcomplete', () => {
-            console.log("hola");
+
+        if (this.attacking) {
+            let index = this.scene.entities.indexOf(this);
+            if (index > -1) {
+                this.scene.entities.splice(index, 1);
+            }
+
             this.destroy();
-        });
+
+        } else {
+
+            this.anims.play('explosionB', true);
+
+            this.once('animationcomplete', () => {
+
+                let index = this.scene.entities.indexOf(this);
+                if (index > -1) {
+                    this.scene.entities.splice(index, 1);
+                }
+
+                this.scene.time.delayedCall(10, this.destroy, [], this);
+            });
+        }
     }
 
-    Update() {
-        
 
-        if (this.canMove) {
+    Update() {
+        if (this.scene && this.canMove) {
+
+            if (this.body.blocked.left || this.body.blocked.right) { this.body.setVelocityY(-100); }
 
             if (Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x)) {
 
-                if (Math.abs(this.scene.bowPlayer.x - this.x) > 85) {
+                if (Math.abs(this.scene.bowPlayer.x - this.x) > this.range) {
                     if (this.scene.bowPlayer.x < this.x) {
                         this.body.setVelocityX(-this.speed);
                         this.flipX = false;
                         this.anims.play('rollLeft', true);
-
                     } else {
                         this.body.setVelocityX(this.speed);
                         this.flipX = true;
                         this.anims.play('rollLeft', true);
-
                     }
-
                 } else {
 
                     if (this.scene.bowPlayer.x < this.x) {
@@ -124,10 +141,8 @@ class Ball extends Enemy {
                         this.anims.play('idleBall', true);
                     }
                 }
-
-
             } else {
-                if (Math.abs(this.scene.swordPlayer.x - this.x) > 85) {
+                if (Math.abs(this.scene.swordPlayer.x - this.x) > this.range) {
                     if (this.scene.swordPlayer.x < this.x) {
                         this.body.setVelocityX(-this.speed);
                         this.flipX = false;
@@ -141,7 +156,7 @@ class Ball extends Enemy {
                     }
 
                 } else {
-                    
+
                     if (this.scene.swordPlayer.x < this.x) {
                         this.flipX = false;
                     } else {
@@ -155,27 +170,23 @@ class Ball extends Enemy {
                     }
                 }
             }
-            
         }
-
-
-
 
     }
 
     Attack() {
-        console.log("holi");
         this.canMove = false;
         this.canAttack = false;
-        this.body.setVelocityY(-150);
+
+        this.body.setVelocityY(-300);
 
 
         this.timer = this.scene.time.delayedCall(this.wait, startAttack, [null], this);
 
 
         function startAttack() {
-            
-            if (this.health>0) {
+
+            if (this.health > 0) {
                 this.hitBox = this.scene.physics.add.image(this.x, this.y, null);
                 this.hitBox.setCircle(28, -15, -6);
                 this.hitBox.visible = false;
@@ -186,12 +197,13 @@ class Ball extends Enemy {
                 this.anims.play('ballAttack', true);
                 this.attacking = true;
                 this.body.setVelocityX(0);
+                this.body.setVelocityY(0);
+                this.body.setAllowGravity(false);
+                this.body.enable = false;
 
                 this.once('animationcomplete', () => {
-
-                    this.attacking = false;
-                    this.Die();
                     this.hitBox.destroy();
+                    this.Die();
                 });
             }
         }

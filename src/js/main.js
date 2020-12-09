@@ -4,7 +4,7 @@ window.onload = function () {
         pixelArt: true,
         roundPixels: false,
         scale: {
-            mode: Phaser.Scale.FIT,// Phaser.Scale.RESIZE
+            mode: Phaser.Scale.FIT,// Phaser.Scale.FIT || Phaser.Scale.RESIZE
             parent: 'phaser-example',
             width: 480,
             height: 270
@@ -14,10 +14,10 @@ window.onload = function () {
             
             arcade: {
                 gravity: { y: 981 },
-                debug: true
+                //debug: true
             }
         },
-        scene: [MainMenu,AltarRoom, Dungeons]
+        scene: [MainMenu,BossRoom, Dungeons]
     }
 
     var game = new Phaser.Game(config);
