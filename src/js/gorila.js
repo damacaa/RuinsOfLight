@@ -71,6 +71,8 @@ class GreatGorila extends Enemy {
     }
 
     Die() {
+        defeatedBosses++;
+        
         this.awake = false;
         this.anims.play('gorilaSleep', true);
         this.canMove = false;
