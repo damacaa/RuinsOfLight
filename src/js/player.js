@@ -1,9 +1,10 @@
 class Player extends Phaser.GameObjects.Sprite {
 
 
-    constructor(scene, x, y, noWeaponKey, swordKey, bowKey) {
+    constructor(scene, x, y, noWeaponKey, swordKey, bowKey, health) {
         super(scene, x, y, noWeaponKey);
         this.scene = scene;
+        this.health = health;
         this.noWeaponKey = noWeaponKey;
         this.swordKey = swordKey;
         this.bowKey = bowKey;
@@ -326,6 +327,8 @@ class Player extends Phaser.GameObjects.Sprite {
             this.attacking = false;
             this.fallingAttack = false;
 
+            if(this.health!=0){
+            this.health--;
             this.body.setVelocityY(-300);
             this.body.setVelocityX(0);
 
@@ -335,11 +338,17 @@ class Player extends Phaser.GameObjects.Sprite {
             this.attacking = false;
             this.fallingAttack = false;
             //this.hitBox.body.enable = false;
+            this.scene.health.UpdateLifes();
 
             this.scene.time.delayedCall(1000, function () {
                 this.canAttack = true; this.canMove = true; this.isHurt = false;
 
             }, [], this);
+
+            }else{
+                this.scene.LoadScene('mainMenu');
+            }
+
         }
     }
 
