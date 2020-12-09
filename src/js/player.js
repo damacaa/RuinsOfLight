@@ -121,6 +121,59 @@ class Player extends Phaser.GameObjects.Sprite {
         });
 
 
+
+        //Animaciones arco
+
+        scene.anims.create({
+            key: 'right' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 0, end: 5 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'idleRight' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 6, end: 9 }),
+            frameRate: 10,
+            repeat: -1,
+        });
+
+        scene.anims.create({
+            key: 'attack1' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 10, end: 22 }),
+            frameRate: 15,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'jumpRight' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 23, end: 24 }),
+            frameRate: 15,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'fallRight' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 25, end: 26 }),
+            frameRate: 15,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'fallingAttackRight' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 27, end: 32 }),
+            frameRate: 15,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'getHurt' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 35, end: 36 }),
+            frameRate: 10,
+            repeat: 0
+        });
+
+
         this.body.setSize(16, 32);
         this.body.offset.x = 32;
         this.body.offset.y = 32;
