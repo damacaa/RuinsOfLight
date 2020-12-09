@@ -161,14 +161,14 @@ class Player extends Phaser.GameObjects.Sprite {
 
         scene.anims.create({
             key: 'fallingAttackRight' + bowKey,
-            frames: scene.anims.generateFrameNumbers(bowKey, { start: 27, end: 32 }),
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 27, end: 37 }),
             frameRate: 15,
             repeat: 0
         });
 
         scene.anims.create({
             key: 'getHurt' + bowKey,
-            frames: scene.anims.generateFrameNumbers(bowKey, { start: 35, end: 36 }),
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 38, end: 39 }),
             frameRate: 10,
             repeat: 0
         });
