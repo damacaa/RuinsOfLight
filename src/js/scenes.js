@@ -63,6 +63,13 @@ class BaseScene extends Phaser.Scene {
             frameHeight: 64
         }
         );
+        
+        this.load.spritesheet('arrow',
+            '/resources/animations/players/Flecha.png', {
+            frameWidth: 21,
+            frameHeight: 3
+        }
+        );
 
         //Enemigos
         this.load.spritesheet('greatGorila',
@@ -126,8 +133,8 @@ class BaseScene extends Phaser.Scene {
         this.players.add(this.player0);
         this.players.add(this.player1);
 
-        this.player0.SetWeapon(1);
-        this.player1.SetWeapon(2);
+        this.player0.SetWeapon(2);
+        this.player1.SetWeapon(1);
 
 
         //Configura la cámara
@@ -164,7 +171,7 @@ class BaseScene extends Phaser.Scene {
 
     }
 
-    LoadTileMap(key){
+    LoadTileMap(key) {
         this.platforms = this.physics.add.staticGroup();
 
         this.map = this.make.tilemap({ key: key });
@@ -302,7 +309,7 @@ class BossRoom extends BaseScene {
         //this.bg = this.add.image(0, 0, 'background');
 
         //Crea escenario
-         this.LoadTileMap('bossRoom');
+        this.LoadTileMap('bossRoom');
 
         //Crea puertas
         this.door = new SceneDoor(this, 1200, 192, 'dungeon');
@@ -368,15 +375,15 @@ class Dungeons extends BaseScene {
 
     CreateStage() {
         ////https://www.html5gamedevs.com/topic/41691-cant-get-group-to-work/
-        
+
 
         this.levelId = levelX + "_" + levelY;
 
         this.LoadTileMap('map' + this.levelId);
 
-        
 
-        
+
+
 
         //Añade a cada nivel los items
         switch (levelX) {
