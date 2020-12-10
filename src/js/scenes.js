@@ -100,6 +100,9 @@ class BaseScene extends Phaser.Scene {
         this.load.image('background', '/resources/img/background.png');
         this.load.image('relic', '/resources/img/Items/Reliquia/Reliquia.png')
 
+        this.load.image('atlas', 'resources/levels/Tile_sheet.png');
+        this.load.tilemapTiledJSON('bossRoom', 'resources/levels/BossRoom.json');
+
         //Interfaz
         this.load.spritesheet('vidas',
             '/resources/img/Interfaz/Vida2.png', {
@@ -117,9 +120,8 @@ class BaseScene extends Phaser.Scene {
         this.enemies = this.physics.add.group();
 
         //Crea jugadores //Se deberían crear solo una vez en altares y mantener para todas las escenas --> Mover al CreateStage de altares
-        console.log(p0Health);
-        this.player0 = new Player(this, 128, 32, 'p0noWeapon', 'p0sword', 'p0bow', p0Health);
-        this.player1 = new Player(this, 64, 32, 'p1noWeapon', 'p1sword', 'p1bow', p1Health);
+        this.player0 = new Player(this, 64, 96, 'p0noWeapon', 'p0sword', 'p0bow', p0Health);
+        this.player1 = new Player(this, 128, 96, 'p1noWeapon', 'p1sword', 'p1bow', p1Health);
 
         this.players.add(this.player0);
         this.players.add(this.player1);
@@ -139,8 +141,8 @@ class BaseScene extends Phaser.Scene {
 
         //Añade colisiones
 
-        this.physics.add.collider(this.players, this.platforms);
-        this.physics.add.collider(this.enemies, this.platforms);
+        /*this.physics.add.collider(this.players, this.platforms);
+        this.physics.add.collider(this.enemies, this.platforms);*/
 
         this.physics.add.overlap(this.players, this.enemyProjectiles, this.ProjectileDamage, null, this);
         this.physics.add.overlap(this.enemies, this.playerProjectiles, this.ProjectileDamage, null, this);
@@ -158,7 +160,24 @@ class BaseScene extends Phaser.Scene {
         }).setScrollFactor(0);
         */
         this.health = new Health(this, 100, 20, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0.5, 0.5);
+        this.health.UpdateLifes();
 
+    }
+
+    LoadTileMap(key){
+        this.platforms = this.physics.add.staticGroup();
+
+        this.map = this.make.tilemap({ key: key });
+        this.groundTiles = this.map.addTilesetImage('Tile_sheet', 'atlas');
+        this.groundLayer = this.map.createStaticLayer('Suelo', this.groundTiles, 0, 0);
+
+        //Colisiones
+        this.groundLayer.setCollisionBetween(1, 29);
+
+        this.physics.add.collider(this.players, this.groundLayer);
+        this.physics.add.collider(this.enemies, this.groundLayer);
+
+        this.camera.setBounds(0, 0, this.map.width * 32, this.map.height * 32);
     }
 
     CheckInputs(delta) {
@@ -283,25 +302,20 @@ class BossRoom extends BaseScene {
         //this.bg = this.add.image(0, 0, 'background');
 
         //Crea escenario
-        this.platforms = this.physics.add.staticGroup();
-
-        for (let i = 0; i < 40; i++) {
-            this.platforms.create(16 + (32 * i), 230, 'wall');
-        }
+         this.LoadTileMap('bossRoom');
 
         //Crea puertas
-        this.door = new SceneDoor(this, 1200, 182, 'dungeon');
-
+        this.door = new SceneDoor(this, 1200, 192, 'dungeon');
 
         //Crea enemigos
-        this.gorila = new GreatGorila(this, 500, 86, 'greatGorila');
-        this.parrot = new Parrot(this, 800, 165, 'greatParrot');
+        this.gorila = new GreatGorila(this, 500, 96, 'greatGorila');
+        this.parrot = new Parrot(this, 650, 175, 'greatParrot');
 
         if (hasRelic) {
             this.player0.x = this.door.x - 80;
             this.player1.x = this.door.x - 48;
-            //this.player0.y = this.door1.y;
-            //this.player1.y = this.door1.y;
+            this.player0.y = this.door1.y;
+            this.player1.y = this.door1.y;
 
             this.player0.flipX = true;
             this.player1.flipX = true;
@@ -324,8 +338,6 @@ class BossRoom extends BaseScene {
                     break;
             }
 
-
-
             hasRelic = false;
         }
     }
@@ -333,9 +345,7 @@ class BossRoom extends BaseScene {
 
 let levelX = 1;
 let levelY = 1;
-
 let whereAreTheyComingFrom = 0;
-
 class Dungeons extends BaseScene {
     //https://www.youtube.com/watch?v=2_x1dOvgF1E
     //https://phaser.io/examples/v3/view/game-objects/tilemap/collision/multiple-tile-sizes
@@ -358,27 +368,26 @@ class Dungeons extends BaseScene {
 
     CreateStage() {
         ////https://www.html5gamedevs.com/topic/41691-cant-get-group-to-work/
-        this.platforms = this.physics.add.staticGroup();
+        
 
         this.levelId = levelX + "_" + levelY;
 
-        this.map = this.make.tilemap({ key: 'map' + this.levelId });
-        this.groundTiles = this.map.addTilesetImage('Tile_sheet', 'atlas');
-        this.groundLayer = this.map.createStaticLayer('Suelo', this.groundTiles, 0, 0);
+        this.LoadTileMap('map' + this.levelId);
 
-        //Colisiones
-        this.groundLayer.setCollisionBetween(1, 29);
+        
 
-        this.physics.add.collider(this.players, this.groundLayer);
-        this.physics.add.collider(this.enemies, this.groundLayer);
-
-        this.camera.setBounds(0, 0, this.map.width * 32, this.map.height * 32);
+        
 
         //Añade a cada nivel los items
         switch (levelX) {
             case 1:
                 //1.1
                 this.stairs = new SceneStairs(this, 64, 6 * 32, 'bossRoom');
+                /*if(hasRelic){
+                    this.stairs.body.enable = true;
+                }else{
+                    this.stairs.body.enable = false;
+                }*/
 
                 //new Relic(this, 400, 6 * 32);
 
@@ -396,7 +405,7 @@ class Dungeons extends BaseScene {
 
                     case 2:
                         //2.2
-                        this.stairs = new DungeonStairs(this, 1 * 32, 7 * 32, "1_1");
+                        this.stairs = new DungeonStairs(this, 2 * 32, 8 * 32, "1_1");
                         new Relic(this, 51 * 32, 23 * 32);
                         break;
 
@@ -411,11 +420,12 @@ class Dungeons extends BaseScene {
                 break;
         }
 
+        console.log(whereAreTheyComingFrom);
         //Dependiendo de de qué nivel vengan, los jugadores aparecen en un sitio u otro
         switch (whereAreTheyComingFrom) {
             case 0:
                 //Aparecer en escaleras
-                this.player0.body.x = this.stairs.x + 64;
+                this.player0.x = this.stairs.x + 64;
                 this.player1.x = this.stairs.x + 96;
                 break;
 
@@ -478,32 +488,60 @@ class MainMenu extends Phaser.Scene {
 
     constructor() {
         super('mainMenu');
+
+        this.step = 0;
+        this.steps = 7;
     }
 
     preload() {
+        this.load.spritesheet('intro',
+            '/resources/intro.png', {
+            frameWidth: 480,
+            frameHeight: 270
+        }
+        );
+
         this.load.image('title', '/resources/img/Interfaz/Menu/Title.png');
         this.load.image('menuBackground', '/resources/img/Interfaz/Menu/menuBackground.png');
     }
 
     create() {
+        p0Health = 6;
+        p1Health = 6;
+
         this.camera = this.cameras.main;
         this.EnableFullScreen();
 
-        this.add.text(240, 250, 'PRESS TO PLAY', {
+        this.text = this.add.text(240, 250, 'PRESS TO PLAY', {
             fontFamily: '"CambriaB"',
             fontSize: '12px'
         }).setOrigin(0.5).setDepth(10);; //, stroke: '0f0f0f', strokeThickness: 20
 
-        let title = this.add.image(240, 40, 'title').setOrigin(0.5, 0.5).setDepth(10);
-        this.bg = this.add.image(240, 135, 'menuBackground').setOrigin(0.5, 0.5);
+        this.title = this.add.image(240, 40, 'title').setOrigin(0.5, 0.5).setDepth(10);
+        this.bg = this.add.sprite(240, 135, 'intro').setOrigin(0.5, 0.5);
+
+        this.input.on('pointerdown', function (event) {
+            console.log(this.step);
+            if (this.step == 0) {
+                this.step++;
+                this.bg.setFrame(this.step);
+                this.title.destroy();
+                this.text.destroy();
+
+            } else if (this.step < this.steps) {
+                this.step++;
+                this.bg.setFrame(this.step);
+            } else {
+                this.step = 0;
+                this.scene.start('bossRoom');
+            }
 
 
-        this.input.once('pointerdown', function (event) {
-
-            this.scene.start('bossRoom');
 
         }, this);
     }
+
+    update(time, delta) { }
 
     EnableFullScreen() {
 

@@ -373,6 +373,7 @@ class Health extends Phaser.GameObjects.Sprite {
         var id = this.player0.health;
         //variable de acceso a los casos del switch anidado
         var id2 = this.player1.health;
+
         switch (id) {
             case 6:
                 this.anims.play('P0_6 & P1_6', true);
