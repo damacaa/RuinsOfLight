@@ -100,6 +100,13 @@ class BaseScene extends Phaser.Scene {
         }
         );
 
+        this.load.spritesheet('guardian',
+            '/resources/animations/enemies/Guardian/guardian.png', {
+            frameWidth: 129,
+            frameHeight: 90
+        }
+        );
+
         //Escenario
         this.load.image('puerta', '/resources/img/Items/Arcos de Paso/Arcos de Paso.png');
         this.load.image('escalerasL', '/resources/img/Items/Escaleras/escaleras_laterales.png');
@@ -469,7 +476,7 @@ class Dungeons extends BaseScene {
 
             let x = this.player0.x + 300;
             if (x < this.map.width * 32) {
-                this.randomEnemy = new Ball(this, x, this.player0.y - 32, 'ball');
+                this.randomEnemy = new Guardian(this, x, this.player0.y - 32, 'guardian');
                 this.randomEnemy.primaryTarget = this.player0;
                 this.randomEnemy.WakeUp();
             }
