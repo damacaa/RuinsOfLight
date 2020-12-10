@@ -63,7 +63,7 @@ class BaseScene extends Phaser.Scene {
             frameHeight: 64
         }
         );
-        
+
         this.load.spritesheet('arrow',
             '/resources/animations/players/Flecha.png', {
             frameWidth: 21,
@@ -100,6 +100,7 @@ class BaseScene extends Phaser.Scene {
         }
         );
 
+
         this.load.spritesheet('drone',
             '/resources/animations/enemies/Drone/Drone.png', {
             frameWidth: 32,
@@ -111,6 +112,14 @@ class BaseScene extends Phaser.Scene {
             '/resources/animations/enemies/Drone/DroneShot.png', {
             frameWidth: 16,
             frameHeight: 16
+        }
+        );
+
+        this.load.spritesheet('guardian',
+            '/resources/animations/enemies/Guardian/guardian.png', {
+            frameWidth: 129,
+            frameHeight: 90
+
         }
         );
 
@@ -180,7 +189,7 @@ class BaseScene extends Phaser.Scene {
             , fill: '#ffffff'
         }).setScrollFactor(0);
         */
-        this.health = new Health(this, 100, 20, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0.5, 0.5);
+        this.health = new Health(this, 120, 20, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0.5, 0.5);
         this.health.UpdateLifes();
 
     }
@@ -486,7 +495,7 @@ class Dungeons extends BaseScene {
 
             let x = this.player0.x + 300;
             if (x < this.map.width * 32) {
-                this.randomEnemy = new Ball(this, x, this.player0.y - 32, 'ball');
+                this.randomEnemy = new Guardian(this, x, this.player0.y - 32, 'guardian');
                 this.randomEnemy.primaryTarget = this.player0;
                 this.randomEnemy.WakeUp();
             }
