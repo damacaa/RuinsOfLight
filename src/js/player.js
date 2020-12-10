@@ -141,14 +141,14 @@ class Player extends Phaser.GameObjects.Sprite {
         scene.anims.create({
             key: 'attack1' + bowKey,
             frames: scene.anims.generateFrameNumbers(bowKey, { start: 10, end: 19 }),
-            frameRate: 15,
+            frameRate: 25,
             repeat: 0
         });
 
         scene.anims.create({
             key: 'attack2' + bowKey,
             frames: scene.anims.generateFrameNumbers(bowKey, { start: 20, end: 22 }),
-            frameRate: 15,
+            frameRate: 25,
             repeat: 0
         });
 
@@ -247,6 +247,7 @@ class Player extends Phaser.GameObjects.Sprite {
     }
 
     Run(dir, delta) {
+        if(this.attacking){console.log(this.attacking);}
 
         if (this.canMove && !this.attacking) { this.body.setVelocityX(dir * this.speed); }
 
@@ -302,7 +303,7 @@ class Player extends Phaser.GameObjects.Sprite {
             }
 
 
-        } else if (this.fallingAttack) {
+        } else if (this.fallingAttack && this.weapon == 1) {
             this.hitBox.y = this.y + 16;
 
             if (this.body.onFloor()) {
@@ -458,41 +459,58 @@ class Player extends Phaser.GameObjects.Sprite {
                     break;
                 case 2:
                     //Arco
-                    this.body.setVelocityX(0);
+                    if (!this.attacking) {
+                        this.body.setVelocityX(0);
 
-                    if (this.body.onFloor()) {
-                        this.attacking = true;
-                        this.canMove = false;
-                        this.anims.play('attack1' + this.name, true);
+                        if (this.body.blocked.down) {
 
-                        this.once('animationcomplete', () => {
-                            this.canMove = true;
-                            this.attacking = false;
+                            this.attacking = true;
+                            this.anims.play('attack1' + this.name, true);
 
-                            (!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
-                        });
+                            /*this.scene.time.delayedCall(1000, function () {
+                                this.attacking = false;
 
-                        this.anims.play('attack2' + this.name, true);
+                                (!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
+                            }, [], this);*/
 
-                        /*
-                        if (!x || !y) {
+                            this.once('animationcomplete', () => {
+                                console.log("listo");
+                                this.attacking = false;
+                                this.anims.play('attack2' + this.name, true);
+                                (!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
+                            });
 
+                            
+                            
+
+                            /*
+                            if (!x || !y) {
+    
+                            }
+                            else {
+                                let dirX = x - this.x;
+                                let dirY = y - 16 - this.y;
+                                let sum = Math.abs(-dirX + dirY);
+                                dirX /= sum;
+                                dirY /= sum;
+                            }*/
+
+                        } else if (!this.fallingAttack) {
+                            this.attacking = true;
+                            this.fallingAttack = true;
+
+                            this.anims.play('fallingAttackRight' + this.name, true);
+                            //(!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
+                            
+                            this.once('animationcomplete', () => {
+                                console.log("listo");
+                                this.attacking = false;
+                                this.fallingAttack = false;
+                                this.anims.play('fallingAttackRight2' + this.name, true);
+
+                                (!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
+                            });
                         }
-                        else {
-                            let dirX = x - this.x;
-                            let dirY = y - 16 - this.y;
-                            let sum = Math.abs(-dirX + dirY);
-                            dirX /= sum;
-                            dirY /= sum;
-                        }*/
-
-                    } else if (!this.fallingAttack) {
-                        this.attacking = false;
-                        this.fallingAttack = false;
-
-                        this.anims.play('fallingAttackRight' + this.name, true);
-                        (!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
-                        this.anims.play('fallingAttackRight2' + this.name, true);
                     }
                     break;
             }
