@@ -19,7 +19,7 @@ class Enemy extends Phaser.GameObjects.Sprite {
     this.canAttack;
     this.wait = 2000;
     this.awake = false;
-    this.speed=100;
+    this.speed = 100;
 
     this.primaryTarget;
     this.secondaryTarget;
@@ -69,7 +69,19 @@ class Enemy extends Phaser.GameObjects.Sprite {
 
     }*/
 
-    if (this.health >= 1) {
+    if (this.awake) {
+      if (this.health >= 1) {
+        this.setTintFill(0xffd7b1);
+        this.scene.time.delayedCall(25, function () { this.clearTint(); }, [], this);
+        this.health -= amount;
+        this.Flinch();
+      } else {
+        this.Die();
+        console.log("Muere");
+      }
+    }
+
+    /*if (this.health >= 1) {
       if (this.awake) {
         this.setTintFill(0xffd7b1);
         this.scene.time.delayedCall(25, function () { this.clearTint(); }, [], this);
@@ -83,8 +95,8 @@ class Enemy extends Phaser.GameObjects.Sprite {
 
     } else if(this.awake){
       this.Die();
-      console.log("Muere");
-    }
+      
+    }*/
 
 
   }
@@ -92,13 +104,13 @@ class Enemy extends Phaser.GameObjects.Sprite {
   Update() {
     if (this.active) {
       if (this.canMove) {
-        if (this.body.onFloor() &&  this.primaryTarget.y < this.y-16) {
+        if (this.body.onFloor() && this.primaryTarget.y < this.y - 16) {
           this.body.setVelocityY(-500);
         }
 
-        let dir = this.primaryTarget.x-this.x;
+        let dir = this.primaryTarget.x - this.x;
         dir = dir / Math.abs(dir);
-        this.body.setVelocityX(dir*100);
+        this.body.setVelocityX(dir * 100);
       }
 
       if (this.canAttack) {

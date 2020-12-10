@@ -1,9 +1,10 @@
 class Player extends Phaser.GameObjects.Sprite {
 
 
-    constructor(scene, x, y, noWeaponKey, swordKey, bowKey) {
+    constructor(scene, x, y, noWeaponKey, swordKey, bowKey, health) {
         super(scene, x, y, noWeaponKey);
         this.scene = scene;
+        this.health = health;
         this.noWeaponKey = noWeaponKey;
         this.swordKey = swordKey;
         this.bowKey = bowKey;
@@ -121,6 +122,59 @@ class Player extends Phaser.GameObjects.Sprite {
         });
 
 
+
+        //Animaciones arco
+
+        scene.anims.create({
+            key: 'right' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 0, end: 5 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'idleRight' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 6, end: 9 }),
+            frameRate: 10,
+            repeat: -1,
+        });
+
+        scene.anims.create({
+            key: 'attack1' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 10, end: 22 }),
+            frameRate: 15,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'jumpRight' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 23, end: 24 }),
+            frameRate: 15,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'fallRight' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 25, end: 26 }),
+            frameRate: 15,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'fallingAttackRight' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 27, end: 37 }),
+            frameRate: 15,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'getHurt' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 38, end: 39 }),
+            frameRate: 10,
+            repeat: 0
+        });
+
+
         this.body.setSize(16, 32);
         this.body.offset.x = 32;
         this.body.offset.y = 32;
@@ -137,7 +191,7 @@ class Player extends Phaser.GameObjects.Sprite {
 
         this.goingRight = true;
         this.attacking = false;
-        this.speed = 200;
+        this.speed = 200;//200
         this.weapon = 0;
         this.attackNumber = 1;
         this.fallingAttack = false;
@@ -273,6 +327,8 @@ class Player extends Phaser.GameObjects.Sprite {
             this.attacking = false;
             this.fallingAttack = false;
 
+            if(this.health!=0){
+            this.health--;
             this.body.setVelocityY(-300);
             this.body.setVelocityX(0);
 
@@ -282,11 +338,17 @@ class Player extends Phaser.GameObjects.Sprite {
             this.attacking = false;
             this.fallingAttack = false;
             //this.hitBox.body.enable = false;
+            this.scene.health.UpdateLifes();
 
             this.scene.time.delayedCall(1000, function () {
                 this.canAttack = true; this.canMove = true; this.isHurt = false;
 
             }, [], this);
+
+            }else{
+                this.scene.LoadScene('mainMenu');
+            }
+
         }
     }
 
@@ -417,7 +479,7 @@ class Arrow extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         scene.add.existing(this);
         scene.playerProjectiles.add(this);
-        this.body.setAllowGravity(true);
+        this.body.setAllowGravity(false);
 
         this.body.setSize(4, 4);
         this.body.velocity.x = dirX * this.speed;
@@ -427,14 +489,14 @@ class Arrow extends Phaser.GameObjects.Sprite {
 
         this.setOrigin(0.5,0.7);
 
-        scene.tweens.add({
+        /*scene.tweens.add({
             targets: this,
             duration: 500,
             angle: 360,
             //ease: 'Quad.easeInOut',
             repeat: -1,
             yoyo: false
-        });
+        });*/
 
         this.scene.time.delayedCall(1000, function () {
             this.destroy();
