@@ -100,6 +100,20 @@ class BaseScene extends Phaser.Scene {
         }
         );
 
+        this.load.spritesheet('drone',
+            '/resources/animations/enemies/Drone/Drone.png', {
+            frameWidth: 32,
+            frameHeight: 32
+        }
+        );
+
+        this.load.spritesheet('droneShotKey',
+            '/resources/animations/enemies/Drone/DroneShot.png', {
+            frameWidth: 16,
+            frameHeight: 16
+        }
+        );
+
         //Escenario
         this.load.image('puerta', '/resources/img/Items/Arcos de Paso/Arcos de Paso.png');
         this.load.image('escalerasL', '/resources/img/Items/Escaleras/escaleras_laterales.png');
@@ -317,6 +331,9 @@ class BossRoom extends BaseScene {
         //Crea enemigos
         this.gorila = new GreatGorila(this, 500, 96, 'greatGorila');
         this.parrot = new Parrot(this, 650, 175, 'greatParrot');
+
+        this.drone = new Drone(this, 350, 90, 'drone');
+        this.drone.WakeUp();
 
         if (hasRelic) {
             this.player0.x = this.door.x - 80;
