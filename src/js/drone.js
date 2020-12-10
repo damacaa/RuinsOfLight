@@ -39,7 +39,7 @@ class Drone extends Enemy {
         this.wait = 400;
         this.timer = null;
         this.speed = 90;
-        this.range = 50;
+        this.range = 10;
 
         this.primaryTarget = this.scene.swordPlayer;
         this.secondaryTarget = this.scene.bowPlayer;
@@ -57,7 +57,7 @@ class Drone extends Enemy {
             this.canAttack = true;
         });
     }
-   
+
     Die() {
 
         this.canMove = false;
@@ -101,10 +101,12 @@ class Drone extends Enemy {
                         this.body.setVelocityX(-this.speed);
                         this.flipX = false;
                         this.anims.play('flyLeft', true);
+                        
                     } else {
                         this.body.setVelocityX(this.speed);
                         this.flipX = true;
                         this.anims.play('flyLeft', true);
+                        
                     }
                 } else {
 
@@ -116,7 +118,7 @@ class Drone extends Enemy {
 
                     if (this.canAttack) {
                         this.Attack();
-                       
+
                     } else {
                         this.anims.play('idleDrone', true);
                     }
@@ -145,40 +147,44 @@ class Drone extends Enemy {
 
                     if (this.canAttack) {
                         this.Attack();
-                       
+
                     } else {
                         this.anims.play('idleDrone', true);
                     }
                 }
             }
 
-            /*if ((Math.abs(this.scene.swordPlayer.x - this.x) > 400) && (Math.abs(this.scene.bowPlayer.x - this.x) > 400)) {
+            if (this.health<1 || ((Math.abs(this.scene.swordPlayer.x - this.x) > 400) && (Math.abs(this.scene.bowPlayer.x - this.x) > 400))) {
                 this.Die();
-            }*/
+            }
         }
 
     }
 
     Attack() {
-
         //this.hitBox.body.enable = true;
         this.canMove = false;
-        this.canAttack = true;
+        this.canAttack = false;
         this.attacking = true;
         //this.setTintFill(0xff1010);
 
-        if ( Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x) ){
-        
-            this.shotDown = new Shot(this.scene, this.x + 25, this.y, true, this.flipX, this.secondaryTarget.x, this.secondaryTarget.y);
+        if (Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x)) {
+
+            this.shotDown = new Shot(this.scene, this.x, this.y, true, this.flipX, this.secondaryTarget.x, this.secondaryTarget.y);
             this.shotDown.shooting(this.secondaryTarget.x, this.secondaryTarget.y);
-            
+
 
         } else {
-            this.shotDown = new Shot(this.scene, this.x + 25, this.y, true, this.flipX, this.primaryTarget.x, this.primaryTarget.y);
+            this.shotDown = new Shot(this.scene, this.x, this.y, true, this.flipX, this.primaryTarget.x, this.primaryTarget.y);
             this.shotDown.shooting(this.primaryTarget.x, this.primaryTarget.y);
-            
+
         }
-        this.attacking=false;
+
+
+        this.scene.time.delayedCall(1500, function () {
+            this.canAttack = true; this.canMove = true; this.isHurt = false; this.attacking = false;
+
+        }, [], this);
     }
 }
 
@@ -186,7 +192,7 @@ class Shot extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, dir, droneDir, targetx, targety) {
         super(scene, x, y, "hola");
 
-        this.speed = 9000;
+        this.speed = 5000;
         this.tx = targetx;
         this.ty = targety;
 
@@ -196,8 +202,6 @@ class Shot extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
         scene.enemyProjectiles.add(this);
         this.body.setAllowGravity(false);
-
-        // set setSize
 
         this.scene.anims.create({
             key: 'droneShot',
@@ -210,18 +214,12 @@ class Shot extends Phaser.GameObjects.Sprite {
 
         this.body.setSize(16, 16, true);
         if (dir) {
-            //this.x -= 38;
             this.body.velocity.x = this.speed;
-            //this.body.offset.x = 32;
         } else {
-            //this.x -= 38;
             this.body.velocity.x = -this.speed;
-            //this.body.offset.x = 0;
         }
 
         if (droneDir) { this.x += 32; } else { this.x -= 32; }
-
-
 
         this.flipX = dir;
     }
@@ -230,7 +228,7 @@ class Shot extends Phaser.GameObjects.Sprite {
         this.body.velocity.x = (this.tx - this.x) * 3;
         this.body.velocity.y = (this.ty - this.y) * 2;
 
-        this.timer=this.scene.time.delayedCall(650, this.destroy, [], this);
+        this.timer = this.scene.time.delayedCall(650, this.destroy, [], this);
     }
 
 

@@ -341,9 +341,7 @@ class BossRoom extends BaseScene {
         this.gorila = new GreatGorila(this, 500, 96, 'greatGorila');
         this.parrot = new Parrot(this, 650, 175, 'greatParrot');
 
-        this.drone = new Drone(this, 350, 90, 'drone');
-        this.drone.WakeUp();
-
+        
         if (hasRelic) {
             this.player0.x = this.door.x - 80;
             this.player1.x = this.door.x - 48;
