@@ -159,13 +159,13 @@ class BaseScene extends Phaser.Scene {
 
         //Crea jugadores //Se deberían crear solo una vez en altares y mantener para todas las escenas --> Mover al CreateStage de altares
         this.player0 = new Player(this, 128, 192, 'p0noWeapon', 'p0sword', 'p0bow', p0Health);
-        this.player1 = new Player(this, 192, 192, 'p1noWeapon', 'p1sword', 'p0bow', p1Health);
+        this.player1 = new Player(this, 192, 192, 'p1noWeapon', 'p1sword', 'p1bow', p1Health);
 
         this.players.add(this.player0);
         this.players.add(this.player1);
 
-        this.player0.SetWeapon(2);
-        this.player1.SetWeapon(1);
+        this.player0.SetWeapon(1);
+        this.player1.SetWeapon(2);
 
 
         //Configura la cámara
@@ -356,7 +356,7 @@ class BossRoom extends BaseScene {
         this.gorila = new GreatGorila(this, 500, 96, 'greatGorila');
         this.parrot = new Parrot(this, 650, 175, 'greatParrot');
 
-        
+
         if (hasRelic) {
             this.player0.x = this.door.x - 80;
             this.player1.x = this.door.x - 48;
@@ -424,7 +424,7 @@ class Dungeons extends BaseScene {
 
         this.LoadTileMap('map' + this.levelId);
 
-        this.bg = this.add.sprite(0, 0, 'background').setOrigin(0,0).setScrollFactor(.25).setDepth(-2);
+        this.bg = this.add.sprite(0, 0, 'background').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
 
 
 
@@ -510,13 +510,13 @@ class Dungeons extends BaseScene {
         this.entities.forEach(element => element.Update());
         this.CheckInputs(delta);
 
-        if (this.canSpawnEnemies) {
+        /*if (this.canSpawnEnemies) {
 
             let x = this.player0.x + 300;
             if (x < this.map.width * 32) {
-                /*this.randomEnemy = new Guardian(this, x, this.player0.y - 32, 'guardian');
+                this.randomEnemy = new Guardian(this, x, this.player0.y - 32, 'guardian');
                 this.randomEnemy.primaryTarget = this.player0;
-                this.randomEnemy.WakeUp();*/
+                this.randomEnemy.WakeUp();
                 this.randomEnemy = new Drone(this, x, this.player0.y - 32, 'drone');
                 this.randomEnemy.primaryTarget = this.player0;
                 this.randomEnemy.WakeUp();
@@ -528,9 +528,9 @@ class Dungeons extends BaseScene {
                 this.randomEnemy.primaryTarget = this.player0;
                 this.randomEnemy.WakeUp();
 
-                /*this.randomEnemy = new Ball(this, x, this.player0.y - 32, 'ball');
+            this.randomEnemy = new Ball(this, x, this.player0.y - 32, 'ball');
                 this.randomEnemy.primaryTarget = this.player0;
-                this.randomEnemy.WakeUp();*/
+                this.randomEnemy.WakeUp();
             }
 
             this.nextSpawnTime = time + this.spawnWait;
@@ -539,7 +539,7 @@ class Dungeons extends BaseScene {
             this.spawnWait *= .99;
         } else if (this.nextSpawnTime <= time && this.entities.length < 100) {
             this.canSpawnEnemies = true;
-        }
+        }*/
     }
 }
 
