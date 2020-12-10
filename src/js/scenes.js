@@ -63,7 +63,7 @@ class BaseScene extends Phaser.Scene {
             frameHeight: 64
         }
         );
-        
+
         this.load.spritesheet('arrow',
             '/resources/animations/players/Flecha.png', {
             frameWidth: 21,
@@ -100,10 +100,26 @@ class BaseScene extends Phaser.Scene {
         }
         );
 
+
+        this.load.spritesheet('drone',
+            '/resources/animations/enemies/Drone/Drone.png', {
+            frameWidth: 32,
+            frameHeight: 32
+        }
+        );
+
+        this.load.spritesheet('droneShotKey',
+            '/resources/animations/enemies/Drone/DroneShot.png', {
+            frameWidth: 16,
+            frameHeight: 16
+        }
+        );
+
         this.load.spritesheet('guardian',
             '/resources/animations/enemies/Guardian/guardian.png', {
             frameWidth: 129,
             frameHeight: 90
+
         }
         );
 
@@ -325,6 +341,7 @@ class BossRoom extends BaseScene {
         this.gorila = new GreatGorila(this, 500, 96, 'greatGorila');
         this.parrot = new Parrot(this, 650, 175, 'greatParrot');
 
+        
         if (hasRelic) {
             this.player0.x = this.door.x - 80;
             this.player1.x = this.door.x - 48;

@@ -379,6 +379,7 @@ class Player extends Phaser.GameObjects.Sprite {
                 this.hitBox.visible = false;
                 this.hitBox.setSize(10, 10);
                 this.hitBox.body.setAllowGravity(false);
+                this.hitBox.body.enable=false;
                 this.scene.physics.add.overlap(this.hitBox, this.scene.enemies, this.scene.MeleeDamage, null, this.scene);
 
                 break;
