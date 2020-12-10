@@ -190,7 +190,7 @@ class Drone extends Enemy {
 
 class Shot extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, dir, droneDir, targetx, targety) {
-        super(scene, x, y, "hola");
+        super(scene, x, y, "shot");
 
         this.speed = 5000;
         this.tx = targetx;
@@ -222,6 +222,8 @@ class Shot extends Phaser.GameObjects.Sprite {
         if (droneDir) { this.x += 32; } else { this.x -= 32; }
 
         this.flipX = dir;
+
+        this.setDepth(3);
     }
 
     shooting() {

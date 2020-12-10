@@ -181,7 +181,7 @@ class FireBall extends Phaser.GameObjects.Sprite {
         scene.enemyProjectiles.add(this);
         this.body.setAllowGravity(false);
 
-
+        this.setDepth(3);
 
         // set setSize
 
