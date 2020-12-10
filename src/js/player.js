@@ -247,7 +247,14 @@ class Player extends Phaser.GameObjects.Sprite {
     }
 
     Run(dir, delta) {
-        if(this.attacking){console.log(this.attacking);}
+
+        if (this == this.scene.swordPlayer && (Math.abs(this.scene.player0.x - this.scene.player1.x) > 240 || Math.abs(this.scene.player0.y - this.scene.player1.y) > 135) && !this.isHurt) {
+            //this.health++;
+            //this.Hurt();
+
+            this.x = this.scene.bowPlayer.x - 32 * this.scene.bowPlayer.flipX;
+            this.y = this.scene.bowPlayer.y - 32;
+        }
 
         if (this.canMove && !this.attacking) { this.body.setVelocityX(dir * this.speed); }
 
@@ -481,8 +488,8 @@ class Player extends Phaser.GameObjects.Sprite {
                                 (!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
                             });
 
-                            
-                            
+
+
 
                             /*
                             if (!x || !y) {
@@ -502,7 +509,7 @@ class Player extends Phaser.GameObjects.Sprite {
 
                             this.anims.play('fallingAttackRight' + this.name, true);
                             //(!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
-                            
+
                             this.once('animationcomplete', () => {
                                 console.log("listo");
                                 this.attacking = false;
@@ -554,6 +561,8 @@ class Arrow extends Phaser.GameObjects.Sprite {
             this.destroy();
 
         }, [], this);
+
+        this.setDepth(3);
     }
 
 

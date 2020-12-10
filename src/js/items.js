@@ -13,7 +13,7 @@ class SceneDoor extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         this.targetScene = sceneKey;
 
-        this.setDepth(-2);
+        this.setDepth(0);
         this.scene.physics.add.overlap(this, scene.players, this.LoadTargetScene, null, scene);
     }
 
@@ -41,7 +41,7 @@ class DungeonDoor extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         this.targetDungeon = dungeonId;
 
-        this.setDepth(-2);
+        this.setDepth(0);
         this.scene.physics.add.overlap(this, scene.players, this.LoadTargetScene, null, scene);
     }
 
@@ -74,7 +74,7 @@ class SceneStairs extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         this.targetScene = sceneKey;
 
-        this.setDepth(-2);
+        this.setDepth(0);
         this.scene.physics.add.overlap(this, scene.players, this.LoadTargetScene, null, scene);
     }
 
@@ -103,7 +103,7 @@ class DungeonStairs extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         this.targetDungeon = dungeonId;
 
-        this.setDepth(-2);
+        this.setDepth(0);
         this.scene.physics.add.overlap(this, scene.players, this.LoadTargetScene, null, scene);
     }
 
@@ -140,7 +140,7 @@ class Relic extends Phaser.GameObjects.Sprite {
 
         this.body.setAllowGravity(false);
 
-        this.setDepth(-2);
+        this.setDepth(0);
         this.scene.physics.add.overlap(this, scene.players, this.GetRelic, null, scene);
     }
 
