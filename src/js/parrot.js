@@ -34,8 +34,9 @@ class Parrot extends Enemy {
             repeat: -1
         });
 
-        this.health = 1000;
+        this.health = 2000;
         this.wait = 1000;
+        this.percentageHealth;
 
         this.hitBox = this.scene.physics.add.image(this.x, this.y, null);
         this.hitBox.visible = false;
@@ -51,6 +52,8 @@ class Parrot extends Enemy {
         this.awake = true;
         this.body.allowGravity = false;
         this.anims.play('parrotWakeUp', true);
+        this.vidaLoro = new StatusBar(this.scene, this, 'Gran Guardián Loro');
+
 
         this.scene.physics.add.overlap(this.hitBox, this.scene.players, this.scene.MeleeDamage, null, this.scene);
 
@@ -91,6 +94,12 @@ class Parrot extends Enemy {
     }
 
     Update() {
+
+        if(this.awake){
+            this.percentageHealth = (this.health / 2000) * 240;
+            this.vidaLoro.UpdateVida();
+        }
+
         if (this.scene) {
 
             if (this.awake) {

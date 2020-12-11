@@ -355,7 +355,7 @@ class BossRoom extends BaseScene {
         //Crea enemigos
         this.gorila = new GreatGorila(this, 500, 96, 'greatGorila');
         this.parrot = new Parrot(this, 650, 175, 'greatParrot');
-
+        //this.gorila.WakeUp();
 
         if (hasRelic) {
             this.player0.x = this.door.x - 80;
@@ -365,13 +365,12 @@ class BossRoom extends BaseScene {
 
             this.player0.flipX = true;
             this.player1.flipX = true;
-
+            
             //Dependiendo del número de bosses derrotados se activa el siguiente boss
             switch (defeatedBosses) {
                 case 0:
                     this.gorila.WakeUp();
                     break;
-
                 case 1:
                     this.parrot.WakeUp();
                     break;
@@ -425,10 +424,6 @@ class Dungeons extends BaseScene {
         this.LoadTileMap('map' + this.levelId);
 
         this.bg = this.add.sprite(0, 0, 'background').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
-
-
-
-
 
         //Añade a cada nivel los items
         switch (levelX) {
