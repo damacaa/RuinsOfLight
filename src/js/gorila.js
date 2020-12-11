@@ -52,8 +52,9 @@ class GreatGorila extends Enemy {
             });
         }
 
-        this.health = 1000;
+        this.health = 2000;
         this.wait = 4000;
+        this.percentageHealth;
 
         this.primaryTarget = this.scene.bowPlayer;
         this.secondaryTarget = this.scene.swordPlayer;
@@ -62,6 +63,7 @@ class GreatGorila extends Enemy {
     WakeUp() {
         this.awake = true;
         this.anims.play('gorilaWakeUp', true);
+        this.vidaGorila = new StatusBar(this.scene, this, 'Gran Guardián Gorila');
 
         this.once('animationcomplete', () => {
             this.anims.play('idleLeft', true);
@@ -72,7 +74,7 @@ class GreatGorila extends Enemy {
 
     Die() {
         defeatedBosses++;
-        
+
         this.awake = false;
         this.anims.play('gorilaSleep', true);
         this.canMove = false;
@@ -84,6 +86,11 @@ class GreatGorila extends Enemy {
     }
 
     Update() {
+        if(this.awake){
+            this.percentageHealth = (this.health/2000) * 240;
+            this.vidaGorila.UpdateVida();
+        }
+
         if (this.scene && this.canMove) {
 
             if (Math.abs(this.secondaryTarget.x - this.x) > 100) {
@@ -181,13 +188,9 @@ class FireBall extends Phaser.GameObjects.Sprite {
         scene.enemyProjectiles.add(this);
         this.body.setAllowGravity(false);
 
-
+        this.setDepth(3);
 
         // set setSize
-
-
-
-
 
         this.scene.anims.create({
             key: 'gorilaProjectileEvolution',
@@ -215,14 +218,5 @@ class FireBall extends Phaser.GameObjects.Sprite {
 
 
         this.flipX = dir;
-    }
-
-    update() {
-
-        //this.body.velocity.x *= 0.99;
-
-        /*if (this.destroyCounter++ > 100) {
-            this.destroy();
-        }*/
     }
 }

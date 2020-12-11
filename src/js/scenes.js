@@ -64,6 +64,13 @@ class BaseScene extends Phaser.Scene {
         }
         );
 
+        this.load.spritesheet('arrow',
+            '/resources/animations/players/Flecha.png', {
+            frameWidth: 21,
+            frameHeight: 3
+        }
+        );
+
         //Enemigos
         this.load.spritesheet('greatGorila',
             '/resources/animations/enemies/Gorila/Gorila.png', {
@@ -93,10 +100,34 @@ class BaseScene extends Phaser.Scene {
         }
         );
 
+
+        this.load.spritesheet('drone',
+            '/resources/animations/enemies/Drone/Drone.png', {
+            frameWidth: 32,
+            frameHeight: 32
+        }
+        );
+
+        this.load.spritesheet('droneShotKey',
+            '/resources/animations/enemies/Drone/DroneShot.png', {
+            frameWidth: 16,
+            frameHeight: 16
+        }
+        );
+
+        this.load.spritesheet('guardian',
+            '/resources/animations/enemies/Guardian/guardian.png', {
+            frameWidth: 129,
+            frameHeight: 90
+
+        }
+        );
+
         //Escenario
         this.load.image('puerta', '/resources/img/Items/Arcos de Paso/Arcos de Paso.png');
         this.load.image('escalerasL', '/resources/img/Items/Escaleras/escaleras_laterales.png');
         this.load.image('wall', '/resources/img/tiles/BrickWall.png');
+        this.load.image('bossBackground', '/resources/img/bossBackground.png');
         this.load.image('background', '/resources/img/background.png');
         this.load.image('relic', '/resources/img/Items/Reliquia/Reliquia.png')
 
@@ -110,6 +141,13 @@ class BaseScene extends Phaser.Scene {
             frameHeight: 8
         }
         );
+
+        this.load.spritesheet('controls',
+            '/resources/img/Interfaz/Controls.png', {
+            frameWidth: 55,
+            frameHeight: 47
+        }
+        );
     }
 
     create() {
@@ -120,8 +158,8 @@ class BaseScene extends Phaser.Scene {
         this.enemies = this.physics.add.group();
 
         //Crea jugadores //Se deberían crear solo una vez en altares y mantener para todas las escenas --> Mover al CreateStage de altares
-        this.player0 = new Player(this, 64, 96, 'p0noWeapon', 'p0sword', 'p0bow', p0Health);
-        this.player1 = new Player(this, 128, 96, 'p1noWeapon', 'p1sword', 'p1bow', p1Health);
+        this.player0 = new Player(this, 128, 192, 'p0noWeapon', 'p0sword', 'p0bow', p0Health);
+        this.player1 = new Player(this, 192, 192, 'p1noWeapon', 'p1sword', 'p1bow', p1Health);
 
         this.players.add(this.player0);
         this.players.add(this.player1);
@@ -135,7 +173,8 @@ class BaseScene extends Phaser.Scene {
         this.EnableFullScreen();
         //this.camera.setZoom(.5);
         this.camera.setOrigin(0.5, 0.5);
-        this.camera.startFollow(this.swordPlayer, true);
+        this.camera.startFollow(this.player0, true);
+        this.camera.setBackgroundColor('rgba(21, 7, 4, 1)');
 
         this.CreateStage();
 
@@ -159,17 +198,22 @@ class BaseScene extends Phaser.Scene {
             , fill: '#ffffff'
         }).setScrollFactor(0);
         */
-        this.health = new Health(this, 100, 20, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0.5, 0.5);
+        this.health = new Health(this, 120, 20, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0.5, 0.5);
         this.health.UpdateLifes();
 
     }
 
-    LoadTileMap(key){
+    LoadTileMap(key) {
         this.platforms = this.physics.add.staticGroup();
 
         this.map = this.make.tilemap({ key: key });
+        this.wallTiles = this.map.addTilesetImage('Tile_sheet', 'atlas');
+        this.wallLayer = this.map.createStaticLayer('Pared', this.wallTiles, 0, 0).setDepth(-1);
+
         this.groundTiles = this.map.addTilesetImage('Tile_sheet', 'atlas');
         this.groundLayer = this.map.createStaticLayer('Suelo', this.groundTiles, 0, 0);
+
+
 
         //Colisiones
         this.groundLayer.setCollisionBetween(1, 29);
@@ -274,7 +318,7 @@ class BaseScene extends Phaser.Scene {
     }
 
     ProjectileDamage(target, projectile) {
-        target.Hurt(10);
+        target.Hurt(100);
         projectile.destroy();
     }
 
@@ -298,11 +342,12 @@ class BossRoom extends BaseScene {
     }
 
     CreateStage() {
-        //this.camera.setOrigin(0.5, 0.75);
-        //this.bg = this.add.image(0, 0, 'background');
+        this.camera.startFollow(this.bowPlayer, true);
+        this.bg = this.add.sprite(0, -32, 'bossBackground').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
+        //this.bg = this.add.sprite(240 + 480, 135, 'intro').setOrigin(0.5, 0.5).setScrollFactor(.25).setDepth(-1).flipX = true;
 
         //Crea escenario
-         this.LoadTileMap('bossRoom');
+        this.LoadTileMap('bossRoom');
 
         //Crea puertas
         this.door = new SceneDoor(this, 1200, 192, 'dungeon');
@@ -310,22 +355,22 @@ class BossRoom extends BaseScene {
         //Crea enemigos
         this.gorila = new GreatGorila(this, 500, 96, 'greatGorila');
         this.parrot = new Parrot(this, 650, 175, 'greatParrot');
+        //this.gorila.WakeUp();
 
         if (hasRelic) {
             this.player0.x = this.door.x - 80;
             this.player1.x = this.door.x - 48;
-            this.player0.y = this.door1.y;
-            this.player1.y = this.door1.y;
+            this.player0.y = this.door.y;
+            this.player1.y = this.door.y;
 
             this.player0.flipX = true;
             this.player1.flipX = true;
-
+            
             //Dependiendo del número de bosses derrotados se activa el siguiente boss
             switch (defeatedBosses) {
                 case 0:
                     this.gorila.WakeUp();
                     break;
-
                 case 1:
                     this.parrot.WakeUp();
                     break;
@@ -339,6 +384,10 @@ class BossRoom extends BaseScene {
             }
 
             hasRelic = false;
+        } else {
+            //Muestra los controles
+            this.controls0 = this.add.sprite(this.player0.x - 30, this.player0.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
+            this.controls0 = this.add.sprite(this.player1.x + 30, this.player1.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
         }
     }
 }
@@ -368,15 +417,13 @@ class Dungeons extends BaseScene {
 
     CreateStage() {
         ////https://www.html5gamedevs.com/topic/41691-cant-get-group-to-work/
-        
+        this.camera.startFollow(this.bowPlayer, true);
 
         this.levelId = levelX + "_" + levelY;
 
         this.LoadTileMap('map' + this.levelId);
 
-        
-
-        
+        this.bg = this.add.sprite(0, 0, 'background').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
 
         //Añade a cada nivel los items
         switch (levelX) {
@@ -458,18 +505,25 @@ class Dungeons extends BaseScene {
         this.entities.forEach(element => element.Update());
         this.CheckInputs(delta);
 
-        if (this.canSpawnEnemies) {
+        /*if (this.canSpawnEnemies) {
 
             let x = this.player0.x + 300;
             if (x < this.map.width * 32) {
-                this.randomEnemy = new Ball(this, x, this.player0.y - 32, 'ball');
+                this.randomEnemy = new Guardian(this, x, this.player0.y - 32, 'guardian');
+                this.randomEnemy.primaryTarget = this.player0;
+                this.randomEnemy.WakeUp();
+                this.randomEnemy = new Drone(this, x, this.player0.y - 32, 'drone');
                 this.randomEnemy.primaryTarget = this.player0;
                 this.randomEnemy.WakeUp();
             }
 
             x = this.player0.x - 300;
             if (x > 32) {
-                this.randomEnemy = new Ball(this, x, this.player0.y - 32, 'ball');
+                this.randomEnemy = new Drone(this, x, this.player0.y - 32, 'drone');
+                this.randomEnemy.primaryTarget = this.player0;
+                this.randomEnemy.WakeUp();
+
+            this.randomEnemy = new Ball(this, x, this.player0.y - 32, 'ball');
                 this.randomEnemy.primaryTarget = this.player0;
                 this.randomEnemy.WakeUp();
             }
@@ -480,7 +534,7 @@ class Dungeons extends BaseScene {
             this.spawnWait *= .99;
         } else if (this.nextSpawnTime <= time && this.entities.length < 100) {
             this.canSpawnEnemies = true;
-        }
+        }*/
     }
 }
 
@@ -495,7 +549,7 @@ class MainMenu extends Phaser.Scene {
 
     preload() {
         this.load.spritesheet('intro',
-            '/resources/intro.png', {
+            '/resources/img/intro.png', {
             frameWidth: 480,
             frameHeight: 270
         }
