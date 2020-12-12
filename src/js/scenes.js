@@ -148,6 +148,13 @@ class BaseScene extends Phaser.Scene {
             frameHeight: 47
         }
         );
+
+        this.load.spritesheet('Attackcontrols',
+        '/resources/img/Interfaz/AttackControls.png', {
+        frameWidth: 17,
+        frameHeight: 18
+    }
+    );
     }
 
     create() {
@@ -365,7 +372,7 @@ class BossRoom extends BaseScene {
 
             this.player0.flipX = true;
             this.player1.flipX = true;
-            
+
             //Dependiendo del número de bosses derrotados se activa el siguiente boss
             switch (defeatedBosses) {
                 case 0:
@@ -430,6 +437,9 @@ class Dungeons extends BaseScene {
             case 1:
                 //1.1
                 this.stairs = new SceneStairs(this, 64, 6 * 32, 'bossRoom');
+
+                this.controls1 = this.add.sprite(this.player0.x - 10, this.player0.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
+                this.controls1 = this.add.sprite(this.player1.x + 10, this.player1.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
                 /*if(hasRelic){
                     this.stairs.body.enable = true;
                 }else{
@@ -473,7 +483,7 @@ class Dungeons extends BaseScene {
             case 0:
                 //Aparecer en escaleras
                 this.player0.x = this.stairs.x + 64;
-                this.player1.x = this.stairs.x + 96;
+                this.player1.x = this.stairs.x + 128;
                 break;
 
             case 1:
