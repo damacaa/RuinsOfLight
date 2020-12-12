@@ -2,6 +2,9 @@
 let p0Health = 6;
 let p1Health = 6;
 
+let p0Weapon = 0;
+let p1Weapon = 0;
+
 class BaseScene extends Phaser.Scene {
     constructor(key) {
         super(key);
@@ -123,8 +126,23 @@ class BaseScene extends Phaser.Scene {
         }
         );
 
+        this.load.spritesheet('swordAltar',
+            '/resources/img/Items/Altares/AltarEspada.png', {
+            frameWidth: 32,
+            frameHeight: 32
+        }
+        );
+
+
+        this.load.spritesheet('bowAltar',
+            '/resources/img/Items/Altares/AltarArco.png', {
+            frameWidth: 32,
+            frameHeight: 32
+        }
+        );
+
         //Escenario
-        this.load.image('puerta', '/resources/img/Items/Arcos de Paso/Arcos de Paso.png');
+        this.load.image('puerta', '/resources/img/Items/Arcos de Paso/Arco de Paso.png');
         this.load.image('escalerasL', '/resources/img/Items/Escaleras/escaleras_laterales.png');
         this.load.image('wall', '/resources/img/tiles/BrickWall.png');
         this.load.image('bossBackground', '/resources/img/bossBackground.png');
@@ -132,6 +150,7 @@ class BaseScene extends Phaser.Scene {
         this.load.image('relic', '/resources/img/Items/Reliquia/Reliquia.png')
 
         this.load.image('atlas', 'resources/levels/Tile_sheet.png');
+        this.load.tilemapTiledJSON('altarRoom', 'resources/levels/AltarRoom.json');
         this.load.tilemapTiledJSON('bossRoom', 'resources/levels/BossRoom.json');
 
         //Interfaz
@@ -171,8 +190,8 @@ class BaseScene extends Phaser.Scene {
         this.players.add(this.player0);
         this.players.add(this.player1);
 
-        this.player0.SetWeapon(1);
-        this.player1.SetWeapon(2);
+        this.player0.SetWeapon(p0Weapon);
+        this.player1.SetWeapon(p1Weapon);
 
 
         //Configura la cámara
@@ -180,7 +199,6 @@ class BaseScene extends Phaser.Scene {
         this.EnableFullScreen();
         //this.camera.setZoom(.5);
         this.camera.setOrigin(0.5, 0.5);
-        this.camera.startFollow(this.player0, true);
         this.camera.setBackgroundColor('rgba(21, 7, 4, 1)');
 
         this.CreateStage();
@@ -317,6 +335,8 @@ class BaseScene extends Phaser.Scene {
 
     CreateStage() { }
 
+    UpdateStage(time, delta) { }
+
     MeleeDamage(weapon, target) {
         target.Hurt(10);
 
@@ -332,12 +352,82 @@ class BaseScene extends Phaser.Scene {
     update(time, delta) {
         this.entities.forEach(element => element.Update());
         this.CheckInputs(delta);
+
+        this.UpdateStage(time, delta);
     }
 
     LoadScene(key) {
         p0Health = this.player0.health;
         p1Health = this.player1.health;
         this.scene.start(key);
+    }
+}
+
+class AltarRoom extends BaseScene {
+    constructor() {
+        super('altarRoom');
+        this.swordAltar;
+        this.bowAltar;
+
+        this.center;
+        this.loading = false;
+
+
+    }
+
+    CreateStage() {
+        //this.camera.startFollow(this.player0, true);
+        this.player0.x = 48;
+        this.player1.x = 80;
+
+
+        this.bg = this.add.sprite(0, -32, 'bossBackground').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
+        console.log("altar");
+        //Crea escenario
+        this.LoadTileMap('altarRoom');
+
+        this.center = this.add.image(256, 64);
+        this.center.visible = false;
+
+        this.bowAltar = new Altar(this, 200, 191, 'bowAltar');
+
+        this.swordAltar = new Altar(this, 288, 191, 'swordAltar');
+
+        this.bowAltar.otherAltar = this.swordAltar;
+        this.swordAltar.otherAltar = this.bowAltar;
+
+        //Crea puertas
+        this.door = new SceneDoor(this, 416, 192, 'bossRoom');
+    }
+
+    UpdateStage(time, delta) {
+        if (!this.loading && this.bowAltar.activated && this.swordAltar.activated && this.bowAltar.player != this.swordAltar.player) {
+            
+            this.loading = true;
+
+            this.time.delayedCall(1000, function () {
+                if (this.bowAltar.activated && this.swordAltar.activated && this.bowAltar.player != this.swordAltar.player) {
+                    this.cameras.main.flash(1000);
+
+                    this.swordAltar.done = true;
+                    this.bowAltar.done = true;
+
+                    this.swordAltar.player.SetWeapon(1);
+                    this.bowAltar.player.SetWeapon(2);
+
+                    this.swordAltar.Deactivate();
+                    this.bowAltar.Deactivate();
+
+                    if (this.swordPlayer == this.player0) {
+                        p0Weapon = 1;
+                        p1Weapon = 2;
+                    } else {
+                        p0Weapon = 2;
+                        p1Weapon = 1;
+                    }
+                } else { loading = false; }
+            }, [], this);
+        }
     }
 }
 
@@ -410,9 +500,8 @@ class Dungeons extends BaseScene {
     constructor() {
         super('dungeon');
         this.canSpawnEnemies = false;
-        this.nextSpawnTime = 10000;
+        this.nextSpawnTime = 20000;
         this.spawnWait = 5000;
-
     }
 
     preload() {
@@ -430,7 +519,11 @@ class Dungeons extends BaseScene {
 
         this.LoadTileMap('map' + this.levelId);
 
-        this.bg = this.add.sprite(0, 0, 'background').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
+
+
+        for (let index = 0; index < this.map.width * 32; index += 159) {
+            this.bg = this.add.sprite(index, 0, 'background').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
+        }
 
         //Añade a cada nivel los items
         switch (levelX) {
@@ -507,15 +600,13 @@ class Dungeons extends BaseScene {
             default:
                 break;
         }
-
-
     }
 
-    update(time, delta) {
+    UpdateStage(time, delta) {
         this.entities.forEach(element => element.Update());
         this.CheckInputs(delta);
 
-        /*if (this.canSpawnEnemies) {
+        if (this.canSpawnEnemies) {
 
             let x = this.player0.x + 300;
             if (x < this.map.width * 32) {
@@ -533,7 +624,7 @@ class Dungeons extends BaseScene {
                 this.randomEnemy.primaryTarget = this.player0;
                 this.randomEnemy.WakeUp();
 
-            this.randomEnemy = new Ball(this, x, this.player0.y - 32, 'ball');
+                this.randomEnemy = new Ball(this, x, this.player0.y - 32, 'ball');
                 this.randomEnemy.primaryTarget = this.player0;
                 this.randomEnemy.WakeUp();
             }
@@ -541,10 +632,11 @@ class Dungeons extends BaseScene {
             this.nextSpawnTime = time + this.spawnWait;
             this.canSpawnEnemies = false;
 
-            this.spawnWait *= .99;
+            if (this.spawnWait > 2000) { this.spawnWait *= .99; }
+
         } else if (this.nextSpawnTime <= time && this.entities.length < 100) {
             this.canSpawnEnemies = true;
-        }*/
+        }
     }
 }
 
@@ -585,7 +677,6 @@ class MainMenu extends Phaser.Scene {
         this.bg = this.add.sprite(240, 135, 'intro').setOrigin(0.5, 0.5);
 
         this.input.on('pointerdown', function (event) {
-            console.log(this.step);
             if (this.step == 0) {
                 this.step++;
                 this.bg.setFrame(this.step);
@@ -597,7 +688,7 @@ class MainMenu extends Phaser.Scene {
                 this.bg.setFrame(this.step);
             } else {
                 this.step = 0;
-                this.scene.start('bossRoom');
+                this.scene.start('altarRoom');
             }
 
 
