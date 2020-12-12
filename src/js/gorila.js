@@ -86,9 +86,12 @@ class GreatGorila extends Enemy {
     }
 
     Update() {
-        if(this.awake){
-            this.percentageHealth = (this.health/2000) * 240;
+        if (this.awake) {
+            this.percentageHealth = (this.health / 2000) * 240;
             this.vidaGorila.UpdateVida();
+
+            if (this.health <= 0)
+                this.vidaGorila.Death();
         }
 
         if (this.scene && this.canMove) {
