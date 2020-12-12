@@ -1,6 +1,4 @@
 class Player extends Phaser.GameObjects.Sprite {
-
-
     constructor(scene, x, y, noWeaponKey, swordKey, bowKey, health) {
         super(scene, x, y, noWeaponKey);
         this.scene = scene;
@@ -248,13 +246,13 @@ class Player extends Phaser.GameObjects.Sprite {
 
     Run(dir, delta) {
 
-        if (this == this.scene.swordPlayer && (Math.abs(this.scene.player0.x - this.scene.player1.x) > 240 || Math.abs(this.scene.player0.y - this.scene.player1.y) > 135) && !this.isHurt) {
+        /*if (this == this.scene.swordPlayer && (Math.abs(this.scene.player0.x - this.scene.player1.x) > 240 || Math.abs(this.scene.player0.y - this.scene.player1.y) > 135) && !this.isHurt) {
             //this.health++;
             //this.Hurt();
 
             this.x = this.scene.bowPlayer.x - 32 * this.scene.bowPlayer.flipX;
             this.y = this.scene.bowPlayer.y - 32;
-        }
+        }*/
 
         if (this.canMove && !this.attacking) { this.body.setVelocityX(dir * this.speed); }
 
@@ -348,7 +346,7 @@ class Player extends Phaser.GameObjects.Sprite {
             this.fallingAttack = false;
 
             if (this.health != 0) {
-                this.health--;
+                //this.health--;
                 this.body.setVelocityY(-300);
                 this.body.setVelocityX(0);
 

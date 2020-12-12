@@ -11,13 +11,13 @@ window.onload = function () {
         },
         physics: {
             default: 'arcade',
-            
+
             arcade: {
                 gravity: { y: 981 },
                 //debug: true
             }
         },
-        scene: [MainMenu,BossRoom, Dungeons]
+        scene: [MainMenu, AltarRoom, BossRoom, Dungeons]
     }
 
     var game = new Phaser.Game(config);
