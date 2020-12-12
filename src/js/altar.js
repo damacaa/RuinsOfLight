@@ -1,6 +1,6 @@
 class Altar extends Phaser.GameObjects.Sprite {
 
-    constructor(scene, x, y, key) {
+    constructor(scene, x, y, key, weaponKey) {
         super(scene, x, y, key);
 
         scene.add.existing(this);
@@ -9,6 +9,8 @@ class Altar extends Phaser.GameObjects.Sprite {
         this.key = key;
         this.player;
         this.otherAltar;
+
+        this.weapon = scene.add.image(x, y-16,weaponKey);
 
         this.setOrigin(.5, 0);
 

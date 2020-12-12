@@ -70,10 +70,11 @@ class Enemy extends Phaser.GameObjects.Sprite {
     }*/
 
     if (this.awake) {
-      if (this.health >= 1) {
+      this.health -= amount;
+
+      if (this.health > 0) {
         this.setTintFill(0xffd7b1);
         this.scene.time.delayedCall(25, function () { this.clearTint(); }, [], this);
-        this.health -= amount;
         this.Flinch();
       } else {
         this.Die();
