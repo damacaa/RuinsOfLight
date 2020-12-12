@@ -184,6 +184,7 @@ class BaseScene extends Phaser.Scene {
             frameHeight: 18
         }
         );
+
     }
 
     create() {
@@ -748,5 +749,99 @@ class MainMenu extends Phaser.Scene {
 
         }, this);
     }
+
+}
+
+class Credits extends Phaser.Scene {
+
+    constructor() {
+        super('Credits');
+
+        //this.step = 0;
+        //this.steps = 70;
+        
+    }
+
+    preload() {
+        this.load.spritesheet('endCredits',
+            '/resources/img/Interfaz/EndCredits/Credits.png', {
+            frameWidth: 480,
+            frameHeight: 270
+        }
+        );
+
+        //this.load.image('title', '/resources/img/Interfaz/Menu/Title.png');
+        //this.load.image('menuBackground', '/resources/img/Interfaz/Menu/menuBackground.png');
+    }
+
+    create() {
+        //p0Health = 6;
+        //p1Health = 6;
+
+        this.anims.create({
+            key: 'credits',
+            frames: this.anims.generateFrameNumbers('endCredits', { start: 0, end:  70}),
+            frameRate: 7,
+            repeat: 0
+        });
+
+
+        this.camera = this.cameras.main;
+
+        this.cr = this.add.sprite(240, 135, 'endCredits').setOrigin(0.5, 0.5);
+
+        this.cr.anims.play('credits', true);
+
+        this.cr.once('animationcomplete', () => {
+            this.scene.start('mainMenu');
+        });
+        //this.EnableFullScreen();
+
+        /*this.text = this.add.text(240, 250, 'PRESS TO PLAY', {
+            fontFamily: '"CambriaB"',
+            fontSize: '12px'
+        }).setOrigin(0.5).setDepth(10);; //, stroke: '0f0f0f', strokeThickness: 20
+
+        this.title = this.add.image(240, 40, 'title').setOrigin(0.5, 0.5).setDepth(10);
+        this.bg = this.add.sprite(240, 135, 'intro').setOrigin(0.5, 0.5);
+
+        this.input.on('pointerdown', function (event) {
+            if (this.step == 0) {
+                this.step++;
+                this.bg.setFrame(this.step);
+                this.title.destroy();
+                this.text.destroy();
+
+            } else if (this.step < this.steps) {
+                this.step++;
+                this.bg.setFrame(this.step);
+            } else {
+                this.step = 0;
+                this.scene.start('altarRoom');
+            }
+
+
+
+        }, this);
+        */
+    }
+
+    update(time, delta) { }
+
+    /*EnableFullScreen() {
+
+        var FKey = this.input.keyboard.addKey('F');
+
+        FKey.on('down', function () {
+
+            if (this.scale.isFullscreen) {
+                this.scale.stopFullscreen();
+            }
+            else {
+                this.scale.startFullscreen();
+            }
+
+        }, this);
+    }*/
 
 } 
