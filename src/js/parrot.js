@@ -98,6 +98,9 @@ class Parrot extends Enemy {
         if(this.awake){
             this.percentageHealth = (this.health / 2000) * 240;
             this.vidaLoro.UpdateVida();
+
+            if (this.health <= 0)
+                this.vidaGorila.Death();
         }
 
         if (this.scene) {
