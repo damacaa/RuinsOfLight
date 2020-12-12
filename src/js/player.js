@@ -345,8 +345,8 @@ class Player extends Phaser.GameObjects.Sprite {
             this.attacking = false;
             this.fallingAttack = false;
 
-            if (this.health != 0) {
-                //this.health--;
+            if (this.health > 0) {
+                this.health--;
                 this.body.setVelocityY(-300);
                 this.body.setVelocityX(0);
 
@@ -480,7 +480,6 @@ class Player extends Phaser.GameObjects.Sprite {
                             }, [], this);*/
 
                             this.once('animationcomplete', () => {
-                                console.log("listo");
                                 this.attacking = false;
                                 this.anims.play('attack2' + this.name, true);
                                 (!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
@@ -505,7 +504,7 @@ class Player extends Phaser.GameObjects.Sprite {
                             //(!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
 
                             this.once('animationcomplete', () => {
-                                console.log("listo");
+
                                 this.attacking = false;
                                 this.fallingAttack = false;
                                 this.anims.play('fallingAttackRight2' + this.name, true);

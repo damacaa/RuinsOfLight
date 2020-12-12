@@ -5,6 +5,14 @@ let p1Health = 6;
 let p0Weapon = 0;
 let p1Weapon = 0;
 
+let levelX = 1;
+let levelY = 1;
+let whereAreTheyComingFrom = 0;
+
+let hasRelic = false;
+let firstTimeBoss = true;
+var defeatedBosses = 0;
+
 class BaseScene extends Phaser.Scene {
     constructor(key) {
         super(key);
@@ -148,6 +156,8 @@ class BaseScene extends Phaser.Scene {
         this.load.image('bossBackground', '/resources/img/bossBackground.png');
         this.load.image('background', '/resources/img/background.png');
         this.load.image('relic', '/resources/img/Items/Reliquia/Reliquia.png')
+        this.load.image('sword', '/resources/img/Items/Weapons/Sword.png')
+        this.load.image('bow', '/resources/img/Items/Weapons/Bow.png')
 
         this.load.image('atlas', 'resources/levels/Tile_sheet.png');
         this.load.tilemapTiledJSON('altarRoom', 'resources/levels/AltarRoom.json');
@@ -169,11 +179,11 @@ class BaseScene extends Phaser.Scene {
         );
 
         this.load.spritesheet('Attackcontrols',
-        '/resources/img/Interfaz/AttackControls.png', {
-        frameWidth: 17,
-        frameHeight: 18
-    }
-    );
+            '/resources/img/Interfaz/AttackControls.png', {
+            frameWidth: 17,
+            frameHeight: 18
+        }
+        );
     }
 
     create() {
@@ -371,14 +381,12 @@ class AltarRoom extends BaseScene {
 
         this.center;
         this.loading = false;
-
-
     }
 
     CreateStage() {
         //this.camera.startFollow(this.player0, true);
-        this.player0.x = 48;
-        this.player1.x = 80;
+        this.player0.x = 80;
+        this.player1.x = 100;
 
 
         this.bg = this.add.sprite(0, -32, 'bossBackground').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
@@ -389,20 +397,28 @@ class AltarRoom extends BaseScene {
         this.center = this.add.image(256, 64);
         this.center.visible = false;
 
-        this.bowAltar = new Altar(this, 200, 191, 'bowAltar');
+        this.bowAltar = new Altar(this, 200, 191, 'bowAltar', 'bow');
 
-        this.swordAltar = new Altar(this, 288, 191, 'swordAltar');
+        this.swordAltar = new Altar(this, 288, 191, 'swordAltar', 'sword');
 
         this.bowAltar.otherAltar = this.swordAltar;
         this.swordAltar.otherAltar = this.bowAltar;
 
+        //Muestra los controles
+        this.controls0 = this.add.sprite(this.player0.x - 30, this.player0.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
+        this.controls0 = this.add.sprite(this.player1.x + 30, this.player1.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
+
         //Crea puertas
         this.door = new SceneDoor(this, 416, 192, 'bossRoom');
+        this.door.body.enable = false;
+
+        if(this.loading){}
     }
 
     UpdateStage(time, delta) {
+        console.log(this.loading);
         if (!this.loading && this.bowAltar.activated && this.swordAltar.activated && this.bowAltar.player != this.swordAltar.player) {
-            
+
             this.loading = true;
 
             this.time.delayedCall(1000, function () {
@@ -418,6 +434,9 @@ class AltarRoom extends BaseScene {
                     this.swordAltar.Deactivate();
                     this.bowAltar.Deactivate();
 
+                    this.swordAltar.weapon.destroy();
+                    this.bowAltar.weapon.destroy();
+
                     if (this.swordPlayer == this.player0) {
                         p0Weapon = 1;
                         p1Weapon = 2;
@@ -425,14 +444,16 @@ class AltarRoom extends BaseScene {
                         p0Weapon = 2;
                         p1Weapon = 1;
                     }
-                } else { loading = false; }
+
+                    this.loading=false;
+
+                    this.door.body.enable = true;
+                } else { this.loading = false; }
             }, [], this);
         }
     }
 }
 
-let hasRelic = false;
-var defeatedBosses = 0;
 class BossRoom extends BaseScene {
     constructor() {
         super('bossRoom');
@@ -452,9 +473,8 @@ class BossRoom extends BaseScene {
         //Crea enemigos
         this.gorila = new GreatGorila(this, 500, 96, 'greatGorila');
         this.parrot = new Parrot(this, 650, 175, 'greatParrot');
-        //this.gorila.WakeUp();
 
-        if (hasRelic) {
+        if (!firstTimeBoss) {
             this.player0.x = this.door.x - 80;
             this.player1.x = this.door.x - 48;
             this.player0.y = this.door.y;
@@ -462,17 +482,24 @@ class BossRoom extends BaseScene {
 
             this.player0.flipX = true;
             this.player1.flipX = true;
+        } else {
+            this.controls1 = this.add.sprite(this.player0.x, this.player0.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
+            this.controls1 = this.add.sprite(this.player1.x, this.player1.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
+
+            firstTimeBoss = false;
+        }
+
+        if (hasRelic) {
+            this.door.body.enable = false;
 
             //Dependiendo del número de bosses derrotados se activa el siguiente boss
             switch (defeatedBosses) {
                 case 0:
+                    this.currentBoss = this.gorila;
                     this.gorila.WakeUp();
                     break;
                 case 1:
-                    this.parrot.WakeUp();
-                    break;
-                case 2:
-                    this.gorila.WakeUp();
+                    this.currentBoss = this.parrot;
                     this.parrot.WakeUp();
                     break;
 
@@ -481,17 +508,15 @@ class BossRoom extends BaseScene {
             }
 
             hasRelic = false;
-        } else {
-            //Muestra los controles
-            this.controls0 = this.add.sprite(this.player0.x - 30, this.player0.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
-            this.controls0 = this.add.sprite(this.player1.x + 30, this.player1.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
         }
+    }
+
+    UpdateStage() {
+        if (this.currentBoss) { this.door.body.enable = !this.currentBoss.awake; }
     }
 }
 
-let levelX = 1;
-let levelY = 1;
-let whereAreTheyComingFrom = 0;
+
 class Dungeons extends BaseScene {
     //https://www.youtube.com/watch?v=2_x1dOvgF1E
     //https://phaser.io/examples/v3/view/game-objects/tilemap/collision/multiple-tile-sizes
@@ -531,8 +556,7 @@ class Dungeons extends BaseScene {
                 //1.1
                 this.stairs = new SceneStairs(this, 64, 6 * 32, 'bossRoom');
 
-                this.controls1 = this.add.sprite(this.player0.x - 10, this.player0.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
-                this.controls1 = this.add.sprite(this.player1.x + 10, this.player1.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
+
                 /*if(hasRelic){
                     this.stairs.body.enable = true;
                 }else{
@@ -608,24 +632,24 @@ class Dungeons extends BaseScene {
 
         if (this.canSpawnEnemies) {
 
-            let x = this.player0.x + 300;
+            let x = this.bowPlayer.x + 300;
             if (x < this.map.width * 32) {
-                this.randomEnemy = new Guardian(this, x, this.player0.y - 32, 'guardian');
-                this.randomEnemy.primaryTarget = this.player0;
+                this.randomEnemy = new Guardian(this, x, this.bowPlayer.y - 32, 'guardian');
+                this.randomEnemy.primaryTarget = this.bowPlayer;
                 this.randomEnemy.WakeUp();
-                this.randomEnemy = new Drone(this, x, this.player0.y - 32, 'drone');
-                this.randomEnemy.primaryTarget = this.player0;
+                this.randomEnemy = new Drone(this, x, this.bowPlayer.y - 32, 'drone');
+                this.randomEnemy.primaryTarget = this.bowPlayer;
                 this.randomEnemy.WakeUp();
             }
 
-            x = this.player0.x - 300;
+            x = this.bowPlayer.x - 300;
             if (x > 32) {
-                this.randomEnemy = new Drone(this, x, this.player0.y - 32, 'drone');
-                this.randomEnemy.primaryTarget = this.player0;
+                this.randomEnemy = new Drone(this, x, this.bowPlayer.y - 32, 'drone');
+                this.randomEnemy.primaryTarget = this.bowPlayer;
                 this.randomEnemy.WakeUp();
 
-                this.randomEnemy = new Ball(this, x, this.player0.y - 32, 'ball');
-                this.randomEnemy.primaryTarget = this.player0;
+                this.randomEnemy = new Ball(this, x, this.bowPlayer.y - 32, 'ball');
+                this.randomEnemy.primaryTarget = this.bowPlayer;
                 this.randomEnemy.WakeUp();
             }
 
@@ -634,7 +658,7 @@ class Dungeons extends BaseScene {
 
             if (this.spawnWait > 2000) { this.spawnWait *= .99; }
 
-        } else if (this.nextSpawnTime <= time && this.entities.length < 100) {
+        } else if (this.nextSpawnTime <= time && this.entities.length < 10) {
             this.canSpawnEnemies = true;
         }
     }
@@ -665,10 +689,21 @@ class MainMenu extends Phaser.Scene {
         p0Health = 6;
         p1Health = 6;
 
+        p0Weapon = 0;
+        p1Weapon = 0;
+
+        levelX = 1;
+        levelY = 1;
+        whereAreTheyComingFrom = 0;
+
+        hasRelic = false;
+        firstTimeBoss = true;
+        defeatedBosses = 0;
+
         this.camera = this.cameras.main;
         this.EnableFullScreen();
 
-        this.text = this.add.text(240, 250, 'PRESS TO PLAY', {
+        this.text = this.add.text(240, 250, 'CLICK TO START', {
             fontFamily: '"CambriaB"',
             fontSize: '12px'
         }).setOrigin(0.5).setDepth(10);; //, stroke: '0f0f0f', strokeThickness: 20
