@@ -212,7 +212,7 @@ class Shot extends Phaser.GameObjects.Sprite {
 
         this.anims.play('droneShot', true);
 
-        this.body.setSize(16, 16, true);
+        this.body.setSize(6, 6, true);
         if (dir) {
             this.body.velocity.x = this.speed;
         } else {

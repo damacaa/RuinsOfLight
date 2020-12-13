@@ -356,7 +356,7 @@ class Player extends Phaser.GameObjects.Sprite {
                 }, [], this);
 
             } else {
-                this.scene.LoadScene('mainMenu');
+                this.scene.LoadScene('gameOver');
             }
 
         }

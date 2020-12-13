@@ -123,7 +123,7 @@ class BossRoom extends BaseScene {
 
         //Crea puertas
         this.dungeonDoor = new SceneDoor(this, 1184, 160, 'dungeon', false);
-        this.exitDoor = new SceneDoor(this, 32, 160, 'mainMenu', true);
+        this.exitDoor = new SceneDoor(this, 32, 160, 'credits', true);
         this.exitDoor.Close();
 
         //Crea enemigos
@@ -360,7 +360,7 @@ class MainMenu extends Phaser.Scene {
         this.text = this.add.text(240, 250, 'CLICK TO START', {
             fontFamily: '"CambriaB"',
             fontSize: '12px'
-        }).setOrigin(0.5).setDepth(10);; //, stroke: '0f0f0f', strokeThickness: 20
+        }).setOrigin(0.5).setDepth(10); //, stroke: '0f0f0f', strokeThickness: 20
 
         this.title = this.add.image(240, 40, 'title').setOrigin(0.5, 0.5).setDepth(10);
         this.bg = this.add.sprite(240, 135, 'intro').setOrigin(0.5, 0.5);
@@ -406,4 +406,88 @@ class MainMenu extends Phaser.Scene {
         }, this);
     }
 
-} 
+}
+
+class Credits extends Phaser.Scene {
+
+    constructor() {
+        super('Credits');
+
+    }
+
+    preload() {
+        this.load.spritesheet('endCredits',
+            '/resources/img/Interfaz/EndCredits/Credits.png', {
+            frameWidth: 480,
+            frameHeight: 270
+        }
+        );
+
+    }
+
+    create() {
+
+        this.anims.create({
+            key: 'credits',
+            frames: this.anims.generateFrameNumbers('endCredits', { start: 0, end: 70 }),
+            frameRate: 7,
+            repeat: 0
+        });
+
+
+        this.camera = this.cameras.main;
+
+        this.cr = this.add.sprite(240, 135, 'endCredits').setOrigin(0.5, 0.5);
+
+        this.cr.anims.play('credits', true);
+
+        this.cr.once('animationcomplete', () => {
+            this.scene.start('mainMenu');
+        });
+
+    }
+
+    update(time, delta) { }
+
+}
+
+class GameOver extends Phaser.Scene {
+
+    constructor() {
+        super('gameOver');
+
+    }
+
+    preload() {
+
+        this.load.image('gameOver', '/resources/img/Interfaz/Game Over/Game Over.png');
+    }
+
+    create() {
+
+        this.camera = this.cameras.main;
+
+        this.gO = this.add.image(240, 135, 'gameOver').setOrigin(0.5, 0.5);
+
+        this.time.delayedCall(2000, function () {
+            this.text = this.add.text(240, 250, 'CLICK TO PLAY AGAIN', {
+                fontFamily: '"CambriaB"',
+                fontSize: '12px'
+            }).setOrigin(0.5).setDepth(10);
+
+
+            this.input.on('pointerdown', function (event) {
+
+                this.scene.start('mainMenu');
+
+
+            }, this);
+        }, [], this);
+    }
+
+    update(time, delta) { }
+
+}
+
+
+
