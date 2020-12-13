@@ -25,7 +25,7 @@ function ResetGame(){
     levelY = 1;
     whereAreTheyComingFrom = 0;
 
-    hasRelic = true;
+    hasRelic = false;
     firstTimeBoss = true;
     defeatedBosses = 0;
 }
@@ -129,6 +129,7 @@ class BossRoom extends BaseScene {
         //Crea enemigos
         this.gorila = new GreatGorila(this, 500, 96, 'greatGorila');
         this.parrot = new Parrot(this, 650, 175, 'greatParrot');
+        
 
         if (!firstTimeBoss) {
             this.player0.x = this.dungeonDoor.x - 80;
@@ -144,7 +145,6 @@ class BossRoom extends BaseScene {
 
             firstTimeBoss = false;
         }
-
         if (hasRelic) {
             this.dungeonDoor.Close();
 

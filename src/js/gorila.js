@@ -50,10 +50,17 @@ class GreatGorila extends Enemy {
                 frameRate: 8,
                 repeat: 0
             });
+
+            this.scene.anims.create({
+                key: 'dead',
+                frames: this.scene.anims.generateFrameNumbers(gorilaKey, { start: 19, end: 27 }),
+                frameRate: 4,
+                repeat: 0
+            });
         }
 
         
-        this.health = 4000;
+        this.health = 1000;
         this.wait = 4000;
 
         this.primaryTarget = this.scene.bowPlayer;
@@ -81,7 +88,7 @@ class GreatGorila extends Enemy {
         defeatedBosses++;
 
         this.awake = false;
-        this.anims.play('gorilaSleep', true);
+        this.anims.play('dead', true);
         this.canMove = false;
         this.body.enable = false;
 
