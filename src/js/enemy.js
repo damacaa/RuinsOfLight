@@ -40,66 +40,26 @@ class Enemy extends Phaser.GameObjects.Sprite {
     this.canAttack = false;
     this.body.enable = false;
 
-    console.log(this.scene.entities.length);
-
     const index = this.scene.entities.indexOf(this);
     if (index > -1) {
       this.scene.entities.splice(index, 1);
     }
 
-    console.log(this.scene.entities.length);
     this.scene.time.delayedCall(this.wait, this.destroy, [], this);
-
   }
 
   Hurt(amount) {
-    /*if (!this.awake && this.health > 0) {
-      this.WakeUp()
-      console.log("Despierta");
-    } else if (this.awake && this.health <= 0) {
-      this.Die();
-      console.log("Muere");
-
-    } else {
-      this.setTintFill(0xffd7b1);
-      this.scene.time.delayedCall(25, function () { this.clearTint(); }, [], this);
-      this.health -= amount;
-      this.Flinch();
-      console.log("Ouch");
-
-    }*/
-
     if (this.awake) {
       this.health -= amount;
 
       if (this.health > 0) {
-        this.setTintFill(0xffd7b1);
+        this.setTintFill(0xeeeeba);
         this.scene.time.delayedCall(25, function () { this.clearTint(); }, [], this);
         this.Flinch();
       } else {
         this.Die();
-        console.log("Muere");
       }
     }
-
-    /*if (this.health >= 1) {
-      if (this.awake) {
-        this.setTintFill(0xffd7b1);
-        this.scene.time.delayedCall(25, function () { this.clearTint(); }, [], this);
-        this.health -= amount;
-        this.Flinch();
-        console.log("Ouch");
-      } else {
-        this.WakeUp()
-        console.log("Despierta");
-      }
-
-    } else if(this.awake){
-      this.Die();
-      
-    }*/
-
-
   }
 
   Update() {
@@ -133,7 +93,7 @@ class Enemy extends Phaser.GameObjects.Sprite {
 
   Flinch() { }
 
-  /*Jump(){
+  Jump(){
     this.body.setVelocityY(-100);
-  }*/
+  }
 }

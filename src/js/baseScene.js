@@ -1,3 +1,5 @@
+
+
 class BaseScene extends Phaser.Scene {
     constructor(key) {
         super(key);
@@ -14,6 +16,8 @@ class BaseScene extends Phaser.Scene {
         this.health;
 
         this.entities = [];
+
+        this.fading;
     }
 
     preload() {
@@ -179,6 +183,8 @@ class BaseScene extends Phaser.Scene {
     }
 
     create() {
+        this.fading = false;
+        this.cameras.main.setRenderToTexture(customPipeline);
         //Crea listas de entidades
         this.playerProjectiles = this.physics.add.group();
         this.enemyProjectiles = this.physics.add.group();
@@ -352,6 +358,7 @@ class BaseScene extends Phaser.Scene {
     }
 
     update(time, delta) {
+        //console.log(1000/delta);//Muestra fps
         this.entities.forEach(element => element.Update());
         this.CheckInputs(delta);
 
@@ -359,9 +366,16 @@ class BaseScene extends Phaser.Scene {
     }
 
     LoadScene(key) {
-        this.entities = [];
-        p0Health = this.player0.health;
-        p1Health = this.player1.health;
-        this.scene.start(key);
+        if (!this.fading) {
+            this.fading = true;
+            this.cameras.main.fadeOut(500);
+            p0Health = this.player0.health;
+            p1Health = this.player1.health;
+            this.entities = [];
+
+            this.cameras.main.once('camerafadeoutcomplete', () => {
+                this.scene.start(key);
+            });
+        }
     }
 }

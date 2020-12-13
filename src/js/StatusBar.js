@@ -10,7 +10,7 @@ class StatusBar extends Phaser.GameObjects.Sprite {
         this.currentBoss = currentBoss;
 
         this.barraVida = this.scene.add.rectangle(240, 240, 240, 7, 0xac3232).setScrollFactor(0).setDepth(10).setOrigin(0.5, 0.5);
-        this.barraVida.setStrokeStyle(1, 0xefc53f).setScrollFactor(0).setDepth(10).setOrigin(0.5, 0.5);
+        this.barraVida.setStrokeStyle(1, 0xeeeeba).setScrollFactor(0).setDepth(10).setOrigin(0.5, 0.5);
 
         this.text = this.scene.add.text(240, 255, nombreBoss, {
             fontFamily: '"CambriaB"',
@@ -19,7 +19,6 @@ class StatusBar extends Phaser.GameObjects.Sprite {
         }).setScrollFactor(0).setOrigin(0.5, 0.5);
 
         this.maxHealth = currentBoss.health;
-
     }
 
     UpdateBar() {
@@ -31,6 +30,4 @@ class StatusBar extends Phaser.GameObjects.Sprite {
         this.barraVida.setStrokeStyle();
         this.text.destroy();
     }
-
-
 }
