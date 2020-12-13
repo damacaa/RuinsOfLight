@@ -64,17 +64,6 @@ class Drone extends Enemy {
         this.canAttack = false;
         this.body.setVelocityX(0);
 
-
-        if (this.attacking) {
-            let index = this.scene.entities.indexOf(this);
-            if (index > -1) {
-                this.scene.entities.splice(index, 1);
-            }
-
-            this.destroy();
-
-        } else {
-
             this.anims.play('explosionD', true);
 
             this.once('animationcomplete', () => {
@@ -83,10 +72,8 @@ class Drone extends Enemy {
                 if (index > -1) {
                     this.scene.entities.splice(index, 1);
                 }
-
                 this.scene.time.delayedCall(10, this.destroy, [], this);
             });
-        }
     }
 
     Update() {
