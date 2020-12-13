@@ -341,6 +341,8 @@ class Player extends Phaser.GameObjects.Sprite {
                 this.health--;
                 this.body.setVelocityY(-300);
                 this.body.setVelocityX(0);
+                
+                this.scene.sound.play("effectHurt");
 
                 this.fallingAttack = false;
                 //this.hitBox.body.enable = false;
@@ -409,6 +411,7 @@ class Player extends Phaser.GameObjects.Sprite {
 
                             switch (this.attackNumber) {
                                 case 1:
+                                    this.scene.sound.play("effectSword2");
                                     break;
                                 case 2:
                                     (this.flipX) ? this.body.setVelocityX(-500) : this.body.setVelocityX(500);
@@ -416,13 +419,14 @@ class Player extends Phaser.GameObjects.Sprite {
                                         this.body.setVelocityX(0)
                                     }, [], this);
                                     this.hitBox.x = (this.flipX) ? this.x - 50 : this.x + 50;
-
+                                    this.scene.sound.play("effectSword");
                                     break;
                                 case 3:
                                     (this.flipX) ? this.body.setVelocityX(250) : this.body.setVelocityX(-250);
                                     this.scene.time.delayedCall(25, function () {
                                         this.body.setVelocityX(0)
                                     }, [], this);
+                                    this.scene.sound.play("effectSword3");
                                     break;
                                 default:
                             }
@@ -452,7 +456,7 @@ class Player extends Phaser.GameObjects.Sprite {
                         this.body.velocity.y += 500;
 
                         this.anims.play('fallingAttackRight' + this.name, true);
-
+                        this.scene.sound.play("effectSwordFall");
                     }
                     break;
                 case 2:
@@ -476,6 +480,7 @@ class Player extends Phaser.GameObjects.Sprite {
                                 this.anims.play('attack2' + this.name, true);
                                 (!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
                             });
+                            this.scene.sound.play("effectBow");
                             /*
                             if (!x || !y) {
     

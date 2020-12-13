@@ -94,6 +94,10 @@ class GreatGorila extends Enemy {
 
         this.healthBar.Death();
 
+        this.scene.sound.stopAll();
+        this.scene.sound.play("music", { loop: true }, { volume: 2 });
+        this.scene.sound.play("effectDeathGorila");
+
         /*this.once('animationcomplete', () => {
             this.destroy();
         });*/
@@ -159,7 +163,7 @@ class GreatGorila extends Enemy {
         //this.attacking = true;
         this.canAttack = false;
         this.canMove = false;
-
+        this.scene.sound.play("effectGorila");
         this.anims.play('smash', true);
 
         this.once('animationcomplete', () => {

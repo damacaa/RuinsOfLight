@@ -34,6 +34,13 @@ class Parrot extends Enemy {
             repeat: -1
         });
 
+        this.scene.anims.create({
+            key: 'dead2',
+            frames: this.scene.anims.generateFrameNumbers(parrotKey, { start: 9, end: 16 }),
+            frameRate: 3,
+            repeat: 0
+        });
+
         this.health = 2000;
         this.wait = 1000;
 
@@ -90,6 +97,10 @@ class Parrot extends Enemy {
 
         this.healthBar.Death();
 
+        this.scene.sound.stopAll();
+        this.scene.sound.play("music", { loop: true }, { volume: 2 });
+        this.scene.sound.play("effectDeathGorila");
+
         /*this.once('animationcomplete', () => {
             //this.destroy();
         });*/
@@ -101,7 +112,6 @@ class Parrot extends Enemy {
         }
 
         if (this.scene) {
-
             if (this.awake) {
                 this.hitBox.x = this.x;
                 this.hitBox.y = this.y + 50;
@@ -140,10 +150,10 @@ class Parrot extends Enemy {
                     this.body.setAccelerationY(-500);
                     this.scene.cameras.main.shake(750, .01);
                 }
-
+                
             } else {
                 if (this.body.blocked.down && this.body.enable) {
-                    this.anims.play('parrotSleep', true);
+                    this.anims.play('dead2', true);
                     this.once('animationcomplete', () => {
                         this.body.enable = false;
                     });
@@ -175,6 +185,9 @@ class Parrot extends Enemy {
         //this.setTintFill(0xff1010);
         this.body.velocity.x = (this.primaryTarget.x - this.x) * 3;
         this.body.velocity.y = (this.primaryTarget.y - this.y) * 2;
+
+        this.scene.sound.play("effectParrot");
+
 
         /*this.scene.time.delayedCall(1500, function () {
             this.anims.play('parrotIdle', true);

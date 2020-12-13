@@ -157,6 +157,32 @@ class BaseScene extends Phaser.Scene {
         this.load.tilemapTiledJSON('altarRoom', 'resources/levels/AltarRoom.json');
         this.load.tilemapTiledJSON('bossRoom', 'resources/levels/BossRoom.json');
 
+        //Audio
+        this.load.audio("music", "resources/audio/music.ogg"); // Fondo
+        this.load.audio("fastMusic", "resources/audio/fastmusic.ogg"); // Fondo rapido
+
+        //Efectos jugadores
+        this.load.audio("effectSword", "resources/audio/effects/sword.ogg"); // Efecto espada
+        this.load.audio("effectSword2", "resources/audio/effects/sword2.ogg"); // Efecto espada
+        this.load.audio("effectSword3", "resources/audio/effects/sword3.ogg"); // Efecto espada
+        this.load.audio("effectSwordFall", "resources/audio/effects/swordFall.ogg"); // Efecto espada caida
+        this.load.audio("effectBow", "resources/audio/effects/bow2.ogg"); // Efecto arco
+        this.load.audio("effectHurt", "resources/audio/effects/hurt.ogg"); // Efecto daño
+
+        //Efectos enemigos
+        this.load.audio("effectGorila", "resources/audio/effects/gorila.ogg"); // Efecto gorila ataque
+        this.load.audio("effectBaseGorila", "resources/audio/effects/baseGorila.ogg"); // Efecto gorila
+        this.load.audio("effectDeathGorila", "resources/audio/effects/gorilaDeath.ogg"); // Efecto gorila muerte
+        this.load.audio("effectParrot", "resources/audio/effects/parrot.ogg"); // Efecto loro ataque
+        this.load.audio("effectBaseParrot", "resources/audio/effects/baseParrot.ogg"); // Efecto loro
+        this.load.audio("effectDeathParrot", "resources/audio/effects/parrotDeath.ogg"); // Efecto loro muerte
+
+        this.load.audio("effectWalk", "resources/audio/effects/bow2.ogg"); // Efecto pasos          /////////////////////////////////////////
+        this.load.audio("effectGorilaRelic", "resources/audio/effects/gorilaRelic.ogg"); // Efecto reliquia ////////////////////////////////
+
+        //Efectos intro
+        this.load.audio("effectIntroDoor", "resources/audio/effects/introDoor.ogg"); // Efecto puerta   ////////////////////////////////////
+
         //Interfaz
         this.load.spritesheet('vidas',
             '/resources/img/Interfaz/Vida2.png', {
@@ -234,7 +260,7 @@ class BaseScene extends Phaser.Scene {
             , fill: '#ffffff'
         }).setScrollFactor(0);
         */
-        this.health = new Health(this, 10, 10, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0, 0);
+        this.health = new Health(this, 40, 10, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0, 0);
         this.health.UpdateLifes();
 
         this.camera1.ignore(this.health);
