@@ -18,12 +18,10 @@ class StatusBar extends Phaser.GameObjects.Sprite {
             , fill: '#ffffff'
         }).setScrollFactor(0).setOrigin(0.5, 0.5);
 
-        this.maxHealth = currentBoss.health;
-
     }
 
     UpdateBar() {
-        this.barraVida.width = this.currentBoss.health / this.maxHealth * 240;
+        this.barraVida.width = this.currentBoss.percentageHealth;
     }
 
     Death() {

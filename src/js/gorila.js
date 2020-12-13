@@ -52,9 +52,9 @@ class GreatGorila extends Enemy {
             });
         }
 
-        
         this.health = 2000;
         this.wait = 4000;
+        this.percentageHealth;
 
         this.primaryTarget = this.scene.bowPlayer;
         this.secondaryTarget = this.scene.swordPlayer;
@@ -65,7 +65,7 @@ class GreatGorila extends Enemy {
     WakeUp() {
         this.awake = true;
         this.anims.play('gorilaWakeUp', true);
-        this.healthBar = new StatusBar(this.scene, this, 'Gran Guardián Gorila');
+        this.vidaGorila = new StatusBar(this.scene, this, 'Gran Guardián Gorila');
         this.body.enable = true;
 
         this.once('animationcomplete', () => {
@@ -76,7 +76,6 @@ class GreatGorila extends Enemy {
     }
 
     Die() {
-        this.scene.camera.flash(1000);
         defeatedBosses++;
 
         this.awake = false;
@@ -84,7 +83,7 @@ class GreatGorila extends Enemy {
         this.canMove = false;
         this.body.enable = false;
 
-        this.healthBar.Death();
+        this.vidaGorila.Death();
 
         /*this.once('animationcomplete', () => {
             this.destroy();
@@ -93,7 +92,8 @@ class GreatGorila extends Enemy {
 
     Update() {
         if (this.awake) {
-            this.healthBar.UpdateBar();
+            this.percentageHealth = (this.health / 2000) * 240;
+            this.vidaGorila.UpdateBar();
         }
 
         if (this.scene && this.canMove) {
