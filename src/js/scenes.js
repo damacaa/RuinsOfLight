@@ -25,7 +25,7 @@ function ResetGame(){
     levelY = 1;
     whereAreTheyComingFrom = 0;
 
-    hasRelic = true;
+    hasRelic = false;
     firstTimeBoss = true;
     defeatedBosses = 0;
 }
