@@ -436,10 +436,8 @@ class MainMenu extends Phaser.Scene {
                 }).setOrigin(0.5).setDepth(10);; //, stroke: '0f0f0f', strokeThickness: 20
 
                 this.input.on('pointerdown', function (event) {
-                    if (this.step == 0) {
-                        this.step++;
-                        this.bg.setFrame(this.step);
-                    } else if (this.step < 7) {
+                    
+                    if (this.step < 7) {
                         this.step++;
                         this.bg.setFrame(this.step);
 
@@ -447,53 +445,38 @@ class MainMenu extends Phaser.Scene {
                         this.bg.anims.play('first', true);
                         this.step++;
 
-                        this.bg.once('animationcomplete', () => {
                             this.input.on('pointerdown', function (event) {
-                                this.bg.setFrame(this.step);
+                                this.bg.setFrame(10);
                             }, this);
-                        });
 
                     } else if (this.step == 8) {
                         this.bg.anims.play('second', true);
                         this.step++;
 
-                        this.bg.once('animationcomplete', () => {
                             this.input.on('pointerdown', function (event) {
-                                this.bg.setFrame(this.step);
+                                this.bg.setFrame(12);
                             }, this);
-                        });
-
-
+   
                     } else if (this.step == 9) {
                         this.bg.anims.play('third', true);
                         this.step++;
 
-                        this.bg.once('animationcomplete', () => {
                             this.input.on('pointerdown', function (event) {
-                                this.bg.setFrame(this.step);
+                                this.bg.setFrame(15);
                             }, this);
-                        });
 
                     } else if (this.step == 10) {
                         this.bg.anims.play('fourth', true);
                         this.step++;
 
-                        this.bg.once('animationcomplete', () => {
                             this.input.on('pointerdown', function (event) {
-                                this.bg.setFrame(this.step);
+                                this.bg.setFrame(18);
                             }, this);
-                        });
-
+                     
                     } else if (this.step == this.steps) {
                         this.bg.anims.play('fifth', true);
                         this.step++;
-
-                        this.bg.once('animationcomplete', () => {
-                            this.input.on('pointerdown', function (event) {
-                                this.bg.setFrame(this.step);
-                            }, this);
-                        });
-
+   
                     } else {
                         this.step = 0;
                         this.scene.start('altarRoom');
