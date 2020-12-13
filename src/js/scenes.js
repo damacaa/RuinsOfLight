@@ -121,8 +121,8 @@ class BaseScene extends Phaser.Scene {
 
         this.load.spritesheet('droneShotKey',
             '/resources/animations/enemies/Drone/DroneShot.png', {
-            frameWidth: 16,
-            frameHeight: 16
+            frameWidth: 6,
+            frameHeight: 6
         }
         );
 

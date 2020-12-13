@@ -192,7 +192,7 @@ class Shot extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, dir, droneDir, targetx, targety) {
         super(scene, x, y, "shot");
 
-        this.speed = 5000;
+        this.speed = 500;
         this.tx = targetx;
         this.ty = targety;
 
