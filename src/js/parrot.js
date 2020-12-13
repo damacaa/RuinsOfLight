@@ -34,6 +34,13 @@ class Parrot extends Enemy {
             repeat: -1
         });
 
+        this.scene.anims.create({
+            key: 'dead2',
+            frames: this.scene.anims.generateFrameNumbers(parrotKey, { start: 9, end: 16 }),
+            frameRate: 3,
+            repeat: 0
+        });
+
         this.health = 2000;
         this.wait = 1000;
 
@@ -105,7 +112,6 @@ class Parrot extends Enemy {
         }
 
         if (this.scene) {
-
             if (this.awake) {
                 this.hitBox.x = this.x;
                 this.hitBox.y = this.y + 50;
@@ -144,10 +150,10 @@ class Parrot extends Enemy {
                     this.body.setAccelerationY(-500);
                     this.scene.cameras.main.shake(750, .01);
                 }
-
+                
             } else {
                 if (this.body.blocked.down && this.body.enable) {
-                    this.anims.play('parrotSleep', true);
+                    this.anims.play('dead2', true);
                     this.once('animationcomplete', () => {
                         this.body.enable = false;
                     });

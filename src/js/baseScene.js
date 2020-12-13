@@ -260,7 +260,7 @@ class BaseScene extends Phaser.Scene {
             , fill: '#ffffff'
         }).setScrollFactor(0);
         */
-        this.health = new Health(this, 10, 10, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0, 0);
+        this.health = new Health(this, 40, 10, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0, 0);
         this.health.UpdateLifes();
 
         this.camera1.ignore(this.health);
