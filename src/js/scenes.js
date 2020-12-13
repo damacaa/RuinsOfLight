@@ -1,378 +1,36 @@
 //https://www.youtube.com/watch?v=1P8jvnj85e4
-let p0Health = 6;
-let p1Health = 6;
 
-let p0Weapon = 0;
-let p1Weapon = 0;
+let p0Health;
+let p1Health;
 
-let levelX = 1;
-let levelY = 1;
-let whereAreTheyComingFrom = 0;
+let p0Weapon;
+let p1Weapon;
 
-let hasRelic = false;
-let firstTimeBoss = true;
-var defeatedBosses = 0;
+let levelX;
+let levelY;
+let whereAreTheyComingFrom;
 
-class BaseScene extends Phaser.Scene {
-    constructor(key) {
-        super(key);
+let hasRelic;
+let firstTimeBoss;
+var defeatedBosses;
 
-        this.player0;
-        this.player1;
-        this.swordPlayer;
-        this.bowPlayer;
+function ResetGame(){
+    p0Health = 6;
+    p1Health = 6;
 
-        this.playerProjectiles;
-        this.enemyProjectiles;
-        this.players;
-        this.enemies;
-        this.health;
+    p0Weapon = 0;
+    p1Weapon = 0;
 
-        this.entities = [];
-    }
+    levelX = 1;
+    levelY = 1;
+    whereAreTheyComingFrom = 0;
 
-    preload() {
-        //Personajes
-        this.load.spritesheet('p0noWeapon',
-            '/resources/animations/players/p0noWeapon.png', {
-            frameWidth: 80,
-            frameHeight: 64
-        }
-        );
-
-        this.load.spritesheet('p0sword',
-            '/resources/animations/players/p0Sword.png', {
-            frameWidth: 80,
-            frameHeight: 64
-        }
-        );
-
-        this.load.spritesheet('p0bow',
-            '/resources/animations/players/p0Bow.png', {
-            frameWidth: 80,
-            frameHeight: 64
-        }
-        );
-
-        this.load.spritesheet('p1noWeapon',
-            '/resources/animations/players/p1noWeapon.png', {
-            frameWidth: 80,
-            frameHeight: 64
-        }
-        );
-
-        this.load.spritesheet('p1sword',
-            '/resources/animations/players/p1Sword.png', {
-            frameWidth: 80,
-            frameHeight: 64
-        }
-        );
-
-        this.load.spritesheet('p1bow',
-            '/resources/animations/players/p1Bow.png', {
-            frameWidth: 80,
-            frameHeight: 64
-        }
-        );
-
-        this.load.spritesheet('arrow',
-            '/resources/animations/players/Flecha.png', {
-            frameWidth: 21,
-            frameHeight: 3
-        }
-        );
-
-        //Enemigos
-        this.load.spritesheet('greatGorila',
-            '/resources/animations/enemies/Gorila/Gorila.png', {
-            frameWidth: 256,
-            frameHeight: 256
-        }
-        );
-
-        this.load.spritesheet('greatParrot',
-            '/resources/animations/enemies/Parrot/Parrot.png', {
-            frameWidth: 256,
-            frameHeight: 256
-        }
-        );
-
-        this.load.spritesheet('gorilaProjectileKey',
-            '/resources/animations/enemies/Gorila/GorilaProjectile.png', {
-            frameWidth: 64,
-            frameHeight: 32
-        }
-        );
-
-        this.load.spritesheet('ball',
-            '/resources/animations/enemies/Ball/Ball.png', {
-            frameWidth: 63,
-            frameHeight: 63
-        }
-        );
-
-
-        this.load.spritesheet('drone',
-            '/resources/animations/enemies/Drone/Drone.png', {
-            frameWidth: 32,
-            frameHeight: 32
-        }
-        );
-
-        this.load.spritesheet('droneShotKey',
-            '/resources/animations/enemies/Drone/DroneShot.png', {
-            frameWidth: 6,
-            frameHeight: 6
-        }
-        );
-
-        this.load.spritesheet('guardian',
-            '/resources/animations/enemies/Guardian/guardian.png', {
-            frameWidth: 129,
-            frameHeight: 90
-
-        }
-        );
-
-        this.load.spritesheet('swordAltar',
-            '/resources/img/Items/Altares/AltarEspada.png', {
-            frameWidth: 32,
-            frameHeight: 32
-        }
-        );
-
-
-        this.load.spritesheet('bowAltar',
-            '/resources/img/Items/Altares/AltarArco.png', {
-            frameWidth: 32,
-            frameHeight: 32
-        }
-        );
-
-        //Escenario
-        this.load.image('puerta', '/resources/img/Items/Arcos de Paso/Arco de Paso.png');
-        this.load.image('escalerasL', '/resources/img/Items/Escaleras/escaleras_laterales.png');
-        this.load.image('wall', '/resources/img/tiles/BrickWall.png');
-        this.load.image('bossBackground', '/resources/img/bossBackground.png');
-        this.load.image('background', '/resources/img/background.png');
-        this.load.image('relic', '/resources/img/Items/Reliquia/Reliquia.png')
-        this.load.image('sword', '/resources/img/Items/Weapons/Sword.png')
-        this.load.image('bow', '/resources/img/Items/Weapons/Bow.png')
-
-        this.load.image('atlas', 'resources/levels/Tile_sheet.png');
-        this.load.tilemapTiledJSON('altarRoom', 'resources/levels/AltarRoom.json');
-        this.load.tilemapTiledJSON('bossRoom', 'resources/levels/BossRoom.json');
-
-        //Interfaz
-        this.load.spritesheet('vidas',
-            '/resources/img/Interfaz/Vida2.png', {
-            frameWidth: 154,
-            frameHeight: 8
-        }
-        );
-
-        this.load.spritesheet('controls',
-            '/resources/img/Interfaz/Controls.png', {
-            frameWidth: 55,
-            frameHeight: 47
-        }
-        );
-
-        this.load.spritesheet('Attackcontrols',
-            '/resources/img/Interfaz/AttackControls.png', {
-            frameWidth: 17,
-            frameHeight: 18
-        }
-        );
-
-    }
-
-    create() {
-        //Crea listas de entidades
-        this.playerProjectiles = this.physics.add.group();
-        this.enemyProjectiles = this.physics.add.group();
-        this.players = this.physics.add.group();
-        this.enemies = this.physics.add.group();
-
-        //Crea jugadores //Se deberían crear solo una vez en altares y mantener para todas las escenas --> Mover al CreateStage de altares
-        this.player0 = new Player(this, 128, 192, 'p0noWeapon', 'p0sword', 'p0bow', p0Health);
-        this.player1 = new Player(this, 192, 192, 'p1noWeapon', 'p1sword', 'p1bow', p1Health);
-
-        this.players.add(this.player0);
-        this.players.add(this.player1);
-
-        this.player0.SetWeapon(p0Weapon);
-        this.player1.SetWeapon(p1Weapon);
-
-
-        //Configura la cámara
-        this.camera = this.cameras.main;
-        this.EnableFullScreen();
-        //this.camera.setZoom(.5);
-        this.camera.setOrigin(0.5, 0.5);
-        this.camera.setBackgroundColor('rgba(21, 7, 4, 1)');
-
-        this.CreateStage();
-
-        //Añade colisiones
-
-        /*this.physics.add.collider(this.players, this.platforms);
-        this.physics.add.collider(this.enemies, this.platforms);*/
-
-        this.physics.add.overlap(this.players, this.enemyProjectiles, this.ProjectileDamage, null, this);
-        this.physics.add.overlap(this.enemies, this.playerProjectiles, this.ProjectileDamage, null, this);
-        //this.physics.add.overlap(this.enemies, this.enemyProjectiles, this.ProjectileDamage, null, this);
-
-        this.physics.world.setFPS(60);
-        /*
-        this.graphics = this.add.graphics();
-        //this.graphics.lineStyle(1, 0x00ff00, 1);
-        
-        this.text = this.add.text(10, 10, 'ExampleUI', {
-            fontFamily: '"Press Start 2P"',
-            fontSize: '20px'
-            , fill: '#ffffff'
-        }).setScrollFactor(0);
-        */
-        this.health = new Health(this, 120, 20, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0.5, 0.5);
-        this.health.UpdateLifes();
-
-    }
-
-    LoadTileMap(key) {
-        this.platforms = this.physics.add.staticGroup();
-
-        this.map = this.make.tilemap({ key: key });
-        this.wallTiles = this.map.addTilesetImage('Tile_sheet', 'atlas');
-        this.wallLayer = this.map.createStaticLayer('Pared', this.wallTiles, 0, 0).setDepth(-1);
-
-        this.groundTiles = this.map.addTilesetImage('Tile_sheet', 'atlas');
-        this.groundLayer = this.map.createStaticLayer('Suelo', this.groundTiles, 0, 0);
-
-
-
-        //Colisiones
-        this.groundLayer.setCollisionBetween(1, 29);
-
-        this.physics.add.collider(this.players, this.groundLayer);
-        this.physics.add.collider(this.enemies, this.groundLayer);
-
-        this.camera.setBounds(0, 0, this.map.width * 32, this.map.height * 32);
-    }
-
-    CheckInputs(delta) {
-
-
-        let cursors0 = this.input.keyboard.addKeys({
-            up: Phaser.Input.Keyboard.KeyCodes.W,
-            down: Phaser.Input.Keyboard.KeyCodes.S,
-            left: Phaser.Input.Keyboard.KeyCodes.A,
-            right: Phaser.Input.Keyboard.KeyCodes.D
-        });
-
-
-        var keyObj = this.input.keyboard.addKey('E'); // Get key object
-        var isDown = keyObj.isDown;
-        var isUp = keyObj.isUp;
-
-        if (cursors0.left.isDown) {
-            this.player0.Run(-1, delta);
-        } else if (cursors0.right.isDown) {
-            this.player0.Run(1, delta);
-        } else {
-            this.player0.Run(0, delta);
-        }
-
-        if (cursors0.up.isDown) {
-            this.player0.Jump();
-        }
-
-        if (isDown) {
-            this.player0.Attack();
-        }
-
-        if (isUp) {
-            this.player0.EnableAttack();
-        }
-
-        //////////////////////////////////////////////////////////////////////
-
-        let cursors1 = this.input.keyboard.createCursorKeys();
-        if (cursors1.left.isDown) {
-            this.player1.Run(-1, delta);
-        } else if (cursors1.right.isDown) {
-            this.player1.Run(1, delta);
-        } else {
-            this.player1.Run(0, delta);
-        }
-
-        if (cursors1.up.isDown) {
-            this.player1.Jump();
-        }
-
-        this.input.mouse.disableContextMenu();
-
-        this.input.on('pointerdown', function (pointer) {
-
-            this.player1.Attack(this.input.mousePointer.worldX, this.input.mousePointer.worldY);
-
-        }, this);
-
-        this.input.on('pointerup', function (pointer) {
-
-            this.player1.EnableAttack();
-
-        }, this);
-
-    }
-
-    EnableFullScreen() {
-
-        var FKey = this.input.keyboard.addKey('F');
-
-        FKey.on('down', function () {
-
-            if (this.scale.isFullscreen) {
-                //button.setFrame(0);
-                this.scale.stopFullscreen();
-            }
-            else {
-                //button.setFrame(1);
-                this.scale.startFullscreen();
-            }
-
-        }, this);
-    }
-
-    CreateStage() { }
-
-    UpdateStage(time, delta) { }
-
-    MeleeDamage(weapon, target) {
-        target.Hurt(10);
-
-        //let dir = target.x - weapon.x;
-        //target.body.setVelocityX(dir);
-    }
-
-    ProjectileDamage(target, projectile) {
-        target.Hurt(100);
-        projectile.destroy();
-    }
-
-    update(time, delta) {
-        this.entities.forEach(element => element.Update());
-        this.CheckInputs(delta);
-
-        this.UpdateStage(time, delta);
-    }
-
-    LoadScene(key) {
-        p0Health = this.player0.health;
-        p1Health = this.player1.health;
-        this.scene.start(key);
-    }
+    hasRelic = false;
+    firstTimeBoss = true;
+    defeatedBosses = 0;
 }
+
+
 
 class AltarRoom extends BaseScene {
     constructor() {
@@ -389,9 +47,7 @@ class AltarRoom extends BaseScene {
         this.player0.x = 80;
         this.player1.x = 100;
 
-
         this.bg = this.add.sprite(0, -32, 'bossBackground').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
-        console.log("altar");
         //Crea escenario
         this.LoadTileMap('altarRoom');
 
@@ -410,14 +66,11 @@ class AltarRoom extends BaseScene {
         this.controls0 = this.add.sprite(this.player1.x + 30, this.player1.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
 
         //Crea puertas
-        this.door = new SceneDoor(this, 416, 192, 'bossRoom');
-        this.door.body.enable = false;
-
-        if(this.loading){}
+        this.door = new SceneDoor(this, 384, 160, 'bossRoom');
+        this.door.Close();
     }
 
     UpdateStage(time, delta) {
-        console.log(this.loading);
         if (!this.loading && this.bowAltar.activated && this.swordAltar.activated && this.bowAltar.player != this.swordAltar.player) {
 
             this.loading = true;
@@ -446,9 +99,9 @@ class AltarRoom extends BaseScene {
                         p1Weapon = 1;
                     }
 
-                    this.loading=false;
+                    this.loading = false;
 
-                    this.door.body.enable = true;
+                    this.door.Open();
                 } else { this.loading = false; }
             }, [], this);
         }
@@ -469,17 +122,20 @@ class BossRoom extends BaseScene {
         this.LoadTileMap('bossRoom');
 
         //Crea puertas
-        this.door = new SceneDoor(this, 1200, 192, 'dungeon');
+        this.dungeonDoor = new SceneDoor(this, 1184, 160, 'dungeon', false);
+        this.exitDoor = new SceneDoor(this, 32, 160, 'mainMenu', true);
+        this.exitDoor.Close();
 
         //Crea enemigos
         this.gorila = new GreatGorila(this, 500, 96, 'greatGorila');
         this.parrot = new Parrot(this, 650, 175, 'greatParrot');
+        
 
         if (!firstTimeBoss) {
-            this.player0.x = this.door.x - 80;
-            this.player1.x = this.door.x - 48;
-            this.player0.y = this.door.y;
-            this.player1.y = this.door.y;
+            this.player0.x = this.dungeonDoor.x - 80;
+            this.player1.x = this.dungeonDoor.x - 48;
+            this.player0.y = this.dungeonDoor.y;
+            this.player1.y = this.dungeonDoor.y;
 
             this.player0.flipX = true;
             this.player1.flipX = true;
@@ -489,9 +145,8 @@ class BossRoom extends BaseScene {
 
             firstTimeBoss = false;
         }
-
         if (hasRelic) {
-            this.door.body.enable = false;
+            this.dungeonDoor.Close();
 
             //Dependiendo del número de bosses derrotados se activa el siguiente boss
             switch (defeatedBosses) {
@@ -513,7 +168,11 @@ class BossRoom extends BaseScene {
     }
 
     UpdateStage() {
-        if (this.currentBoss) { this.door.body.enable = !this.currentBoss.awake; }
+        if (this.currentBoss && !this.currentBoss.awake) {
+            if (defeatedBosses == 2) {
+                this.exitDoor.Open();
+            } else { this.dungeonDoor.Open(); }
+        }
     }
 }
 
@@ -555,7 +214,7 @@ class Dungeons extends BaseScene {
         switch (levelX) {
             case 1:
                 //1.1
-                this.stairs = new SceneStairs(this, 64, 6 * 32, 'bossRoom');
+                this.stairs = new SceneDoor(this, 32, 5 * 32, 'bossRoom', true);
 
 
                 /*if(hasRelic){
@@ -564,7 +223,7 @@ class Dungeons extends BaseScene {
                     this.stairs.body.enable = false;
                 }*/
 
-                //new Relic(this, 400, 6 * 32);
+                new Relic(this, 400, 6 * 32);
 
                 this.door1 = new DungeonDoor(this, 7 * 32, 15 * 32, "2_1");
                 this.door2 = new DungeonDoor(this, 65 * 32, 9 * 32, "2_2");
@@ -574,13 +233,13 @@ class Dungeons extends BaseScene {
                 switch (levelY) {
                     case 1:
                         //2.1
-                        this.stairs = new DungeonStairs(this, 64, 6 * 32, "1_1");
-                        new Relic(this, 3 * 32, 13 * 32);
+                        this.stairs = new DungeonStairs(this, 32, 5 * 32, "1_1");
+                        new Relic(this, 3 * 32 - 3, 13 * 32);
                         break;
 
                     case 2:
                         //2.2
-                        this.stairs = new DungeonStairs(this, 2 * 32, 8 * 32, "1_1");
+                        this.stairs = new DungeonStairs(this, 32, 7 * 32, "1_1");
                         new Relic(this, 51 * 32, 23 * 32);
                         break;
 
@@ -595,7 +254,6 @@ class Dungeons extends BaseScene {
                 break;
         }
 
-        console.log(whereAreTheyComingFrom);
         //Dependiendo de de qué nivel vengan, los jugadores aparecen en un sitio u otro
         switch (whereAreTheyComingFrom) {
             case 0:
@@ -687,19 +345,7 @@ class MainMenu extends Phaser.Scene {
     }
 
     create() {
-        p0Health = 6;
-        p1Health = 6;
-
-        p0Weapon = 0;
-        p1Weapon = 0;
-
-        levelX = 1;
-        levelY = 1;
-        whereAreTheyComingFrom = 0;
-
-        hasRelic = false;
-        firstTimeBoss = true;
-        defeatedBosses = 0;
+        ResetGame();
 
         this.camera = this.cameras.main;
         this.EnableFullScreen();
@@ -750,73 +396,4 @@ class MainMenu extends Phaser.Scene {
         }, this);
     }
 
-}
-
-class Credits extends Phaser.Scene {
-
-    constructor() {
-        super('Credits');
-        
-    }
-
-    preload() {
-        this.load.spritesheet('endCredits',
-            '/resources/img/Interfaz/EndCredits/Credits.png', {
-            frameWidth: 480,
-            frameHeight: 270
-        }
-        );
-
-    }
-
-    create() {
-
-        this.anims.create({
-            key: 'credits',
-            frames: this.anims.generateFrameNumbers('endCredits', { start: 0, end:  70}),
-            frameRate: 7,
-            repeat: 0
-        });
-
-
-        this.camera = this.cameras.main;
-
-        this.cr = this.add.sprite(240, 135, 'endCredits').setOrigin(0.5, 0.5);
-
-        this.cr.anims.play('credits', true);
-
-        this.cr.once('animationcomplete', () => {
-            this.scene.start('mainMenu');
-        });
-       
-    }
-
-    update(time, delta) { }
-    
-} 
-
-class GameOver extends Phaser.Scene {
-
-    constructor() {
-        super('gOver');
-        
-    }
-
-    preload() {
-      
-        this.load.image('gameOver', '/resources/img/Interfaz/Game Over/Game Over.png');
-    }
-
-    create() {
-
-        this.camera = this.cameras.main;
-
-        this.gO = this.add.image(240, 135, 'gameOver').setOrigin(0.5, 0.5);
-
-        this.time.delayedCall(2000, function (){this.scene.start('mainMenu');}, [], this);
-       
-    }
-
-    update(time, delta) { }
-    
 } 

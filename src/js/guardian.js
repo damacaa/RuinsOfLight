@@ -64,9 +64,6 @@ class Guardian extends Enemy {
         this.range = 50;
         this.rangeX = 300;
         this.rangeY = 50;
-
-
-
     }
 
     WakeUp() {
@@ -82,28 +79,27 @@ class Guardian extends Enemy {
                 this.canAttack = true;
             }, [], this);
         });
-
-
     }
 
-
-
     Die() {
-
-
         this.body.setVelocityX(0);
         this.awake = false;
         this.anims.play('guardianDie', true);
+
         this.canMove = false;
-        this.body.enable = false;
         this.canAttack = false;
+        this.body.enable = false;
+
+        const index = this.scene.entities.indexOf(this);
+        if (index > -1) {
+            this.scene.entities.splice(index, 1);
+        }
+
+        this.scene.time.delayedCall(this.wait, this.destroy, [], this);
     }
 
 
-
     Update() {
-
-
         if (this.scene && this.canMove) {
 
             if (this.body.blocked.left || this.body.blocked.right) { this.body.setVelocityY(0); }
@@ -112,11 +108,7 @@ class Guardian extends Enemy {
                 this.anims.play('guardianIdle', true);
                 this.body.setVelocityX(0);
             } else {
-
                 if (Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x)) {
-
-
-
                     if ((Math.abs(this.scene.bowPlayer.x - this.x) > this.range) || (Math.abs(this.scene.bowPlayer.y - this.y) > this.range)) {
                         if (this.scene.bowPlayer.x < this.x) {
                             this.body.setVelocityX(-this.speed);
@@ -139,27 +131,19 @@ class Guardian extends Enemy {
                         if (this.canAttack) {
                             this.Attack();
                         }
-
                     }
                 } else {
-
-
                     if ((Math.abs(this.scene.swordPlayer.x - this.x) > this.range) || (Math.abs(this.scene.swordPlayer.y - this.y) > this.range)) {
                         if (this.scene.swordPlayer.x < this.x) {
                             this.body.setVelocityX(-this.speed);
                             this.flipX = false;
                             this.anims.play('guardianMove', true);
-
-
                         } else {
                             this.body.setVelocityX(this.speed);
                             this.flipX = true;
                             this.anims.play('guardianMove', true);
-
                         }
-
                     } else {
-
                         if (this.scene.swordPlayer.x < this.x) {
                             this.flipX = false;
                         } else {
@@ -169,12 +153,10 @@ class Guardian extends Enemy {
                         if (this.canAttack) {
                             this.Attack();
                         }
-
                     }
                 }
             }
         }
-
     }
 
     Attack() {
@@ -184,15 +166,6 @@ class Guardian extends Enemy {
 
         this.body.setVelocityY(0);
 
-
-
-
-
-
-
-
-
-
         this.anims.play('guardianPreparingAttack', true);
         this.attacking = true;
         this.body.setVelocityX(0);
@@ -200,11 +173,8 @@ class Guardian extends Enemy {
 
         this.once('animationcomplete', () => {
             if (this.health > 0) {
-
                 let offset = 0;
                 (this.flipX) ? offset = 22 : offset = -22;
-
-
 
                 this.hitBox = this.scene.physics.add.image(this.x + offset, this.y + 32, null);
                 this.hitBox.setSize(50, 15);
@@ -216,13 +186,9 @@ class Guardian extends Enemy {
 
                 this.anims.play('guardianAtack', true);
 
-
-
-
                 this.once('animationcomplete', () => {
                     this.hitBox.destroy();
                     this.canMove = true;
-
 
                     this.scene.time.delayedCall(this.wait, function () {
                         this.canAttack = true;
@@ -230,12 +196,7 @@ class Guardian extends Enemy {
 
                 });
             }
-
         });
-
-
-
     };
-
     CheckAttacking() { return this.attacking; }
 }
