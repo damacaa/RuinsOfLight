@@ -34,9 +34,8 @@ class Parrot extends Enemy {
             repeat: -1
         });
 
-        this.health = 2000;
+        this.health = 200;
         this.wait = 1000;
-        this.percentageHealth;
 
         this.hitBox = this.scene.physics.add.image(this.x, this.y, null);
         this.hitBox.visible = false;
@@ -52,7 +51,7 @@ class Parrot extends Enemy {
         this.awake = true;
         this.body.allowGravity = false;
         this.anims.play('parrotWakeUp', true);
-        this.vidaLoro = new StatusBar(this.scene, this, 'Gran Guardián Loro');
+        this.healthBar = new StatusBar(this.scene, this, 'Gran Guardián Loro');
 
 
         this.scene.physics.add.overlap(this.hitBox, this.scene.players, this.scene.MeleeDamage, null, this.scene);
@@ -72,6 +71,7 @@ class Parrot extends Enemy {
     }
 
     Die() {
+        this.scene.camera.flash(1000);
         this.awake = false;
 
         defeatedBosses++;
@@ -88,19 +88,16 @@ class Parrot extends Enemy {
         //console.log("Hello");
         this.canMove = false;
 
+        this.healthBar.Death();
+
         /*this.once('animationcomplete', () => {
             //this.destroy();
         });*/
     }
 
     Update() {
-
         if(this.awake){
-            this.percentageHealth = (this.health / 2000) * 240;
-            this.vidaLoro.UpdateBar();
-
-            if (this.health <= 0)
-                this.vidaGorila.Death();
+            this.healthBar.UpdateBar();
         }
 
         if (this.scene) {

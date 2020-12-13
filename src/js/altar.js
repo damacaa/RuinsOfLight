@@ -10,7 +10,16 @@ class Altar extends Phaser.GameObjects.Sprite {
         this.player;
         this.otherAltar;
 
-        this.weapon = scene.add.image(x, y-16,weaponKey);
+        this.weapon = scene.add.image(x, y-10,weaponKey);
+
+        this.scene.tweens.add({
+            targets: this.weapon,
+            y: this.weapon.y-3,
+            duration: 1500,
+            ease: 'Sine.easeInOut',
+            yoyo: true,
+            repeat: -1
+        });
 
         this.setOrigin(.5, 0);
 
