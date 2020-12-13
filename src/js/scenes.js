@@ -494,7 +494,7 @@ class MainMenu extends Phaser.Scene {
 
         this.credits.on('pointerdown', function (event) {
 
-            this.scene.start('Credits');
+            this.scene.start('credits');
 
         }, this);
 
