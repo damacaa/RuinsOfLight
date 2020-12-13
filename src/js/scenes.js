@@ -68,6 +68,9 @@ class AltarRoom extends BaseScene {
         //Crea puertas
         this.door = new SceneDoor(this, 384, 160, 'bossRoom');
         this.door.Close();
+
+        this.sound.stopAll();
+        this.musicBGAltar = this.sound.play("music", { loop: true }, { volume: 2 });
     }
 
     UpdateStage(time, delta) {
@@ -148,6 +151,9 @@ class BossRoom extends BaseScene {
         if (hasRelic) {
             this.dungeonDoor.Close();
 
+            this.sound.stopAll();
+            this.musicBGBoss = this.sound.play("fastMusic", { loop: true }, { volume: 2 });
+
             //Dependiendo del número de bosses derrotados se activa el siguiente boss
             switch (defeatedBosses) {
                 case 0:
@@ -156,6 +162,7 @@ class BossRoom extends BaseScene {
                         this.currentBoss = this.gorila;
                         this.gorila.WakeUp();
                         hasRelic = false;
+                        this.sound.play("effectBaseGorila", { loop: true });
                     }
                     break;
                 case 1:
@@ -164,6 +171,7 @@ class BossRoom extends BaseScene {
                         this.currentBoss = this.parrot;
                         this.parrot.WakeUp();
                         hasRelic = false;
+                        this.sound.play("effectBaseParrot", { loop: true });
                     }
                     this.gorila.setFrame(27);
                     break;
@@ -173,6 +181,10 @@ class BossRoom extends BaseScene {
             }
 
             hasRelic = false;
+        } 
+        else {
+            this.sound.stopAll();
+            this.musicBGBoss = this.sound.play("music", { loop: true }, { volume: 2 });
         }
     }
 
@@ -292,6 +304,8 @@ class Dungeons extends BaseScene {
             default:
                 break;
         }
+        this.sound.stopAll();
+        this.musicBGDungeon = this.sound.play("music", { loop: true }, { volume: 2 });
     }
 
     UpdateStage(time, delta) {
@@ -354,6 +368,8 @@ class MainMenu extends Phaser.Scene {
         this.load.image('credits', '/resources/img/Interfaz/Menu/Buttons2.png');
 
         this.load.image('menuBackground', '/resources/img/Interfaz/Menu/menuBackground.png');
+
+        this.load.audio("music", "resources/audio/music.ogg");
     }
 
     create() {
@@ -399,6 +415,8 @@ class MainMenu extends Phaser.Scene {
                         }
 
                     }, this);
+                    this.sound.stopAll();
+        this.musicBGMainMenu = this.sound.play("music", { loop: true }, { volume: 2 });
 
 
                 }
