@@ -246,14 +246,6 @@ class Player extends Phaser.GameObjects.Sprite {
 
     Run(dir, delta) {
 
-        /*if (this == this.scene.swordPlayer && (Math.abs(this.scene.player0.x - this.scene.player1.x) > 240 || Math.abs(this.scene.player0.y - this.scene.player1.y) > 135) && !this.isHurt) {
-            //this.health++;
-            //this.Hurt();
-
-            this.x = this.scene.bowPlayer.x - 32 * this.scene.bowPlayer.flipX;
-            this.y = this.scene.bowPlayer.y - 32;
-        }*/
-
         if (this.canMove && !this.attacking) { this.body.setVelocityX(dir * this.speed); }
 
         if (!this.attacking && !this.isHurt) {

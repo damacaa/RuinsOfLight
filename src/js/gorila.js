@@ -60,7 +60,7 @@ class GreatGorila extends Enemy {
         }
 
         
-        this.health = 1000;
+        this.health = 4000;
         this.wait = 4000;
 
         this.primaryTarget = this.scene.bowPlayer;
