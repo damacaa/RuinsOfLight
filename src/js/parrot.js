@@ -90,6 +90,10 @@ class Parrot extends Enemy {
 
         this.healthBar.Death();
 
+        this.scene.sound.stopAll();
+        this.scene.sound.play("music", { loop: true }, { volume: 2 });
+        this.scene.sound.play("effectDeathGorila");
+
         /*this.once('animationcomplete', () => {
             //this.destroy();
         });*/
@@ -175,6 +179,9 @@ class Parrot extends Enemy {
         //this.setTintFill(0xff1010);
         this.body.velocity.x = (this.primaryTarget.x - this.x) * 3;
         this.body.velocity.y = (this.primaryTarget.y - this.y) * 2;
+
+        this.scene.sound.play("effectParrot");
+
 
         /*this.scene.time.delayedCall(1500, function () {
             this.anims.play('parrotIdle', true);
