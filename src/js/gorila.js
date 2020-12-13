@@ -71,7 +71,7 @@ class GreatGorila extends Enemy {
 
     WakeUp() {
         this.awake = true;
-        this.anims.play('gorilaWakeUp', true);
+        this.anims.play('statuGorila', true);
         this.healthBar = new StatusBar(this.scene, this, 'GREAT GORILA GUARDIAN');
         this.body.enable = true;
         this.setDepth(2);
