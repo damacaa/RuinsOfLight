@@ -17,7 +17,7 @@ Integrantes:
   
 -María Hidalga de la Fuente
   m.hidalga.2016@alumnos.urjc.es
-  MariaHidalga
+  mariahidalgaf
   
 -Daniel Martí Casanova
   d.marti.2018@alumnos.urjc.es
