@@ -1,6 +1,4 @@
 class Player extends Phaser.GameObjects.Sprite {
-
-
     constructor(scene, x, y, noWeaponKey, swordKey, bowKey, health) {
         super(scene, x, y, noWeaponKey);
         this.scene = scene;
@@ -218,7 +216,7 @@ class Player extends Phaser.GameObjects.Sprite {
 
         this.dealingDamage = false;
 
-        this.setDepth(2);
+        this.setDepth(3);
         //player0.setBounce(0.2);
         //body.setCollideWorldBounds(true);
 
@@ -247,14 +245,6 @@ class Player extends Phaser.GameObjects.Sprite {
     }
 
     Run(dir, delta) {
-
-        if (this == this.scene.swordPlayer && (Math.abs(this.scene.player0.x - this.scene.player1.x) > 240 || Math.abs(this.scene.player0.y - this.scene.player1.y) > 135) && !this.isHurt) {
-            //this.health++;
-            //this.Hurt();
-
-            this.x = this.scene.bowPlayer.x - 32 * this.scene.bowPlayer.flipX;
-            this.y = this.scene.bowPlayer.y - 32;
-        }
 
         if (this.canMove && !this.attacking) { this.body.setVelocityX(dir * this.speed); }
 
@@ -347,7 +337,7 @@ class Player extends Phaser.GameObjects.Sprite {
             this.attacking = false;
             this.fallingAttack = false;
 
-            if (this.health != 0) {
+            if (this.health > 0) {
                 this.health--;
                 this.body.setVelocityY(-300);
                 this.body.setVelocityX(0);
@@ -366,7 +356,7 @@ class Player extends Phaser.GameObjects.Sprite {
                 }, [], this);
 
             } else {
-                this.scene.LoadScene('mainMenu');
+                this.scene.LoadScene('gameOver');
             }
 
         }
@@ -482,7 +472,6 @@ class Player extends Phaser.GameObjects.Sprite {
                             }, [], this);*/
 
                             this.once('animationcomplete', () => {
-                                console.log("listo");
                                 this.attacking = false;
                                 this.anims.play('attack2' + this.name, true);
                                 (!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
@@ -507,7 +496,7 @@ class Player extends Phaser.GameObjects.Sprite {
                             //(!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
 
                             this.once('animationcomplete', () => {
-                                console.log("listo");
+
                                 this.attacking = false;
                                 this.fallingAttack = false;
                                 this.anims.play('fallingAttackRight2' + this.name, true);

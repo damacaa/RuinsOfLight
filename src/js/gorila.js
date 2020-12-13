@@ -50,20 +50,31 @@ class GreatGorila extends Enemy {
                 frameRate: 8,
                 repeat: 0
             });
+
+            this.scene.anims.create({
+                key: 'dead',
+                frames: this.scene.anims.generateFrameNumbers(gorilaKey, { start: 19, end: 27 }),
+                frameRate: 4,
+                repeat: 0
+            });
         }
 
-        this.health = 2000;
+        
+        this.health = 4000;
         this.wait = 4000;
-        this.percentageHealth;
 
         this.primaryTarget = this.scene.bowPlayer;
         this.secondaryTarget = this.scene.swordPlayer;
+
+        this.body.enable = false;
     }
 
     WakeUp() {
         this.awake = true;
         this.anims.play('gorilaWakeUp', true);
-        this.vidaGorila = new StatusBar(this.scene, this, 'Gran Guardián Gorila');
+        this.healthBar = new StatusBar(this.scene, this, 'GREAT GORILA GUARDIAN');
+        this.body.enable = true;
+        this.setDepth(2);
 
         this.once('animationcomplete', () => {
             this.anims.play('idleLeft', true);
@@ -73,12 +84,15 @@ class GreatGorila extends Enemy {
     }
 
     Die() {
+        this.scene.camera.flash(1000);
         defeatedBosses++;
 
         this.awake = false;
-        this.anims.play('gorilaSleep', true);
+        this.anims.play('dead', true);
         this.canMove = false;
         this.body.enable = false;
+
+        this.healthBar.Death();
 
         /*this.once('animationcomplete', () => {
             this.destroy();
@@ -86,9 +100,8 @@ class GreatGorila extends Enemy {
     }
 
     Update() {
-        if(this.awake){
-            this.percentageHealth = (this.health/2000) * 240;
-            this.vidaGorila.UpdateVida();
+        if (this.awake) {
+            this.healthBar.UpdateBar();
         }
 
         if (this.scene && this.canMove) {

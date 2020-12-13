@@ -57,16 +57,13 @@ class Guardian extends Enemy {
         this.canMove = false;
         this.attacking = false;
         this.canAttack = false;
-        this.wait = 200;
+        this.wait = 2000;
         this.timer = null;
         this.speed = 70;
 
         this.range = 50;
         this.rangeX = 300;
         this.rangeY = 50;
-
-
-
     }
 
     WakeUp() {
@@ -78,43 +75,40 @@ class Guardian extends Enemy {
 
         this.once('animationcomplete', () => {
             this.canMove = true;
-            this.canAttack = true;
+            this.scene.time.delayedCall(this.wait, function () {
+                this.canAttack = true;
+            }, [], this);
         });
-
-
     }
 
-
-
     Die() {
-
-
         this.body.setVelocityX(0);
         this.awake = false;
         this.anims.play('guardianDie', true);
+
         this.canMove = false;
-        this.body.enable = false;
         this.canAttack = false;
+        this.body.enable = false;
+
+        const index = this.scene.entities.indexOf(this);
+        if (index > -1) {
+            this.scene.entities.splice(index, 1);
+        }
+
+        this.scene.time.delayedCall(this.wait, this.destroy, [], this);
     }
 
 
-
     Update() {
-
-
         if (this.scene && this.canMove) {
 
             if (this.body.blocked.left || this.body.blocked.right) { this.body.setVelocityY(0); }
 
-            if (((Math.abs(this.scene.bowPlayer.x - this.x) > this.rangeX)&&(Math.abs(this.scene.swordPlayer.x - this.x)>this.rangeX))||((Math.abs(this.scene.bowPlayer.y - this.y) > this.rangeY)&&(Math.abs(this.scene.swordPlayer.y - this.y)>this.rangeY))){
+            if (((Math.abs(this.scene.bowPlayer.x - this.x) > this.rangeX) && (Math.abs(this.scene.swordPlayer.x - this.x) > this.rangeX)) || ((Math.abs(this.scene.bowPlayer.y - this.y) > this.rangeY) && (Math.abs(this.scene.swordPlayer.y - this.y) > this.rangeY))) {
                 this.anims.play('guardianIdle', true);
                 this.body.setVelocityX(0);
-            }else{
-
-            if (Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x)) {
-
-                
-
+            } else {
+                if (Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x)) {
                     if ((Math.abs(this.scene.bowPlayer.x - this.x) > this.range) || (Math.abs(this.scene.bowPlayer.y - this.y) > this.range)) {
                         if (this.scene.bowPlayer.x < this.x) {
                             this.body.setVelocityX(-this.speed);
@@ -137,42 +131,32 @@ class Guardian extends Enemy {
                         if (this.canAttack) {
                             this.Attack();
                         }
-
                     }
-            } else {
-
-
-                if ((Math.abs(this.scene.swordPlayer.x - this.x) > this.range) || (Math.abs(this.scene.swordPlayer.y - this.y) > this.range)) {
-                    if (this.scene.swordPlayer.x < this.x) {
-                        this.body.setVelocityX(-this.speed);
-                        this.flipX = false;
-                        this.anims.play('guardianMove', true);
-
-
-                    } else {
-                        this.body.setVelocityX(this.speed);
-                        this.flipX = true;
-                        this.anims.play('guardianMove', true);
-
-                    }
-
                 } else {
-
-                    if (this.scene.swordPlayer.x < this.x) {
-                        this.flipX = false;
+                    if ((Math.abs(this.scene.swordPlayer.x - this.x) > this.range) || (Math.abs(this.scene.swordPlayer.y - this.y) > this.range)) {
+                        if (this.scene.swordPlayer.x < this.x) {
+                            this.body.setVelocityX(-this.speed);
+                            this.flipX = false;
+                            this.anims.play('guardianMove', true);
+                        } else {
+                            this.body.setVelocityX(this.speed);
+                            this.flipX = true;
+                            this.anims.play('guardianMove', true);
+                        }
                     } else {
-                        this.flipX = true;
-                    }
+                        if (this.scene.swordPlayer.x < this.x) {
+                            this.flipX = false;
+                        } else {
+                            this.flipX = true;
+                        }
 
-                    if (this.canAttack) {
-                        this.Attack();
+                        if (this.canAttack) {
+                            this.Attack();
+                        }
                     }
-
                 }
             }
         }
-    }
-
     }
 
     Attack() {
@@ -182,58 +166,37 @@ class Guardian extends Enemy {
 
         this.body.setVelocityY(0);
 
+        this.anims.play('guardianPreparingAttack', true);
+        this.attacking = true;
+        this.body.setVelocityX(0);
+        this.body.setVelocityY(0);
 
-        this.timer = this.scene.time.delayedCall(this.wait, startAttack, [null], this);
-
-
-
-
-
-        function startAttack() {
-
-
-
-
+        this.once('animationcomplete', () => {
             if (this.health > 0) {
-                this.anims.play('guardianPreparingAttack', true);
-                this.attacking = true;
-                this.body.setVelocityX(0);
-                this.body.setVelocityY(0);
-              
+                let offset = 0;
+                (this.flipX) ? offset = 22 : offset = -22;
+
+                this.hitBox = this.scene.physics.add.image(this.x + offset, this.y + 32, null);
+                this.hitBox.setSize(50, 15);
+                this.hitBox.visible = false;
+                this.hitBox.body.setAllowGravity(false);
+
+                this.hitBox.body.enable = true;
+                this.scene.physics.add.overlap(this.hitBox, this.scene.players, this.scene.MeleeDamage, null, this.scene);
+
+                this.anims.play('guardianAtack', true);
+
                 this.once('animationcomplete', () => {
+                    this.hitBox.destroy();
+                    this.canMove = true;
 
-                    let offset = 0;
-                    (this.flipX) ? offset = 22 : offset = -22;
-
-
-
-                    this.hitBox = this.scene.physics.add.image(this.x + offset, this.y + 32, null);
-                    this.hitBox.setSize(50, 15);
-                    this.hitBox.visible = false;
-                    this.hitBox.body.setAllowGravity(false);
-
-                    this.hitBox.body.enable = true;
-                    this.scene.physics.add.overlap(this.hitBox, this.scene.players, this.scene.MeleeDamage, null, this.scene);
-
-                    this.anims.play('guardianAtack', true);
-
-
-
-
-                    this.once('animationcomplete', () => {
-                        this.hitBox.destroy();
-                        this.canMove = true;
-                        
-
+                    this.scene.time.delayedCall(this.wait, function () {
                         this.canAttack = true;
-
-                    });
-
+                    }, [], this);
 
                 });
-
             }
-        }
+        });
     };
     CheckAttacking() { return this.attacking; }
 }
