@@ -756,9 +756,6 @@ class Credits extends Phaser.Scene {
 
     constructor() {
         super('Credits');
-
-        //this.step = 0;
-        //this.steps = 70;
         
     }
 
@@ -770,13 +767,9 @@ class Credits extends Phaser.Scene {
         }
         );
 
-        //this.load.image('title', '/resources/img/Interfaz/Menu/Title.png');
-        //this.load.image('menuBackground', '/resources/img/Interfaz/Menu/menuBackground.png');
     }
 
     create() {
-        //p0Health = 6;
-        //p1Health = 6;
 
         this.anims.create({
             key: 'credits',
@@ -795,53 +788,35 @@ class Credits extends Phaser.Scene {
         this.cr.once('animationcomplete', () => {
             this.scene.start('mainMenu');
         });
-        //this.EnableFullScreen();
-
-        /*this.text = this.add.text(240, 250, 'PRESS TO PLAY', {
-            fontFamily: '"CambriaB"',
-            fontSize: '12px'
-        }).setOrigin(0.5).setDepth(10);; //, stroke: '0f0f0f', strokeThickness: 20
-
-        this.title = this.add.image(240, 40, 'title').setOrigin(0.5, 0.5).setDepth(10);
-        this.bg = this.add.sprite(240, 135, 'intro').setOrigin(0.5, 0.5);
-
-        this.input.on('pointerdown', function (event) {
-            if (this.step == 0) {
-                this.step++;
-                this.bg.setFrame(this.step);
-                this.title.destroy();
-                this.text.destroy();
-
-            } else if (this.step < this.steps) {
-                this.step++;
-                this.bg.setFrame(this.step);
-            } else {
-                this.step = 0;
-                this.scene.start('altarRoom');
-            }
-
-
-
-        }, this);
-        */
+       
     }
 
     update(time, delta) { }
+    
+} 
 
-    /*EnableFullScreen() {
+class GameOver extends Phaser.Scene {
 
-        var FKey = this.input.keyboard.addKey('F');
+    constructor() {
+        super('gOver');
+        
+    }
 
-        FKey.on('down', function () {
+    preload() {
+      
+        this.load.image('gameOver', '/resources/img/Interfaz/Game Over/Game Over.png');
+    }
 
-            if (this.scale.isFullscreen) {
-                this.scale.stopFullscreen();
-            }
-            else {
-                this.scale.startFullscreen();
-            }
+    create() {
 
-        }, this);
-    }*/
+        this.camera = this.cameras.main;
 
+        this.gO = this.add.image(240, 135, 'gameOver').setOrigin(0.5, 0.5);
+
+        this.time.delayedCall(2000, function (){this.scene.start('mainMenu');}, [], this);
+       
+    }
+
+    update(time, delta) { }
+    
 } 
