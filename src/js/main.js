@@ -143,7 +143,7 @@ window.onload = function () {
                 //debug: true
             }
         },
-        scene: [MainMenu, AltarRoom, BossRoom, Dungeons]
+        scene: [MainMenu, AltarRoom, BossRoom, Dungeons, GameOver, Credits]
     }
 
     game = new Phaser.Game(config);

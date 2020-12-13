@@ -108,8 +108,8 @@ class BaseScene extends Phaser.Scene {
 
         this.load.spritesheet('droneShotKey',
             '/resources/animations/enemies/Drone/DroneShot.png', {
-            frameWidth: 16,
-            frameHeight: 16
+            frameWidth: 6,
+            frameHeight: 6
         }
         );
 
@@ -182,7 +182,7 @@ class BaseScene extends Phaser.Scene {
 
     create() {
         this.fading = false;
-        this.cameras.main.setRenderToTexture(customPipeline);
+        //this.cameras.main.setRenderToTexture(customPipeline);
         //Crea listas de entidades
         this.playerProjectiles = this.physics.add.group();
         this.enemyProjectiles = this.physics.add.group();
