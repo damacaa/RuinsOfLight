@@ -1,5 +1,3 @@
-
-
 class BaseScene extends Phaser.Scene {
     constructor(key) {
         super(key);
@@ -209,6 +207,11 @@ class BaseScene extends Phaser.Scene {
         this.camera.setOrigin(0.5, 0.5);
         this.camera.setBackgroundColor('rgba(21, 7, 4, 1)');
 
+        this.camera1 = this.cameras.add(250, 10, 220, 115);
+        this.camera1.setOrigin(0.5, 0.5).setZoom(1).setBackgroundColor('rgba(21, 7, 4, 1)');
+
+        this.camera1.visible = false;
+
         this.CreateStage();
 
         //Añade colisiones
@@ -231,9 +234,10 @@ class BaseScene extends Phaser.Scene {
             , fill: '#ffffff'
         }).setScrollFactor(0);
         */
-        this.health = new Health(this, 120, 20, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0.5, 0.5);
+        this.health = new Health(this, 10, 10, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0, 0);
         this.health.UpdateLifes();
 
+        this.camera1.ignore(this.health);
     }
 
     LoadTileMap(key) {
@@ -246,8 +250,6 @@ class BaseScene extends Phaser.Scene {
         this.groundTiles = this.map.addTilesetImage('Tile_sheet', 'atlas');
         this.groundLayer = this.map.createStaticLayer('Suelo', this.groundTiles, 0, 0);
 
-
-
         //Colisiones
         this.groundLayer.setCollisionBetween(1, 29);
 
@@ -255,10 +257,10 @@ class BaseScene extends Phaser.Scene {
         this.physics.add.collider(this.enemies, this.groundLayer);
 
         this.camera.setBounds(0, 0, this.map.width * 32, this.map.height * 32);
+        this.camera1.setBounds(0, 0, this.map.width * 32, this.map.height * 32);
     }
 
     CheckInputs(delta) {
-
 
         let cursors0 = this.input.keyboard.addKeys({
             up: Phaser.Input.Keyboard.KeyCodes.W,
@@ -266,7 +268,6 @@ class BaseScene extends Phaser.Scene {
             left: Phaser.Input.Keyboard.KeyCodes.A,
             right: Phaser.Input.Keyboard.KeyCodes.D
         });
-
 
         var keyObj = this.input.keyboard.addKey('E'); // Get key object
         var isDown = keyObj.isDown;
@@ -363,6 +364,19 @@ class BaseScene extends Phaser.Scene {
         this.CheckInputs(delta);
 
         this.UpdateStage(time, delta);
+
+        if (this.swordPlayer && !this.camera.worldView.contains(this.swordPlayer.x, this.swordPlayer.y)) {
+            //this.health++;
+            //this.Hurt();
+
+            //this.x = this.bowPlayer.x - 32 * this.bowPlayer.flipX;
+            //this.y = this.bowPlayer.y - 32;
+
+            //if(this.camera1)
+
+            this.camera1.startFollow(this.swordPlayer);
+            this.camera1.visible = true;
+        } else { this.camera1.visible = false; }
     }
 
     LoadScene(key) {
