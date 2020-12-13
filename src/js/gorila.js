@@ -53,7 +53,7 @@ class GreatGorila extends Enemy {
         }
 
         
-        this.health = 2000;
+        this.health = 4000;
         this.wait = 4000;
 
         this.primaryTarget = this.scene.bowPlayer;
@@ -65,8 +65,9 @@ class GreatGorila extends Enemy {
     WakeUp() {
         this.awake = true;
         this.anims.play('gorilaWakeUp', true);
-        this.healthBar = new StatusBar(this.scene, this, 'Gran Guardián Gorila');
+        this.healthBar = new StatusBar(this.scene, this, 'GREAT GORILA GUARDIAN');
         this.body.enable = true;
+        this.setDepth(2);
 
         this.once('animationcomplete', () => {
             this.anims.play('idleLeft', true);

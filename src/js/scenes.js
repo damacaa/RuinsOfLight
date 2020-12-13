@@ -25,7 +25,7 @@ function ResetGame(){
     levelY = 1;
     whereAreTheyComingFrom = 0;
 
-    hasRelic = false;
+    hasRelic = true;
     firstTimeBoss = true;
     defeatedBosses = 0;
 }
@@ -254,7 +254,6 @@ class Dungeons extends BaseScene {
                 break;
         }
 
-        console.log(whereAreTheyComingFrom);
         //Dependiendo de de qué nivel vengan, los jugadores aparecen en un sitio u otro
         switch (whereAreTheyComingFrom) {
             case 0:
