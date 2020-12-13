@@ -14,7 +14,7 @@ let hasRelic;
 let firstTimeBoss;
 var defeatedBosses;
 
-function ResetGame(){
+function ResetGame() {
     p0Health = 6;
     p1Health = 6;
 
@@ -129,7 +129,7 @@ class BossRoom extends BaseScene {
         //Crea enemigos
         this.gorila = new GreatGorila(this, 500, 96, 'greatGorila');
         this.parrot = new Parrot(this, 650, 175, 'greatParrot');
-        
+
 
         if (!firstTimeBoss) {
             this.player0.x = this.dungeonDoor.x - 80;
@@ -145,27 +145,34 @@ class BossRoom extends BaseScene {
 
             firstTimeBoss = false;
         }
-        if (hasRelic) {
-            this.dungeonDoor.Close();
 
-            //Dependiendo del número de bosses derrotados se activa el siguiente boss
-            switch (defeatedBosses) {
-                case 0:
+        //Dependiendo del número de bosses derrotados se activa el siguiente boss
+        switch (defeatedBosses) {
+            case 0:
+                if (hasRelic) {
+                    this.dungeonDoor.Close();
                     this.currentBoss = this.gorila;
                     this.gorila.WakeUp();
-                    break;
-                case 1:
+                    hasRelic = false;
+                }
+                break;
+            case 1:
+                if (hasRelic) {
+                    this.dungeonDoor.Close();
                     this.currentBoss = this.parrot;
                     this.parrot.WakeUp();
-                    break;
+                    hasRelic = false;
+                }
+                this.gorila.setFrame(27);
+                break;
 
-                default:
-                    break;
-            }
-
-            hasRelic = false;
+            default:
+                break;
         }
+
+        hasRelic = false;
     }
+
 
     UpdateStage() {
         if (this.currentBoss && !this.currentBoss.awake) {
@@ -358,7 +365,9 @@ class MainMenu extends Phaser.Scene {
         this.title = this.add.image(240, 40, 'title').setOrigin(0.5, 0.5).setDepth(10);
         this.bg = this.add.sprite(240, 135, 'intro').setOrigin(0.5, 0.5);
 
+
         this.input.on('pointerdown', function (event) {
+
             if (this.step == 0) {
                 this.step++;
                 this.bg.setFrame(this.step);
@@ -368,6 +377,7 @@ class MainMenu extends Phaser.Scene {
             } else if (this.step < this.steps) {
                 this.step++;
                 this.bg.setFrame(this.step);
+
             } else {
                 this.step = 0;
                 this.scene.start('altarRoom');

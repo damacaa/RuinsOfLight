@@ -150,7 +150,6 @@ class Parrot extends Enemy {
                 }
             }
         }
-
     }
 
     Attack() {
