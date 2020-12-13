@@ -182,7 +182,7 @@ class BaseScene extends Phaser.Scene {
 
     create() {
         this.fading = false;
-        //this.cameras.main.setRenderToTexture(customPipeline);
+        this.cameras.main.setRenderToTexture(customPipeline);
         //Crea listas de entidades
         this.playerProjectiles = this.physics.add.group();
         this.enemyProjectiles = this.physics.add.group();
