@@ -91,7 +91,7 @@ class Parrot extends Enemy {
         this.flipX = false;
 
 
-        this.anims.play('parrotIdle', true);
+        this.anims.play('dead2', true);
         //console.log("Hello");
         this.canMove = false;
 
@@ -99,7 +99,10 @@ class Parrot extends Enemy {
 
         this.scene.sound.stopAll();
         this.scene.sound.play("music", { loop: true }, { volume: 2 });
-        this.scene.sound.play("effectDeathGorila");
+        this.scene.sound.play("effectDeathParrot");
+
+
+        
 
         /*this.once('animationcomplete', () => {
             //this.destroy();
@@ -149,14 +152,6 @@ class Parrot extends Enemy {
                     this.attacking = false;
                     this.body.setAccelerationY(-500);
                     this.scene.cameras.main.shake(750, .01);
-                }
-                
-            } else {
-                if (this.body.blocked.down && this.body.enable) {
-                    this.anims.play('dead2', true);
-                    this.once('animationcomplete', () => {
-                        this.body.enable = false;
-                    });
                 }
             }
         }

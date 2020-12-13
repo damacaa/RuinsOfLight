@@ -523,7 +523,7 @@ class MainMenu extends Phaser.Scene {
 class Credits extends Phaser.Scene {
 
     constructor() {
-        super('Credits');
+        super('credits');
 
     }
 
