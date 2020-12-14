@@ -365,6 +365,7 @@ class MainMenu extends Phaser.Scene {
         this.load.image('title', '/resources/img/Interfaz/Menu/Title.png');
         this.load.image('newGame', '/resources/img/Interfaz/Menu/Buttons1.png');
         this.load.image('credits', '/resources/img/Interfaz/Menu/Buttons2.png');
+        this.load.image('skip', '/resources/img/Interfaz/Menu/Buttons4.png');
 
         this.load.image('menuBackground', '/resources/img/Interfaz/Menu/menuBackground.png');
 
@@ -382,6 +383,7 @@ class MainMenu extends Phaser.Scene {
 
         this.newGame = this.add.image(65, 90, 'newGame').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
         this.credits = this.add.image(65, 130, 'credits').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
+                
 
         this.anims.create({
             key: 'first',
@@ -422,13 +424,20 @@ class MainMenu extends Phaser.Scene {
         this.musicBGMainMenu = this.sound.play("music", { loop: true }, { volume: 2 });
 
         this.newGame.on('pointerdown', function (event) {
+            
             if (this.step == 0) {
                 this.step++;
                 this.bg.setFrame(this.step);
                 this.title.destroy();
                 this.newGame.destroy();
                 this.credits.destroy();
+                //Saltar la introducción
+                this.skip = this.add.image(440, 10, 'skip').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
+                this.skip.on('pointerdown', function (event) {
 
+                    this.scene.start('altarRoom');
+        
+                }, this);
 
                 this.text = this.add.text(240, 260, 'CLICK TO CONTINUE', {
                     fontFamily: '"CambriaB"',
