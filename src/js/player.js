@@ -499,7 +499,7 @@ class Player extends Phaser.GameObjects.Sprite {
 
                             this.anims.play('fallingAttackRight' + this.name, true);
                             //(!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
-
+                            this.scene.sound.play("effectBow");
                             this.once('animationcomplete', () => {
 
                                 this.attacking = false;
