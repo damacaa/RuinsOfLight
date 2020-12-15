@@ -189,6 +189,12 @@ class BaseScene extends Phaser.Scene {
         this.load.audio("effectGorilaRelic", "resources/audio/effects/enemies/gorilaRelic.ogg"); // Efecto reliquia gorila
         this.load.audio("effectParrotRelic", "resources/audio/effects/enemies/parrotRelic.ogg"); // Efecto reliquia loro
 
+
+        //Efectos intro
+        this.load.audio("effectIntroDoor", "resources/audio/effects/doorClosed.ogg"); // Efecto puerta   ////////////////////////////////////
+        this.load.audio("effectPotion", "resources/audio/effects/potion.ogg"); // Efecto pocion
+
+
         //Interfaz
         this.load.spritesheet('vidas',
             '/resources/img/Interfaz/Vida2.png', {
@@ -246,7 +252,7 @@ class BaseScene extends Phaser.Scene {
         if(this.swordPlayer){
             this.camera1.startFollow(this.swordPlayer);
         }
-        
+
         this.camera1.visible = false;
 
         //Crea el escenario
