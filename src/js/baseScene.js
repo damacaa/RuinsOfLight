@@ -190,6 +190,7 @@ class BaseScene extends Phaser.Scene {
 
         //Efectos intro
         this.load.audio("effectIntroDoor", "resources/audio/effects/doorClosed.ogg"); // Efecto puerta   ////////////////////////////////////
+        this.load.audio("effectPotion", "resources/audio/effects/potion.ogg"); // Efecto pocion
 
         //Interfaz
         this.load.spritesheet('vidas',
