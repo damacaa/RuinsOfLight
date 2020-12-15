@@ -132,6 +132,7 @@ Saturación: La saturación será media, con colores llamativos pero no estriden
 
 Música: Altares: Música pausada y relajada constante. Gran Salón: Música relajada y pausada hasta que ocurra un enfrentamiento, entonces la música se acelera. Resto de zonas: Música pausada hasta enfrentamiento. 
 Efectos*: Ataque Espada, Ataque enemigos, Despertar y Muerte de guardianes jefes, Ataque Arco, Puertas…
+
 *Efectos: algunos efectos como los del gorila han tenido que ser descargados y adaptados para el juego. Concretamente la referencia es:http://recursostic.educacion.es/bancoimagenes/web/
  
 Arte conceptual: Guía de estilo: El estilo artístico empleado para los personajes y los escenarios es el pixel art. Los distintos personajes tendrán animaciones de movimiento, ataque, salto, etc. Los escenarios toman inspiración de antiguas civilizaciones. La arquitectura se caracteriza por emplear piedra con detalles de luz emisiva que representa la energía que recorre el templo y a sus guardianes. Galería de imágenes: Véanse imágenes en la carpeta de recursos del siguiente enlace.
