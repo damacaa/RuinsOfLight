@@ -158,9 +158,11 @@ class BaseScene extends Phaser.Scene {
         this.load.tilemapTiledJSON('altarRoom', 'resources/levels/AltarRoom.json');
         this.load.tilemapTiledJSON('bossRoom', 'resources/levels/BossRoom.json');
 
-        //Audio
-        this.load.audio("music", "resources/audio/music.ogg"); // Fondo
-        this.load.audio("fastMusic", "resources/audio/fastmusic.ogg"); // Fondo rapido
+        //Musica
+        this.load.audio("music", "resources/audio/music.ogg"); // Musica fondo
+        this.load.audio("battleMusic", "resources/audio/musicBattle.ogg"); // Musica fondo batalla
+        this.load.audio("gameOverMusic", "resources/audio/musicGameOver.ogg"); // Musica derrota
+        this.load.audio("winMusic", "resources/audio/musicWin.ogg"); // Musica victoria
 
         //Efectos jugadores
         this.load.audio("effectSword", "resources/audio/effects/players/sword.ogg"); // Efecto espada
