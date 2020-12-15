@@ -16,8 +16,13 @@ Integrantes:
 
 https://trello.com/b/W579zLya/ruins-of-light
 
-0.-DATOS DEL PROYECTO Título: Ruins Of Light Game Design Document Diciembre 2020 Fase 2: JER2021-MOS-08
+0.-DATOS DEL PROYECTO 
+Título: Ruins Of Light Game Design Document Diciembre 2020 
+
+Fase 2: JER2021-MOS-08
+
 Equipo de Desarrollo: Sergio Montes Veredas. Sara Fuente Águila. Juan Jesús Rodríguez Sánchez. María Hidalga de la Fuente. Daniel Martí Casanova.
+
 
 1.-INTRODUCCIÓN Acción: los jugadores deben emplear su velocidad, destreza en el control y tiempo de reacción para derrotar a los distintos enemigos que irán surgiendo a lo largo del juego.
 
@@ -46,7 +51,9 @@ Público: Joven-Adulto-Amantes del Arcade. Se trata de una trama sencilla. Es un
 
 Visión general del juego: Ruins Of Light es un juego que toma referencias de las leyendas que mencionan que una antigua civilización dejó templos repartidos por toda la tierra: la Atlántida, las pirámides egipcias, las piedras de Stonehenge… Propósito: Ruins Of Light busca la cooperación en red entre dos jugadores, proporcionándoles retos tales como explorar los más profundos rincones de una pirámide maya en la que existen unos tesoros o reliquias que despertarán los más fieros guardianes de una antiquísima civilización nunca antes conocida. Los dos jugadores deberán luchar codo con codo enfrentándose a infinidad de enemigos, incluidos los guardianes, si quieren poder escapar de este templo que los protagonistas hallaron tras años de investigaciones. Las mecánicas de los enemigos y escenarios están diseñadas precisamente para lograr ese objetivo.
 
-2.-JUGABILIDAD El jugador podrá moverse en un plano 2D a través de distintos escenarios, con un avance lineal pasando por cada uno de los jefes. El sistema de derrota de este juego, se produce si alguno de los dos jugadores, pierde todas sus vidas (7), el juego muestra una pantalla de “Game Over”, y de nuevo habrá que comenzar una nueva partida desde el menú principal. Cámara: 2D siguiendo lateralmente y verticalmente a los protagonistas. Controles: Teclado y ratón. Ratón: Click izquierdo: Ataque. Click derecho: Interacción. Teclado: A: Desplazarse hacia la izquierda. D: Desplazarse hacia la derecha. W / SpaceBar: Saltar. Esc: Menú. Puntuación: No se dispone de un contador de misiones, pero existen tantas estatuas como bosses, y para poder escapar del templo se deben derrotar a todos ellos. El jugador será consciente de esta situación mediante una pequeña introducción , y los jefes son estatuas visibles en todo momento en el Gran Salón. Guardar/Cargar: No se dispone de sistema de guardado. Flujo de pantallas: Los jugadores comienzan en la pantalla del menú principal, compuesta por el título del juego y el botón de inicio. Cuando se pulsa el botón de inicio, se muestran una secuencia de imágenes que sitúan al jugador en el contexto del juego. A continuación aparecen los dos jugadores en una sala del templo donde cada uno elige su arma. Acto seguido los jugadores tendrán libertad para explorar el templo y completar así las misiones en las que se generarán combinaciones aleatorias de enemigos, regresando al Gran Salón para enfrentarse a los jefes tras cada misión. Diagrama de Flujo: 
+
+2.-JUGABILIDAD El jugador podrá moverse en un plano 2D a través de distintos escenarios, con un avance lineal pasando por cada uno de los jefes. El sistema de derrota de este juego, se produce si alguno de los dos jugadores, pierde todas sus vidas (7), el juego muestra una pantalla de “Game Over”, y de nuevo habrá que comenzar una nueva partida desde el menú principal. Cámara: 2D siguiendo lateralmente y verticalmente a los protagonistas. Controles: Teclado y ratón. Ratón: Click izquierdo: Ataque. Click derecho: Interacción. Teclado: A: Desplazarse hacia la izquierda. D: Desplazarse hacia la derecha. W / SpaceBar: Saltar. Esc: Menú. Puntuación: No se dispone de un contador de misiones, pero existen tantas estatuas como bosses, y para poder escapar del templo se deben derrotar a todos ellos. El jugador será consciente de esta situación mediante una pequeña introducción , y los jefes son estatuas visibles en todo momento en el Gran Salón. Guardar/Cargar: No se dispone de sistema de guardado. Flujo de pantallas: Los jugadores comienzan en la pantalla del menú principal, compuesta por el título del juego y el botón de inicio. Cuando se pulsa el botón de inicio, se muestran una secuencia de imágenes que sitúan al jugador en el contexto del juego. A continuación aparecen los dos jugadores en una sala del templo donde cada uno elige su arma. Acto seguido los jugadores tendrán libertad para explorar el templo y completar así las misiones en las que se generarán combinaciones aleatorias de enemigos, regresando al Gran Salón para enfrentarse a los jefes tras cada misión. 
+Diagrama de Flujo: 
 
 ![alt tag](/resources/img/ReadMe/Diagrama.jpeg) 
 
@@ -64,6 +71,7 @@ Escenas:
 
 
 Escenarios:
+
 
 Templo: El templo está formado por piedra y algunos grabados luminosos principalmente. El juego consta de dos salas o “rooms” principales (Altares y Gran Salón). El resto de salas del templo están interconectadas entre sí mediante puertas, de manera que el jugador puede desplazarse libremente por todo el mapa. Entre ellas distinguimos algunas más importantes, que destacamos a continuación.
 
@@ -90,9 +98,12 @@ Enemigos: Descripción: Seres hechos de roca y energía que se encontraban desac
 Guardian Rodante: Descripción:Enemigo con forma de bola. Rueda en dirección de sus enemigos y explota si está cerca de los jugadores produciendo un gran daño. Solo es vulnerable a los ataques instantes antes de colisionar con el enemigo. Imagen: Véase imagen en el documento GDD. Concepto: Personaje secundario. Estos enemigos tienen el propósito de impedirles el paso a los dos jugadores. Momento: Durante todo el transcurso del juego, generados de forma procedural. Habilidades: Explosión al colisionar con un enemigo. Armas: -. Objetos: No tiene. NPC: Son los enemigos básicos, no son jugables.
 
 Guardián: Descripción: Se trata de un enemigo a modo de soldado que defiende el templo. Es un enemigo que carece de piernas y se arrastra por el suelo acercándose a su enemigo al que atacará con sus propias manos. Imagen: Véase imagen en el documento GDD. Concepto: Personaje secundario. Estos enemigos tienen el propósito de impedirles el paso a los dos jugadores. Momento: Durante todo el transcurso del juego, generados de forma procedural. Habilidades: Ataque con sus manos de piedra. Armas: -. Objetos: No tiene. NPC: Son los enemigos básicos, no son jugables.
+
 Guardián volador: Descripción: Se trata de un enemigo con forma de tostadora que vuela por una energía desconocida. Cuando aparece se aleja lo máximo posible de los jugadores y les ataca desde lejos, evitando así ser alcanzado. Concepto: Personaje secundario. Estos enemigos tienen el propósito de impedirles el paso a los dos jugadores. Momento: Durante todo el transcurso del juego, generados de forma procedural. Habilidades: Ataque aéreo mediante bola de energía. Armas:-. Objetos:No tiene. NPC: Son los enemigos básicos, no son jugables.
 
 Gran Guardián Gorila: Descripción: Enemigo principal. Es un líder de la antigua civilización. Tiene una vida superior al resto de enemigos. Sus puños son poderosos e intenta machacar con ellos a sus enemigos. Concepto: Jefe Final. Estos enemigos son más difíciles de derrotar, una vez derrotados, te permiten seguir avanzando. Momento: Cada vez que los jugadores completan una o varias misiones, son generados siempre en el Gran Salón. Habilidades: Golpe de Puños. Armas:-. Objetos: Posee una armadura que le protege del daño. NPC: Son los enemigos principales del juego o jefes, no son jugables. 
+
+Gran Guardián Loro: Descripción: Enemigo principal. Es un líder de la antigua civilización. Tiene una vida superior al resto de enemigos. Sus garras son poderosos e intenta cazar con ellas a sus enemigos. Concepto: Jefe Final. Estos enemigos son más difíciles de derrotar, una vez derrotados, te permiten seguir avanzando. Momento: Cada vez que los jugadores completan una o varias misiones, son generados siempre en el Gran Salón. Habilidades: Golpe de Garras. Armas:-. Objetos: Posee una armadura que le protege del daño. NPC: Son los enemigos principales del juego o jefes, no son jugables. 
 
 Assets Clave:
 
@@ -104,6 +115,7 @@ Altares: Pedestales o soportes donde reposan ambas armas.
 
 Espada: Arma que permite atacar a los enemigos terrestres. Su portador podrá elegir la dirección del ataque. Arco: Arma que permite atacar a los enemigos a distancia. Su portador podrá elegir la dirección del ataque. 
 
+
 3.-INTERFAZ Esta sección abarca los elementos visibles que componen la pantalla de juego. Inicialmente se mostrarán los bocetos y el equipo de diseño se encargará de su actualización dentro del presente documento. También se describen los conceptos relacionados con la apariencia del juego, paleta de colores, ambientación...
 
 Nombre de la pantalla: Menú principal. Descripción de la pantalla: Muestra un fondo con el templo maya donde transcurre el juego, visto desde el exterior. En la imagen en su parte superior se puede leer el título del juego “Ruins of Light”  y en el centro,escorado a la izquierda, aparecen las opciones de Nuevo Juego y Créditos. 
@@ -114,6 +126,7 @@ Nombre de la pantalla: Créditos. Descripción de la pantalla: Aparece una panta
 
 Nombre de la pantalla: Game Over. Descripción de la pantalla: Aparece una pantalla con dos cadáveres de serpientes entrelazadas con la palabra Game Over. Ambas serpientes hacen referencia a las serpientes que representan la barra de vida de los jugadores. 
 
+
 4.-ARTE Colores: Paleta de colores: 
 
 ![alt tag](/resources/img/ReadMe/Paleta.jpg)
@@ -123,6 +136,7 @@ Saturación: La saturación será media, con colores llamativos pero no estriden
 
 Música: Altares: Música pausada y relajada constante. Gran Salón: Música relajada y pausada hasta que ocurra un enfrentamiento, entonces la música se acelera. Resto de zonas: Música pausada hasta enfrentamiento. 
 Efectos*: Ataque Espada, Ataque enemigos, Despertar y Muerte de guardianes jefes, Ataque Arco, Puertas…
+
 *Efectos: algunos efectos como los del gorila han tenido que ser descargados y adaptados para el juego. Concretamente la referencia es:http://recursostic.educacion.es/bancoimagenes/web/
  
 Arte conceptual: Guía de estilo: El estilo artístico empleado para los personajes y los escenarios es el pixel art. Los distintos personajes tendrán animaciones de movimiento, ataque, salto, etc. Los escenarios toman inspiración de antiguas civilizaciones. La arquitectura se caracteriza por emplear piedra con detalles de luz emisiva que representa la energía que recorre el templo y a sus guardianes. Galería de imágenes: Véanse imágenes en la carpeta de recursos del siguiente enlace.
