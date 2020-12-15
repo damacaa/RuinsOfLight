@@ -52,6 +52,8 @@ class Parrot extends Enemy {
 
         this.primaryTarget = this.scene.swordPlayer;
         this.secondaryTarget = this.scene.bowPlayer;
+
+        this.body.allowGravity = false;
     }
 
     WakeUp() {

@@ -30,8 +30,6 @@ function ResetGame() {
     defeatedBosses = 0;
 }
 
-
-
 class AltarRoom extends BaseScene {
     constructor() {
         super('altarRoom');
@@ -130,9 +128,11 @@ class BossRoom extends BaseScene {
         this.exitDoor.Close();
 
         //Crea enemigos
-        this.gorila = new GreatGorila(this, 500, 96, 'greatGorila');
-        this.parrot = new Parrot(this, 650, 175, 'greatParrot');
+        this.gorila = new GreatGorila(this, 500, 32, 'greatGorila');
+        this.parrot = new Parrot(this, 650, 175 - 66, 'greatParrot');
 
+        this.add.image(this.gorila.x + 8, this.gorila.y + 64 + 64 + 32, 'bossAltar').setDepth(0);
+        this.add.image(this.parrot.x + 48, this.parrot.y + 64 + 19, 'bossAltar').setDepth(0);
 
         if (!firstTimeBoss) {
             this.player0.x = this.dungeonDoor.x - 80;
@@ -160,8 +160,6 @@ class BossRoom extends BaseScene {
                     this.musicBGBoss = this.sound.play("fastMusic", { loop: true }, { volume: 2 });
                     this.dungeonDoor.Close();
                     this.currentBoss = this.gorila;
-                    this.gorila.WakeUp();
-                    hasRelic = false;
                     this.sound.play("effectBaseGorila", { loop: true });
                 }
                 break;
@@ -171,11 +169,9 @@ class BossRoom extends BaseScene {
                     this.musicBGBoss = this.sound.play("fastMusic", { loop: true }, { volume: 2 });
                     this.dungeonDoor.Close();
                     this.currentBoss = this.parrot;
-                    this.parrot.WakeUp();
-                    hasRelic = false;
                     this.sound.play("effectBaseParrot", { loop: true });
                 }
-                this.gorila.setFrame(27);
+                this.gorila.visible = false;
                 break;
 
             default:
@@ -183,19 +179,26 @@ class BossRoom extends BaseScene {
 
         }
 
-        hasRelic = false;
+
     }
 
 
     UpdateStage() {
         if (this.currentBoss && !this.currentBoss.awake) {
-            if (defeatedBosses == 2) {
-                this.exitDoor.Open();
-            } else { this.dungeonDoor.Open(); }
+            console.log(hasRelic);
+            if (hasRelic) {
+                if (this.camera.worldView.contains(this.currentBoss.x, this.currentBoss.y)) {
+                    this.currentBoss.WakeUp();
+                    hasRelic = false;
+                }
+            } else {
+                if (defeatedBosses == 2) {
+                    this.exitDoor.Open();
+                } else { this.dungeonDoor.Open(); }
+            }
         }
     }
 }
-
 
 class Dungeons extends BaseScene {
     //https://www.youtube.com/watch?v=2_x1dOvgF1E
@@ -445,7 +448,7 @@ class MainMenu extends Phaser.Scene {
                 }).setOrigin(0.5).setDepth(10);; //, stroke: '0f0f0f', strokeThickness: 20
 
                 this.input.on('pointerdown', function (event) {
-                    
+
                     if (this.step < 7) {
                         this.step++;
                         this.bg.setFrame(this.step);
@@ -454,38 +457,38 @@ class MainMenu extends Phaser.Scene {
                         this.bg.anims.play('first', true);
                         this.step++;
 
-                            this.input.on('pointerdown', function (event) {
-                                this.bg.setFrame(10);
-                            }, this);
+                        this.input.on('pointerdown', function (event) {
+                            this.bg.setFrame(10);
+                        }, this);
 
                     } else if (this.step == 8) {
                         this.bg.anims.play('second', true);
                         this.step++;
 
-                            this.input.on('pointerdown', function (event) {
-                                this.bg.setFrame(12);
-                            }, this);
-   
+                        this.input.on('pointerdown', function (event) {
+                            this.bg.setFrame(12);
+                        }, this);
+
                     } else if (this.step == 9) {
                         this.bg.anims.play('third', true);
                         this.step++;
 
-                            this.input.on('pointerdown', function (event) {
-                                this.bg.setFrame(15);
-                            }, this);
+                        this.input.on('pointerdown', function (event) {
+                            this.bg.setFrame(15);
+                        }, this);
 
                     } else if (this.step == 10) {
                         this.bg.anims.play('fourth', true);
                         this.step++;
 
-                            this.input.on('pointerdown', function (event) {
-                                this.bg.setFrame(18);
-                            }, this);
-                     
+                        this.input.on('pointerdown', function (event) {
+                            this.bg.setFrame(18);
+                        }, this);
+
                     } else if (this.step == this.steps) {
                         this.bg.anims.play('fifth', true);
                         this.step++;
-   
+
                     } else {
                         this.step = 0;
                         this.scene.start('altarRoom');

@@ -73,13 +73,14 @@ class GreatGorila extends Enemy {
         this.awake = true;
         this.anims.play('gorilaWakeUp', true);
         this.healthBar = new StatusBar(this.scene, this, 'GREAT GORILA GUARDIAN');
-        this.body.enable = true;
         this.setDepth(2);
 
         this.once('animationcomplete', () => {
             this.anims.play('idleLeft', true);
             this.canMove = true;
             this.canAttack = true;
+            this.body.enable = true;
+            this.Attack();
         });
     }
 
