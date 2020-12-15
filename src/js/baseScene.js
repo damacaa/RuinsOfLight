@@ -152,6 +152,7 @@ class BaseScene extends Phaser.Scene {
         this.load.image('relic', '/resources/img/Items/Reliquia/Reliquia.png')
         this.load.image('sword', '/resources/img/Items/Weapons/Sword.png')
         this.load.image('bow', '/resources/img/Items/Weapons/Bow.png')
+        this.load.image('bossAltar', '/resources/img/Items/Altares/AltarBoss.png')
 
         this.load.image('atlas', 'resources/levels/Tile_sheet.png');
         this.load.tilemapTiledJSON('altarRoom', 'resources/levels/AltarRoom.json');
