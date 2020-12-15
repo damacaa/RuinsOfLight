@@ -422,6 +422,7 @@ class MainMenu extends Phaser.Scene {
 
                     } else if (this.step == 7) {
                         this.bg.anims.play('first', true);
+                        //this.sound.play("effectIntroDoor");
                         this.step++;
 
                         this.input.on('pointerdown', function (event) {
@@ -430,6 +431,7 @@ class MainMenu extends Phaser.Scene {
 
                     } else if (this.step == 8) {
                         this.bg.anims.play('second', true);
+                        
                         this.step++;
 
                         this.input.on('pointerdown', function (event) {
@@ -536,6 +538,9 @@ class Credits extends Phaser.Scene {
             this.scene.start('mainMenu');
         });
 
+        this.sound.stopAll();
+        this.musicBGCredits = this.sound.play("music", { loop: true }, { volume: 2 });
+
     }
 
     update(time, delta) { }
@@ -574,6 +579,9 @@ class GameOver extends Phaser.Scene {
 
             }, this);
         }, [], this);
+
+        this.sound.stopAll();
+        this.musicBGGameOver = this.sound.play("music", { loop: true }, { volume: 2 });
     }
 
     update(time, delta) { }

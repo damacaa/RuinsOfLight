@@ -167,6 +167,8 @@ class Relic extends Phaser.GameObjects.Sprite {
         this.setDepth(0);
         this.scene.physics.add.overlap(this, scene.players, this.GetRelic, null, scene);
 
+        this.relicCount = 1;
+
         this.scene.tweens.add({
             targets: this,
             y: y-5,
@@ -178,6 +180,12 @@ class Relic extends Phaser.GameObjects.Sprite {
     }
 
     GetRelic(relic) {
+        if(relic.relicCount == 1){
+            relic.scene.sound.play("effectGorilaRelic");
+            relic.relicCount++;
+        } else if (relic.relicCount == 2){
+            relic.scene.sound.play("effectParrotRelic");
+        }
         relic.scene.camera.flash(1000);
         relic.destroy();
         hasRelic = true;

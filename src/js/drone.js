@@ -138,6 +138,7 @@ class Drone extends Enemy {
         this.attacking = true;
 
         this.shotDown = new Shot(this.scene, this.x, this.y, this.flipX, this.primaryTarget.x, this.primaryTarget.y);
+        this.scene.sound.play("effectDrone");
 
         this.scene.time.delayedCall(this.wait, function () {
             this.canAttack = true; this.canMove = true; this.attacking = false;

@@ -167,6 +167,7 @@ class Guardian extends Enemy {
                 this.scene.physics.add.overlap(this.hitBox, this.scene.players, this.scene.MeleeDamage, null, this.scene);
 
                 this.anims.play('guardianAtack', true);
+                this.scene.sound.play("effectGuardian");
 
                 this.once('animationcomplete', () => {
                     this.hitBox.destroy();

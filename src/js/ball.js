@@ -176,7 +176,8 @@ class Ball extends Enemy {
                 this.hitBox.body.setAllowGravity(false);
                 this.hitBox.body.enable = true;
                 this.scene.physics.add.overlap(this.hitBox, this.scene.players, this.scene.MeleeDamage, null, this.scene);
-
+                
+                this.scene.sound.play("effectBall");
                 this.anims.play('ballAttack', true);
                 this.attacking = true;
                 this.body.setVelocityX(0);
