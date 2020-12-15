@@ -1,9 +1,8 @@
 class Player extends Phaser.GameObjects.Sprite {
-
-
-    constructor(scene, x, y, noWeaponKey, swordKey, bowKey) {
+    constructor(scene, x, y, noWeaponKey, swordKey, bowKey, health) {
         super(scene, x, y, noWeaponKey);
         this.scene = scene;
+        this.health = health;
         this.noWeaponKey = noWeaponKey;
         this.swordKey = swordKey;
         this.bowKey = bowKey;
@@ -60,7 +59,6 @@ class Player extends Phaser.GameObjects.Sprite {
             frames: scene.anims.generateFrameNumbers(swordKey, { start: 6, end: 9 }),
             frameRate: 10,
             repeat: -1,
-            //showOnStart: true
         });
 
         scene.anims.create({
@@ -100,14 +98,14 @@ class Player extends Phaser.GameObjects.Sprite {
         });
 
         scene.anims.create({
-            key: 'fallingAttackRight'+swordKey,
+            key: 'fallingAttackRight' + swordKey,
             frames: scene.anims.generateFrameNumbers(swordKey, { start: 27, end: 30 }),
             frameRate: 15,
             repeat: 0
         });
 
         scene.anims.create({
-            key: 'explosion'+swordKey,
+            key: 'explosion' + swordKey,
             frames: scene.anims.generateFrameNumbers(swordKey, { start: 31, end: 34 }),
             frameRate: 10,
             repeat: 0
@@ -116,6 +114,73 @@ class Player extends Phaser.GameObjects.Sprite {
         scene.anims.create({
             key: 'getHurt' + swordKey,
             frames: scene.anims.generateFrameNumbers(swordKey, { start: 35, end: 36 }),
+            frameRate: 10,
+            repeat: 0
+        });
+
+
+
+        //Animaciones arco
+
+        scene.anims.create({
+            key: 'right' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 0, end: 5 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'idleRight' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 6, end: 9 }),
+            frameRate: 10,
+            repeat: -1,
+        });
+
+        scene.anims.create({
+            key: 'attack1' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 10, end: 19 }),
+            frameRate: 25,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'attack2' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 20, end: 22 }),
+            frameRate: 25,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'jumpRight' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 23, end: 24 }),
+            frameRate: 15,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'fallRight' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 25, end: 26 }),
+            frameRate: 15,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'fallingAttackRight' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 27, end: 35 }),
+            frameRate: 25,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'fallingAttackRight2' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 36, end: 37 }),
+            frameRate: 25,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'getHurt' + bowKey,
+            frames: scene.anims.generateFrameNumbers(bowKey, { start: 38, end: 39 }),
             frameRate: 10,
             repeat: 0
         });
@@ -137,7 +202,7 @@ class Player extends Phaser.GameObjects.Sprite {
 
         this.goingRight = true;
         this.attacking = false;
-        this.speed = 200;
+        this.speed = 200;//200
         this.weapon = 0;
         this.attackNumber = 1;
         this.fallingAttack = false;
@@ -151,7 +216,7 @@ class Player extends Phaser.GameObjects.Sprite {
 
         this.dealingDamage = false;
 
-        this.setDepth(2);
+        this.setDepth(3);
         //player0.setBounce(0.2);
         //body.setCollideWorldBounds(true);
 
@@ -197,7 +262,6 @@ class Player extends Phaser.GameObjects.Sprite {
                             this.jumping = true;
                         }
 
-
                     } else {
                         this.jumping = false;
                         if (!this.falling) {
@@ -236,7 +300,7 @@ class Player extends Phaser.GameObjects.Sprite {
             }
 
 
-        } else if (this.fallingAttack) {
+        } else if (this.fallingAttack && this.weapon == 1) {
             this.hitBox.y = this.y + 16;
 
             if (this.body.onFloor()) {
@@ -245,7 +309,7 @@ class Player extends Phaser.GameObjects.Sprite {
                 this.falling = false;
                 this.fallingAttack = false;
                 this.scene.cameras.main.shake(100, .01);
-                this.anims.play('explosion'+this.name, true); //Sustituir por animacion de impacto contra el suelo
+                this.anims.play('explosion' + this.name, true); //Sustituir por animacion de impacto contra el suelo
 
                 this.once('animationcomplete', () => {
                     this.attacking = false;
@@ -261,6 +325,7 @@ class Player extends Phaser.GameObjects.Sprite {
     Jump() {
         if (!this.attacking && this.body.blocked.down && this.canMove) {
             this.body.setVelocityY(-450);
+            this.scene.sound.play("effectJump");
         }
     }
 
@@ -273,20 +338,30 @@ class Player extends Phaser.GameObjects.Sprite {
             this.attacking = false;
             this.fallingAttack = false;
 
-            this.body.setVelocityY(-300);
-            this.body.setVelocityX(0);
+            if (this.health > 0) {
+                this.health--;
+                this.body.setVelocityY(-300);
+                this.body.setVelocityX(0);
+                
+                this.scene.sound.play("effectHurt");
 
-            this.fallingAttack = false;
-            //this.hitBox.body.enable = false;
+                this.fallingAttack = false;
+                //this.hitBox.body.enable = false;
 
-            this.attacking = false;
-            this.fallingAttack = false;
-            //this.hitBox.body.enable = false;
+                this.attacking = false;
+                this.fallingAttack = false;
+                //this.hitBox.body.enable = false;
+                this.scene.health.UpdateLifes();
 
-            this.scene.time.delayedCall(1000, function () {
-                this.canAttack = true; this.canMove = true; this.isHurt = false;
+                this.scene.time.delayedCall(1000, function () {
+                    this.canAttack = true; this.canMove = true; this.isHurt = false;
 
-            }, [], this);
+                }, [], this);
+
+            } else {
+                this.scene.LoadScene('gameOver');
+            }
+
         }
     }
 
@@ -304,13 +379,13 @@ class Player extends Phaser.GameObjects.Sprite {
                 this.hitBox.visible = false;
                 this.hitBox.setSize(10, 10);
                 this.hitBox.body.setAllowGravity(false);
+                this.hitBox.body.enable=false;
                 this.scene.physics.add.overlap(this.hitBox, this.scene.enemies, this.scene.MeleeDamage, null, this.scene);
 
                 break;
             case 2:
                 this.scene.bowPlayer = this;
-                //this.name = this.bowKey;
-                this.name = this.noWeaponKey;
+                this.name = this.bowKey;
                 break;
             default:
                 this.name = this.noWeaponKey;
@@ -337,6 +412,7 @@ class Player extends Phaser.GameObjects.Sprite {
 
                             switch (this.attackNumber) {
                                 case 1:
+                                    this.scene.sound.play("effectSword2");
                                     break;
                                 case 2:
                                     (this.flipX) ? this.body.setVelocityX(-500) : this.body.setVelocityX(500);
@@ -344,13 +420,14 @@ class Player extends Phaser.GameObjects.Sprite {
                                         this.body.setVelocityX(0)
                                     }, [], this);
                                     this.hitBox.x = (this.flipX) ? this.x - 50 : this.x + 50;
-
+                                    this.scene.sound.play("effectSword");
                                     break;
                                 case 3:
                                     (this.flipX) ? this.body.setVelocityX(250) : this.body.setVelocityX(-250);
                                     this.scene.time.delayedCall(25, function () {
                                         this.body.setVelocityX(0)
                                     }, [], this);
+                                    this.scene.sound.play("effectSword3");
                                     break;
                                 default:
                             }
@@ -379,27 +456,62 @@ class Player extends Phaser.GameObjects.Sprite {
                         this.fallingAttack = true;
                         this.body.velocity.y += 500;
 
-                        this.anims.play('fallingAttackRight'+this.name, true);
-
+                        this.anims.play('fallingAttackRight' + this.name, true);
+                        this.scene.sound.play("effectSwordFall");
                     }
                     break;
                 case 2:
                     //Arco
-                    if (!x || !y) {
-                        this.arrow = new Arrow(this.scene, this.x, this.y - 16, 1, 0);
-                    } else {
-                        let dirX = x - this.x;
-                        let dirY = y - 16 - this.y;
-                        let sum = Math.abs(-dirX + dirY);
-                        dirX /=sum;
-                        dirY/=sum;
+                    if (!this.attacking) {
+                        this.body.setVelocityX(0);
 
-                        this.arrow = new Arrow(this.scene, this.x+16, this.y + 16, dirX, dirY);
+                        if (this.body.blocked.down) {
+
+                            this.attacking = true;
+                            this.anims.play('attack1' + this.name, true);
+
+                            /*this.scene.time.delayedCall(1000, function () {
+                                this.attacking = false;
+
+                                (!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
+                            }, [], this);*/
+
+                            this.once('animationcomplete', () => {
+                                this.attacking = false;
+                                this.anims.play('attack2' + this.name, true);
+                                (!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
+                            });
+                            this.scene.sound.play("effectBow");
+                            /*
+                            if (!x || !y) {
+    
+                            }
+                            else {
+                                let dirX = x - this.x;
+                                let dirY = y - 16 - this.y;
+                                let sum = Math.abs(-dirX + dirY);
+                                dirX /= sum;
+                                dirY /= sum;
+                            }*/
+
+                        } else if (!this.fallingAttack) {
+                            this.attacking = true;
+                            this.fallingAttack = true;
+
+                            this.anims.play('fallingAttackRight' + this.name, true);
+                            //(!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
+                            this.scene.sound.play("effectBow");
+                            this.once('animationcomplete', () => {
+
+                                this.attacking = false;
+                                this.fallingAttack = false;
+                                this.anims.play('fallingAttackRight2' + this.name, true);
+
+                                (!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
+                            });
+                        }
                     }
-
                     break;
-                default:
-                //Puños?
             }
         }
     }
@@ -407,7 +519,7 @@ class Player extends Phaser.GameObjects.Sprite {
 
 class Arrow extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, dirX, dirY) {
-        super(scene, x, y, "p0noWeapon");
+        super(scene, x, y, "arrow");
 
 
         this.speed = 1000;
@@ -417,7 +529,7 @@ class Arrow extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         scene.add.existing(this);
         scene.playerProjectiles.add(this);
-        this.body.setAllowGravity(true);
+        this.body.setAllowGravity(false);
 
         this.body.setSize(4, 4);
         this.body.velocity.x = dirX * this.speed;
@@ -425,23 +537,25 @@ class Arrow extends Phaser.GameObjects.Sprite {
 
         //scene.graphics.lineBetween(x, y, x+(dirX*100), y+(dirY*100));
 
-        this.setOrigin(0.5,0.7);
+        this.setOrigin(0.5, 0.7);
 
-        scene.tweens.add({
+        /*scene.tweens.add({
             targets: this,
             duration: 500,
             angle: 360,
             //ease: 'Quad.easeInOut',
             repeat: -1,
             yoyo: false
-        });
+        });*/
 
         this.scene.time.delayedCall(1000, function () {
             this.destroy();
 
         }, [], this);
+
+        this.setDepth(3);
     }
 
-    
+
 
 }
