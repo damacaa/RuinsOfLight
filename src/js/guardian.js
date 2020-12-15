@@ -1,7 +1,8 @@
 class Guardian extends Enemy {
-    constructor(scene, x, y, guardianKey) {
-        super(scene, x, y, guardianKey)
+    constructor(scene, x, y) {
+        let guardianKey = 'guardian';
 
+        super(scene, x, y, guardianKey)
         this.body.setSize(29, 31);
         this.body.offset.x = 54;
         this.body.offset.y = 59;
@@ -57,7 +58,7 @@ class Guardian extends Enemy {
         this.canMove = false;
         this.attacking = false;
         this.canAttack = false;
-        this.wait = 2000;
+        this.wait = 3000;
         this.timer = null;
         this.speed = 70;
 
@@ -67,9 +68,6 @@ class Guardian extends Enemy {
     }
 
     WakeUp() {
-
-
-
         this.awake = true;
         this.anims.play('guardianWakeUp', true);
 
@@ -104,72 +102,56 @@ class Guardian extends Enemy {
 
             if (this.body.blocked.left || this.body.blocked.right) { this.body.setVelocityY(0); }
 
-            if (((Math.abs(this.scene.bowPlayer.x - this.x) > this.rangeX) && (Math.abs(this.scene.swordPlayer.x - this.x) > this.rangeX)) || ((Math.abs(this.scene.bowPlayer.y - this.y) > this.rangeY) && (Math.abs(this.scene.swordPlayer.y - this.y) > this.rangeY))) {
-                this.anims.play('guardianIdle', true);
-                this.body.setVelocityX(0);
+            if (Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x)) {
+                this.primaryTarget = this.scene.bowPlayer;
+                this.secondaryTarget = this.scene.swordPlayer;
             } else {
-                if (Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x)) {
-                    if ((Math.abs(this.scene.bowPlayer.x - this.x) > this.range) || (Math.abs(this.scene.bowPlayer.y - this.y) > this.range)) {
-                        if (this.scene.bowPlayer.x < this.x) {
-                            this.body.setVelocityX(-this.speed);
-                            this.flipX = false;
-                            this.anims.play('guardianMove', true);
+                this.primaryTarget = this.scene.swordPlayer;
+                this.secondaryTarget = this.scene.bowPlayer;
+            }
 
-                        } else {
-                            this.body.setVelocityX(this.speed);
-                            this.flipX = true;
-                            this.anims.play('guardianMove', true);
-                        }
-                    } else {
+            if (Math.abs(this.primaryTarget.x - this.x) > this.range) {
+                //Si está lejos se mueve
+                if (this.primaryTarget.x - 10 < this.x) {
+                    this.body.setVelocityX(-this.speed);
+                    this.flipX = false;
+                    this.anims.play('guardianMove', true);
 
-                        if (this.scene.bowPlayer.x < this.x) {
-                            this.flipX = false;
-                        } else {
-                            this.flipX = true;
-                        }
-
-                        if (this.canAttack) {
-                            this.Attack();
-                        }
-                    }
                 } else {
-                    if ((Math.abs(this.scene.swordPlayer.x - this.x) > this.range) || (Math.abs(this.scene.swordPlayer.y - this.y) > this.range)) {
-                        if (this.scene.swordPlayer.x < this.x) {
-                            this.body.setVelocityX(-this.speed);
-                            this.flipX = false;
-                            this.anims.play('guardianMove', true);
-                        } else {
-                            this.body.setVelocityX(this.speed);
-                            this.flipX = true;
-                            this.anims.play('guardianMove', true);
-                        }
-                    } else {
-                        if (this.scene.swordPlayer.x < this.x) {
-                            this.flipX = false;
-                        } else {
-                            this.flipX = true;
-                        }
-
-                        if (this.canAttack) {
-                            this.Attack();
-                        }
-                    }
+                    this.body.setVelocityX(this.speed);
+                    this.flipX = true;
+                    this.anims.play('guardianMove', true);
                 }
+            } else {
+                //Si está cerca le pega
+                this.body.setVelocityX(0);
+
+                if (this.primaryTarget.x + 10 < this.x) {
+                    this.flipX = false;
+                } else {
+                    this.flipX = true;
+                }
+
+                if (this.canAttack && Math.abs(this.primaryTarget.y - this.y) < 64) {
+                    this.Attack();
+                }
+            }
+
+            if ((Math.abs(this.primaryTarget.x - this.x) > this.dieDistance)) {
+                this.Die();
             }
         }
     }
+
 
     Attack() {
 
         this.canMove = false;
         this.canAttack = false;
 
-        this.body.setVelocityY(0);
-
         this.anims.play('guardianPreparingAttack', true);
         this.attacking = true;
         this.body.setVelocityX(0);
-        this.body.setVelocityY(0);
 
         this.once('animationcomplete', () => {
             if (this.health > 0) {

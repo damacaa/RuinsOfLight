@@ -241,26 +241,9 @@ class BaseScene extends Phaser.Scene {
 
         this.CreateStage();
 
-        //Añade colisiones
-
-        /*this.physics.add.collider(this.players, this.platforms);
-        this.physics.add.collider(this.enemies, this.platforms);*/
-
         this.physics.add.overlap(this.players, this.enemyProjectiles, this.ProjectileDamage, null, this);
         this.physics.add.overlap(this.enemies, this.playerProjectiles, this.ProjectileDamage, null, this);
-        //this.physics.add.overlap(this.enemies, this.enemyProjectiles, this.ProjectileDamage, null, this);
 
-        this.physics.world.setFPS(60);
-        /*
-        this.graphics = this.add.graphics();
-        //this.graphics.lineStyle(1, 0x00ff00, 1);
-        
-        this.text = this.add.text(10, 10, 'ExampleUI', {
-            fontFamily: '"Press Start 2P"',
-            fontSize: '20px'
-            , fill: '#ffffff'
-        }).setScrollFactor(0);
-        */
         this.health = new Health(this, 40, 10, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0, 0);
         this.health.UpdateLifes();
 
@@ -278,13 +261,16 @@ class BaseScene extends Phaser.Scene {
         this.groundLayer = this.map.createStaticLayer('Suelo', this.groundTiles, 0, 0);
 
         //Colisiones
-        this.groundLayer.setCollisionBetween(1, 29);
+        this.groundLayer.setCollisionBetween(1, 28);
 
         this.physics.add.collider(this.players, this.groundLayer);
         this.physics.add.collider(this.enemies, this.groundLayer);
 
         this.camera.setBounds(0, 0, this.map.width * 32, this.map.height * 32);
         this.camera1.setBounds(0, 0, this.map.width * 32, this.map.height * 32);
+
+        this.physics.add.collider(this.playerProjectiles, this.groundLayer);
+        this.physics.add.overlap(this.enemyProjectiles, this.groundLayer, this.ProjectileHitsWall, null, this);
     }
 
     CheckInputs(delta) {
@@ -385,9 +371,15 @@ class BaseScene extends Phaser.Scene {
         projectile.destroy();
     }
 
+    ProjectileHitsWall(projectile, wall) {
+        if (wall.index != -1) {
+            projectile.destroy();
+        }
+    }
+
     update(time, delta) {
         //console.log(1000/delta);//Muestra fps
-        this.entities.forEach(element => element.Update());
+        this.entities.forEach(element => element.Update(time, delta));
         this.CheckInputs(delta);
 
         this.UpdateStage(time, delta);

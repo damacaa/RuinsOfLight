@@ -1,5 +1,7 @@
 class Ball extends Enemy {
-    constructor(scene, x, y, ballKey) {
+    constructor(scene, x, y) {
+        let ballKey = 'ball';
+
         super(scene, x, y, ballKey);
         this.body.setSize(25, 25);
         this.body.offset.x = 19;
@@ -116,59 +118,40 @@ class Ball extends Enemy {
             if (this.body.blocked.left || this.body.blocked.right) { this.body.setVelocityY(-100); }
 
             if (Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x)) {
+                this.primaryTarget = this.scene.bowPlayer;
+                this.secondaryTarget = this.scene.swordPlayer;
+            } else {
+                this.primaryTarget = this.scene.swordPlayer;
+                this.secondaryTarget = this.scene.bowPlayer;
+            }
 
-                if (Math.abs(this.scene.bowPlayer.x - this.x) > this.range) {
-                    if (this.scene.bowPlayer.x < this.x) {
-                        this.body.setVelocityX(-this.speed);
-                        this.flipX = false;
-                        this.anims.play('rollLeft', true);
-                    } else {
-                        this.body.setVelocityX(this.speed);
-                        this.flipX = true;
-                        this.anims.play('rollLeft', true);
-                    }
+            if (Math.abs(this.primaryTarget.x - this.x) > this.range) {
+                if (this.primaryTarget.x < this.x) {
+                    this.body.setVelocityX(-this.speed);
+                    this.flipX = false;
+                    this.anims.play('rollLeft', true);
                 } else {
-
-                    if (this.scene.bowPlayer.x < this.x) {
-                        this.flipX = false;
-                    } else {
-                        this.flipX = true;
-                    }
-
-                    if (this.canAttack) {
-                        this.Attack();
-                    } else {
-                        this.anims.play('idleBall', true);
-                    }
+                    this.body.setVelocityX(this.speed);
+                    this.flipX = true;
+                    this.anims.play('rollLeft', true);
                 }
             } else {
-                if (Math.abs(this.scene.swordPlayer.x - this.x) > this.range) {
-                    if (this.scene.swordPlayer.x < this.x) {
-                        this.body.setVelocityX(-this.speed);
-                        this.flipX = false;
-                        this.anims.play('rollLeft', true);
 
-                    } else {
-                        this.body.setVelocityX(this.speed);
-                        this.flipX = true;
-                        this.anims.play('rollLeft', true);
-
-                    }
-
+                if (this.primaryTarget.x < this.x) {
+                    this.flipX = false;
                 } else {
-
-                    if (this.scene.swordPlayer.x < this.x) {
-                        this.flipX = false;
-                    } else {
-                        this.flipX = true;
-                    }
-
-                    if (this.canAttack) {
-                        this.Attack();
-                    } else {
-                        this.anims.play('idleBall', true);
-                    }
+                    this.flipX = true;
                 }
+
+                if (this.canAttack) {
+                    this.Attack();
+                } else {
+                    this.anims.play('idleBall', true);
+                }
+            }
+
+            if ((Math.abs(this.primaryTarget.x - this.x) > this.dieDistance)) {
+                this.Die();
             }
         }
 
