@@ -11,7 +11,8 @@ class Spawner extends Phaser.GameObjects.Sprite {
 
         this.canSpawnEnemies = false;
         this.nextSpawnTime = 0;
-        this.spawnWait = 1000;
+        this.spawnWait = 3000;
+        this.maxEnemies = 20;
 
         this.setOrigin(0,0);
 
@@ -22,8 +23,6 @@ class Spawner extends Phaser.GameObjects.Sprite {
         if (this.canSpawnEnemies && !this.scene.camera.worldView.contains(this.x, this.y) && !this.scene.camera1.worldView.contains(this.x, this.y)) {
 
             let rand = Math.random();
-
-            console.log(rand);
 
             if (rand < 0.4) {
                 let randomEnemy = new Ball(this.scene, this.x, this.y);
@@ -41,7 +40,7 @@ class Spawner extends Phaser.GameObjects.Sprite {
 
             if (this.spawnWait > 2000) { this.spawnWait *= .99; }
 
-        } else if (this.nextSpawnTime <= time && this.scene.entities.length < 20) {
+        } else if (this.nextSpawnTime <= time && this.scene.entities.length < this.maxEnemies) {
             this.canSpawnEnemies = true;
         }
     }

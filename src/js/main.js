@@ -117,7 +117,6 @@ var CustomPipeline = new Phaser.Class({
             `
             });
         }
-
 });
 
 var config;

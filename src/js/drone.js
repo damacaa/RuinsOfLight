@@ -81,8 +81,6 @@ class Drone extends Enemy {
     Update() {
         if (this.scene && this.canMove) {
 
-            //if (this.body.blocked.left || this.body.blocked.right) { this.body.setVelocityY(-100); }
-
             if (Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x)) {
                 this.primaryTarget = this.scene.bowPlayer;
                 this.secondaryTarget = this.scene.swordPlayer;
@@ -156,6 +154,7 @@ class Shot extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
         scene.enemyProjectiles.add(this);
         this.body.setAllowGravity(false);
+        this.body.setSize(6, 6, true);
 
         this.scene.anims.create({
             key: 'droneShot',
@@ -166,13 +165,16 @@ class Shot extends Phaser.GameObjects.Sprite {
 
         this.anims.play('droneShot', true);
 
-        this.body.setSize(6, 6, true);
-
-
-
         if (droneDir) { this.x += 16; } else { this.x -= 16; }
 
-
+        /*scene.tweens.add({
+            targets: this,
+            duration: 500,
+            angle: 360,
+            ease: 'Quad.easeInOut',
+            repeat: -1,
+            yoyo: false
+        });*/
 
         this.setDepth(3);
 

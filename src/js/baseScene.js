@@ -150,6 +150,7 @@ class BaseScene extends Phaser.Scene {
         this.load.image('bossBackground', '/resources/img/bossBackground.png');
         this.load.image('background', '/resources/img/background.png');
         this.load.image('relic', '/resources/img/Items/Reliquia/Reliquia.png')
+        this.load.image('healthPotion', '/resources/img/Items/Potions/HealthPotion.png')
         this.load.image('sword', '/resources/img/Items/Weapons/Sword.png')
         this.load.image('bow', '/resources/img/Items/Weapons/Bow.png')
         this.load.image('bossAltar', '/resources/img/Items/Altares/AltarBoss.png')
@@ -188,9 +189,11 @@ class BaseScene extends Phaser.Scene {
         this.load.audio("effectGorilaRelic", "resources/audio/effects/enemies/gorilaRelic.ogg"); // Efecto reliquia gorila
         this.load.audio("effectParrotRelic", "resources/audio/effects/enemies/parrotRelic.ogg"); // Efecto reliquia loro
 
+
         //Efectos intro
         this.load.audio("effectIntroDoor", "resources/audio/effects/doorClosed.ogg"); // Efecto puerta   ////////////////////////////////////
         this.load.audio("effectPotion", "resources/audio/effects/potion.ogg"); // Efecto pocion
+
 
         //Interfaz
         this.load.spritesheet('vidas',
@@ -216,37 +219,43 @@ class BaseScene extends Phaser.Scene {
     }
 
     create() {
-        this.fading = false;
+        //Activa el shader que difumina las luces
         this.cameras.main.setRenderToTexture(customPipeline);
-        //Crea listas de entidades
+
+        //Crea listas
         this.playerProjectiles = this.physics.add.group();
         this.enemyProjectiles = this.physics.add.group();
         this.players = this.physics.add.group();
         this.enemies = this.physics.add.group();
 
-        //Crea jugadores //Se deberían crear solo una vez en altares y mantener para todas las escenas --> Mover al CreateStage de altares
+        //Crea jugadores
         this.player0 = new Player(this, 128, 192, 'p0noWeapon', 'p0sword', 'p0bow', p0Health);
         this.player1 = new Player(this, 192, 192, 'p1noWeapon', 'p1sword', 'p1bow', p1Health);
 
         this.players.add(this.player0);
         this.players.add(this.player1);
 
+        //Pone a cada jugador el arma correspondiente
         this.player0.SetWeapon(p0Weapon);
         this.player1.SetWeapon(p1Weapon);
 
 
-        //Configura la cámara
+        //Configura las cámaras
         this.camera = this.cameras.main;
         this.EnableFullScreen();
-        //this.camera.setZoom(.5);
         this.camera.setOrigin(0.5, 0.5);
         this.camera.setBackgroundColor('rgba(21, 7, 4, 1)');
 
         this.camera1 = this.cameras.add(250, 10, 220, 115);
-        this.camera1.setOrigin(0.5, 0.5).setZoom(1).setBackgroundColor('rgba(21, 7, 4, 1)');
+        this.camera1.setOrigin(0.5, 0.5).setBackgroundColor('rgba(21, 7, 4, 1)');
+
+        if(this.swordPlayer){
+            this.camera1.startFollow(this.swordPlayer);
+        }
 
         this.camera1.visible = false;
 
+        //Crea el escenario
         this.CreateStage();
 
         this.physics.add.overlap(this.players, this.enemyProjectiles, this.ProjectileDamage, null, this);
@@ -256,6 +265,13 @@ class BaseScene extends Phaser.Scene {
         this.health.UpdateLifes();
 
         this.camera1.ignore(this.health);
+
+        this.fading = true;
+
+        this.camera.fadeIn(500);
+        this.cameras.main.once('camerafadeincomplete', () => {
+            this.fading = false;
+        });
     }
 
     LoadTileMap(key) {
@@ -282,7 +298,7 @@ class BaseScene extends Phaser.Scene {
     }
 
     CheckInputs(delta) {
-
+        //Controles jugador 0
         let cursors0 = this.input.keyboard.addKeys({
             up: Phaser.Input.Keyboard.KeyCodes.W,
             down: Phaser.Input.Keyboard.KeyCodes.S,
@@ -291,8 +307,6 @@ class BaseScene extends Phaser.Scene {
         });
 
         var keyObj = this.input.keyboard.addKey('E'); // Get key object
-        var isDown = keyObj.isDown;
-        var isUp = keyObj.isUp;
 
         if (cursors0.left.isDown) {
             this.player0.Run(-1, delta);
@@ -306,17 +320,17 @@ class BaseScene extends Phaser.Scene {
             this.player0.Jump();
         }
 
-        if (isDown) {
+        if (keyObj.isDown) {
             this.player0.Attack();
         }
 
-        if (isUp) {
+        if (keyObj.isUp) {
             this.player0.EnableAttack();
         }
 
-        //////////////////////////////////////////////////////////////////////
-
+        //Controles jugador 1
         let cursors1 = this.input.keyboard.createCursorKeys();
+
         if (cursors1.left.isDown) {
             this.player1.Run(-1, delta);
         } else if (cursors1.right.isDown) {
@@ -332,17 +346,12 @@ class BaseScene extends Phaser.Scene {
         this.input.mouse.disableContextMenu();
 
         this.input.on('pointerdown', function (pointer) {
-
             this.player1.Attack(this.input.mousePointer.worldX, this.input.mousePointer.worldY);
-
         }, this);
 
         this.input.on('pointerup', function (pointer) {
-
             this.player1.EnableAttack();
-
         }, this);
-
     }
 
     EnableFullScreen() {
@@ -352,11 +361,9 @@ class BaseScene extends Phaser.Scene {
         FKey.on('down', function () {
 
             if (this.scale.isFullscreen) {
-                //button.setFrame(0);
                 this.scale.stopFullscreen();
             }
             else {
-                //button.setFrame(1);
                 this.scale.startFullscreen();
             }
 
@@ -392,16 +399,7 @@ class BaseScene extends Phaser.Scene {
 
         this.UpdateStage(time, delta);
 
-        if (this.swordPlayer && !this.camera.worldView.contains(this.swordPlayer.x, this.swordPlayer.y)) {
-            //this.health++;
-            //this.Hurt();
-
-            //this.x = this.bowPlayer.x - 32 * this.bowPlayer.flipX;
-            //this.y = this.bowPlayer.y - 32;
-
-            //if(this.camera1)
-
-            this.camera1.startFollow(this.swordPlayer);
+        if (!this.fading && this.swordPlayer && !this.camera.worldView.contains(this.swordPlayer.x, this.swordPlayer.y)) {
             this.camera1.visible = true;
         } else { this.camera1.visible = false; }
     }

@@ -14,6 +14,13 @@ let hasRelic;
 let firstTimeBoss;
 var defeatedBosses;
 
+let relicX;
+let relicY;
+
+let numberOfLevels = 2;
+
+let godMode = false; //Vida infinita para los jugadores
+
 function ResetGame() {
     p0Health = 6;
     p1Health = 6;
@@ -41,7 +48,6 @@ class AltarRoom extends BaseScene {
     }
 
     CreateStage() {
-        //this.camera.startFollow(this.player0, true);
         this.player0.x = 80;
         this.player1.x = 100;
 
@@ -60,8 +66,26 @@ class AltarRoom extends BaseScene {
         this.swordAltar.otherAltar = this.bowAltar;
 
         //Muestra los controles
-        this.controls0 = this.add.sprite(this.player0.x - 15, this.player0.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
-        this.controls0 = this.add.sprite(this.player1.x + 30, this.player1.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
+        this.controls0 = this.add.sprite(this.player0.x - 30, this.player0.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
+        this.controls1 = this.add.sprite(this.player1.x + 30, this.player1.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
+
+        this.tweens.add({
+            targets: this.controls0,
+            y: this.controls0.y - 5,
+            duration: 1500,
+            ease: 'Sine.easeInOut',
+            yoyo: true,
+            repeat: -1
+        });
+
+        this.tweens.add({
+            targets: this.controls1,
+            y: this.controls1.y - 5,
+            duration: 1500,
+            ease: 'Sine.easeInOut',
+            yoyo: true,
+            repeat: -1
+        });
 
         //Crea puertas
         this.door = new SceneDoor(this, 384, 160, 'bossRoom');
@@ -143,12 +167,33 @@ class BossRoom extends BaseScene {
             this.player0.flipX = true;
             this.player1.flipX = true;
         } else {
-            this.controls1 = this.add.sprite(this.player0.x, this.player0.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
+            relicX = Math.floor(Math.random() * (numberOfLevels - 1)) + 2;
+            relicY = Math.floor(Math.random() * Math.pow(2, relicX - 1)) + 1;
+            console.log(relicX + "_" + relicY);
+
+            this.controls0 = this.add.sprite(this.player0.x, this.player0.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
             this.controls1 = this.add.sprite(this.player1.x, this.player1.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
+
+            this.tweens.add({
+                targets: this.controls0,
+                y: this.controls0.y - 5,
+                duration: 1500,
+                ease: 'Sine.easeInOut',
+                yoyo: true,
+                repeat: -1
+            });
+    
+            this.tweens.add({
+                targets: this.controls1,
+                y: this.controls1.y - 5,
+                duration: 1500,
+                ease: 'Sine.easeInOut',
+                yoyo: true,
+                repeat: -1
+            });
 
             firstTimeBoss = false;
         }
-
 
         //Dependiendo del número de bosses derrotados se activa el siguiente boss
         this.sound.stopAll();
@@ -176,16 +221,11 @@ class BossRoom extends BaseScene {
 
             default:
                 break;
-
         }
-
-
     }
-
 
     UpdateStage() {
         if (this.currentBoss && !this.currentBoss.awake) {
-            console.log(hasRelic);
             if (hasRelic) {
                 if (this.camera.worldView.contains(this.currentBoss.x, this.currentBoss.y)) {
                     this.currentBoss.WakeUp();
@@ -194,7 +234,15 @@ class BossRoom extends BaseScene {
             } else {
                 if (defeatedBosses == 2) {
                     this.exitDoor.Open();
-                } else { this.dungeonDoor.Open(); }
+                } else {
+                    relicX = Math.floor(Math.random() * (numberOfLevels - 1)) + 2;
+                    relicY = Math.floor(Math.random() * Math.pow(2, relicX - 1)) + 1;
+                    console.log(relicX + "_" + relicY);
+
+                    this.currentBoss = null;
+
+                    this.dungeonDoor.Open();
+                }
             }
         }
     }
@@ -232,41 +280,44 @@ class Dungeons extends BaseScene {
         switch (levelX) {
             case 1:
                 //1.1
-                this.stairs = new SceneDoor(this, 32, 5 * 32, 'bossRoom', true);
+                this.previousDungeonDoor = new SceneDoor(this, 32, 5 * 32, 'bossRoom', true);
 
-                /*if(hasRelic){
-                    this.stairs.body.enable = true;
-                }else{
-                    this.stairs.body.enable = false;
-                }*/
-
-                new Relic(this, 400, 6 * 32);
+                if (hasRelic) {
+                    this.previousDungeonDoor.Open();
+                } else {
+                    this.previousDungeonDoor.Close();
+                }
 
                 this.door1 = new DungeonDoor(this, 7 * 32, 15 * 32, "2_1");
                 this.door2 = new DungeonDoor(this, 65 * 32, 9 * 32, "2_2");
 
-                new Spawner(this, 21*32, 0);
-                new Spawner(this, 50*32, 0);
-                new Spawner(this, 26*32, 18*32);
-                new Spawner(this, 65*32, 23*32);
-                new Spawner(this, 3*32, 27*32);
-                new Spawner(this, 60*32, 11*32);
+                new Spawner(this, 21 * 32, 0);
+                new Spawner(this, 50 * 32, 0);
+                new Spawner(this, 26 * 32, 18 * 32);
+                new Spawner(this, 65 * 32, 23 * 32);
+                new Spawner(this, 3 * 32, 27 * 32);
+                new Spawner(this, 60 * 32, 11 * 32);
+
                 break;
 
             case 2:
                 switch (levelY) {
                     case 1:
                         //2.1
-                        this.stairs = new DungeonStairs(this, 32, 5 * 32, "1_1");
-                        new Relic(this, 3 * 32, 13 * 32);
-                        new Spawner(this, 3 * 32, 12 * 32);
+                        this.previousDungeonDoor = new DungeonStairs(this, 32, 5 * 32, "2_1");
+
+                        if (!hasRelic && relicX == levelX && relicY == levelY) {
+                            new Relic(this, 9 * 32, 5 * 32);
+                        }
                         break;
 
                     case 2:
                         //2.2
-                        this.stairs = new DungeonStairs(this, 32, 7 * 32, "1_1");
-                        new Relic(this, 51 * 32, 23 * 32);
-                        new Spawner(this, 51 * 32, 22 * 32);
+                        this.previousDungeonDoor = new DungeonStairs(this, 32, 7 * 32, "2_2");
+
+                        if (!hasRelic && relicX == levelX && relicY == levelY) {
+                            new Relic(this, 7 * 32, 7 * 32);
+                        }
                         break;
 
                     default:
@@ -275,17 +326,26 @@ class Dungeons extends BaseScene {
                 break;
 
             default:
-                console.log(levelX + "_" + levelY);
-                //new SceneDoor(this, 10 * 32, 6 * 32, 'mainMenu');
                 break;
+        }
+
+        //Añade pociones
+        for (let i = 0; i < this.map.width; i++) {
+            for (let j = 0; j < this.map.width; j++) {
+                let tile = this.map.getTileAt(i, j);
+                let rand = Math.random();
+                if (rand > 0.95 && tile && (this.map.getTileAt(i, j).index == 2 || this.map.getTileAt(i, j).index == 26)) {
+                    this.potion = new HealthPotion(this, i * 32, (j - 1) * 32);
+                }
+            }
         }
 
         //Dependiendo de de qué nivel vengan, los jugadores aparecen en un sitio u otro
         switch (whereAreTheyComingFrom) {
             case 0:
-                //Aparecer en escaleras
-                this.player0.x = this.stairs.x + 64;
-                this.player1.x = this.stairs.x + 128;
+                //Aparecer en la entrada
+                this.player0.x = this.previousDungeonDoor.x + 64;
+                this.player1.x = this.previousDungeonDoor.x + 128;
                 break;
 
             case 1:
@@ -312,10 +372,16 @@ class Dungeons extends BaseScene {
         this.sound.stopAll();
         this.musicBGDungeon = this.sound.play("music", { loop: true }, { volume: 2 });
     }
+
+    UpdateStage() {
+        if (levelX == 1 && hasRelic && !this.previousDungeonDoor.open) {
+            this.previousDungeonDoor.Open();
+            this.cameras.main.flash(1000);
+        }
+    }
 }
 
 class MainMenu extends Phaser.Scene {
-
     constructor() {
         super('mainMenu');
 
@@ -339,6 +405,9 @@ class MainMenu extends Phaser.Scene {
         this.load.image('menuBackground', '/resources/img/Interfaz/Menu/menuBackground.png');
 
         this.load.audio("music", "resources/audio/music.ogg");
+
+        //Efectos intro
+        this.load.audio("effectIntroDoor", "resources/audio/effects/doorClosed.ogg"); // Efecto puerta
     }
 
     create() {
@@ -358,35 +427,35 @@ class MainMenu extends Phaser.Scene {
         this.anims.create({
             key: 'first',
             frames: this.anims.generateFrameNumbers('intro', { start: 7, end: 9 }),
-            frameRate: 2,
+            frameRate: 1,
             repeat: -1
         });
 
         this.anims.create({
             key: 'second',
             frames: this.anims.generateFrameNumbers('intro', { start: 10, end: 11 }),
-            frameRate: 2,
+            frameRate: 1,
             repeat: -1
         });
 
         this.anims.create({
             key: 'third',
             frames: this.anims.generateFrameNumbers('intro', { start: 12, end: 14 }),
-            frameRate: 2,
+            frameRate: 1,
             repeat: -1
         });
 
         this.anims.create({
             key: 'fourth',
             frames: this.anims.generateFrameNumbers('intro', { start: 15, end: 17 }),
-            frameRate: 2,
+            frameRate: 1,
             repeat: -1
         });
 
         this.anims.create({
             key: 'fifth',
             frames: this.anims.generateFrameNumbers('intro', { start: 18, end: 20 }),
-            frameRate: 2,
+            frameRate: 1,
             repeat: -1
         });
 
@@ -401,12 +470,15 @@ class MainMenu extends Phaser.Scene {
                 this.title.destroy();
                 this.newGame.destroy();
                 this.credits.destroy();
+
                 //Saltar la introducción
                 this.skip = this.add.image(440, 10, 'skip').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
                 this.skip.on('pointerdown', function (event) {
+                    this.cameras.main.fadeOut(500);
 
-                    this.scene.start('altarRoom');
-
+                    this.cameras.main.once('camerafadeoutcomplete', () => {
+                        this.scene.start('altarRoom');
+                    });
                 }, this);
 
                 this.text = this.add.text(240, 260, 'CLICK TO CONTINUE', {
@@ -420,9 +492,10 @@ class MainMenu extends Phaser.Scene {
                         this.step++;
                         this.bg.setFrame(this.step);
 
+                        if (this.step == 4) { this.sound.play('effectIntroDoor'); }
+
                     } else if (this.step == 7) {
                         this.bg.anims.play('first', true);
-                        //this.sound.play("effectIntroDoor");
                         this.step++;
 
                         this.input.on('pointerdown', function (event) {
@@ -431,7 +504,7 @@ class MainMenu extends Phaser.Scene {
 
                     } else if (this.step == 8) {
                         this.bg.anims.play('second', true);
-                        
+
                         this.step++;
 
                         this.input.on('pointerdown', function (event) {
@@ -460,7 +533,11 @@ class MainMenu extends Phaser.Scene {
 
                     } else {
                         this.step = 0;
-                        this.scene.start('altarRoom');
+                        this.cameras.main.fadeOut(500);
+
+                        this.cameras.main.once('camerafadeoutcomplete', () => {
+                            this.scene.start('altarRoom');
+                        });
                     }
 
                 }, this);
@@ -478,7 +555,6 @@ class MainMenu extends Phaser.Scene {
             this.scene.start('credits');
 
         }, this);
-
     }
 
     update(time, delta) { }
