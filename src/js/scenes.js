@@ -157,7 +157,7 @@ class BossRoom extends BaseScene {
             case 0:
                 if (hasRelic) {
                     this.sound.stopAll();
-                    this.musicBGBoss = this.sound.play("fastMusic", { loop: true }, { volume: 2 });
+                    this.musicBGBoss = this.sound.play("battleMusic", { loop: true }, { volume: 2 });
                     this.dungeonDoor.Close();
                     this.currentBoss = this.gorila;
                     this.sound.play("effectBaseGorila", { loop: true });
@@ -166,7 +166,7 @@ class BossRoom extends BaseScene {
             case 1:
                 if (hasRelic) {
                     this.sound.stopAll();
-                    this.musicBGBoss = this.sound.play("fastMusic", { loop: true }, { volume: 2 });
+                    this.musicBGBoss = this.sound.play("battleMusic", { loop: true }, { volume: 2 });
                     this.dungeonDoor.Close();
                     this.currentBoss = this.parrot;
                     this.sound.play("effectBaseParrot", { loop: true });
@@ -515,6 +515,7 @@ class Credits extends Phaser.Scene {
             frameHeight: 270
         }
         );
+        this.load.audio("winMusic", "resources/audio/musicWin.ogg"); // Musica victoria
 
     }
 
@@ -539,7 +540,7 @@ class Credits extends Phaser.Scene {
         });
 
         this.sound.stopAll();
-        this.musicBGCredits = this.sound.play("music", { loop: true }, { volume: 2 });
+        this.musicBGCredits = this.sound.play("winMusic", { loop: true }, { volume: 2 });
 
     }
 
@@ -581,7 +582,7 @@ class GameOver extends Phaser.Scene {
         }, [], this);
 
         this.sound.stopAll();
-        this.musicBGGameOver = this.sound.play("music", { loop: true }, { volume: 2 });
+        this.musicBGGameOver = this.sound.play("gameOverMusic", { loop: true }, { volume: 2 });
     }
 
     update(time, delta) { }
