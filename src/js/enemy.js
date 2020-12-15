@@ -22,6 +22,7 @@ class Enemy extends Phaser.GameObjects.Sprite {
     this.wait = 2000;
     this.awake = false;
     this.speed = 100;
+    this.dieDistance = 300;
 
     this.primaryTarget;
     this.secondaryTarget;
@@ -78,14 +79,12 @@ class Enemy extends Phaser.GameObjects.Sprite {
 
       if (this.canAttack) {
         this.Attack();
-        this.canAttack = false;
-        this.scene.time.delayedCall(this.wait, function () { this.canAttack = true; }, [], this);
       }
     }
   }
 
   Attack() {
-    console.log("Atacando");
+    this.canAttack = false;
     this.attacking = true;
     this.setTintFill(0xff1010);
     this.scene.time.delayedCall(this.wait / 2, function () { this.attacking = false; this.clearTint(); }, [], this);

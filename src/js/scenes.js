@@ -207,9 +207,6 @@ class Dungeons extends BaseScene {
 
     constructor() {
         super('dungeon');
-        this.canSpawnEnemies = false;
-        this.nextSpawnTime = 20000;
-        this.spawnWait = 5000;
     }
 
     preload() {
@@ -227,10 +224,8 @@ class Dungeons extends BaseScene {
 
         this.LoadTileMap('map' + this.levelId);
 
-
-
         for (let index = 0; index < this.map.width * 32; index += 159) {
-            this.bg = this.add.sprite(index, 0, 'background').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
+            this.add.sprite(index, 0, 'background').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
         }
 
         //Añade a cada nivel los items
@@ -238,7 +233,6 @@ class Dungeons extends BaseScene {
             case 1:
                 //1.1
                 this.stairs = new SceneDoor(this, 32, 5 * 32, 'bossRoom', true);
-
 
                 /*if(hasRelic){
                     this.stairs.body.enable = true;
@@ -250,6 +244,13 @@ class Dungeons extends BaseScene {
 
                 this.door1 = new DungeonDoor(this, 7 * 32, 15 * 32, "2_1");
                 this.door2 = new DungeonDoor(this, 65 * 32, 9 * 32, "2_2");
+
+                new Spawner(this, 21*32, 0);
+                new Spawner(this, 50*32, 0);
+                new Spawner(this, 26*32, 18*32);
+                new Spawner(this, 65*32, 23*32);
+                new Spawner(this, 3*32, 27*32);
+                new Spawner(this, 60*32, 11*32);
                 break;
 
             case 2:
@@ -257,13 +258,15 @@ class Dungeons extends BaseScene {
                     case 1:
                         //2.1
                         this.stairs = new DungeonStairs(this, 32, 5 * 32, "1_1");
-                        new Relic(this, 3 * 32 - 3, 13 * 32);
+                        new Relic(this, 3 * 32, 13 * 32);
+                        new Spawner(this, 3 * 32, 12 * 32);
                         break;
 
                     case 2:
                         //2.2
                         this.stairs = new DungeonStairs(this, 32, 7 * 32, "1_1");
                         new Relic(this, 51 * 32, 23 * 32);
+                        new Spawner(this, 51 * 32, 22 * 32);
                         break;
 
                     default:
@@ -309,43 +312,6 @@ class Dungeons extends BaseScene {
         this.sound.stopAll();
         this.musicBGDungeon = this.sound.play("music", { loop: true }, { volume: 2 });
     }
-
-    UpdateStage(time, delta) {
-        this.entities.forEach(element => element.Update());
-        this.CheckInputs(delta);
-
-        if (this.canSpawnEnemies) {
-
-            let x = this.bowPlayer.x + 300;
-            if (x < this.map.width * 32) {
-                this.randomEnemy = new Guardian(this, x, this.bowPlayer.y - 32, 'guardian');
-                this.randomEnemy.primaryTarget = this.bowPlayer;
-                this.randomEnemy.WakeUp();
-                this.randomEnemy = new Drone(this, x, this.bowPlayer.y - 32, 'drone');
-                this.randomEnemy.primaryTarget = this.bowPlayer;
-                this.randomEnemy.WakeUp();
-            }
-
-            x = this.bowPlayer.x - 300;
-            if (x > 32) {
-                this.randomEnemy = new Drone(this, x, this.bowPlayer.y - 32, 'drone');
-                this.randomEnemy.primaryTarget = this.bowPlayer;
-                this.randomEnemy.WakeUp();
-
-                this.randomEnemy = new Ball(this, x, this.bowPlayer.y - 32, 'ball');
-                this.randomEnemy.primaryTarget = this.bowPlayer;
-                this.randomEnemy.WakeUp();
-            }
-
-            this.nextSpawnTime = time + this.spawnWait;
-            this.canSpawnEnemies = false;
-
-            if (this.spawnWait > 2000) { this.spawnWait *= .99; }
-
-        } else if (this.nextSpawnTime <= time && this.entities.length < 10) {
-            this.canSpawnEnemies = true;
-        }
-    }
 }
 
 class MainMenu extends Phaser.Scene {
@@ -386,7 +352,8 @@ class MainMenu extends Phaser.Scene {
 
         this.newGame = this.add.image(65, 90, 'newGame').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
         this.credits = this.add.image(65, 130, 'credits').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
-                
+
+        this.step = 0;
 
         this.anims.create({
             key: 'first',
@@ -427,7 +394,7 @@ class MainMenu extends Phaser.Scene {
         this.musicBGMainMenu = this.sound.play("music", { loop: true }, { volume: 2 });
 
         this.newGame.on('pointerdown', function (event) {
-            
+
             if (this.step == 0) {
                 this.step++;
                 this.bg.setFrame(this.step);
@@ -439,7 +406,7 @@ class MainMenu extends Phaser.Scene {
                 this.skip.on('pointerdown', function (event) {
 
                     this.scene.start('altarRoom');
-        
+
                 }, this);
 
                 this.text = this.add.text(240, 260, 'CLICK TO CONTINUE', {
