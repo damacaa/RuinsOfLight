@@ -163,26 +163,31 @@ class BaseScene extends Phaser.Scene {
         this.load.audio("fastMusic", "resources/audio/fastmusic.ogg"); // Fondo rapido
 
         //Efectos jugadores
-        this.load.audio("effectSword", "resources/audio/effects/sword.ogg"); // Efecto espada
-        this.load.audio("effectSword2", "resources/audio/effects/sword2.ogg"); // Efecto espada
-        this.load.audio("effectSword3", "resources/audio/effects/sword3.ogg"); // Efecto espada
-        this.load.audio("effectSwordFall", "resources/audio/effects/swordFall.ogg"); // Efecto espada caida
-        this.load.audio("effectBow", "resources/audio/effects/bow2.ogg"); // Efecto arco
-        this.load.audio("effectHurt", "resources/audio/effects/hurt.ogg"); // Efecto daño
+        this.load.audio("effectSword", "resources/audio/effects/players/sword.ogg"); // Efecto espada
+        this.load.audio("effectSword2", "resources/audio/effects/players/sword2.ogg"); // Efecto espada
+        this.load.audio("effectSword3", "resources/audio/effects/players/sword3.ogg"); // Efecto espada
+        this.load.audio("effectSwordFall", "resources/audio/effects/players/swordFall.ogg"); // Efecto espada caida
+        this.load.audio("effectBow", "resources/audio/effects/players/bow2.ogg"); // Efecto arco
+        this.load.audio("effectHurt", "resources/audio/effects/players/hurt.ogg"); // Efecto daño
+        this.load.audio("effectJump", "resources/audio/effects/players/jump.ogg"); // Efecto daño
 
         //Efectos enemigos
-        this.load.audio("effectGorila", "resources/audio/effects/gorila.ogg"); // Efecto gorila ataque
-        this.load.audio("effectBaseGorila", "resources/audio/effects/baseGorila.ogg"); // Efecto gorila
-        this.load.audio("effectDeathGorila", "resources/audio/effects/gorilaDeath.ogg"); // Efecto gorila muerte
-        this.load.audio("effectParrot", "resources/audio/effects/parrot.ogg"); // Efecto loro ataque
-        this.load.audio("effectBaseParrot", "resources/audio/effects/baseParrot.ogg"); // Efecto loro
-        this.load.audio("effectDeathParrot", "resources/audio/effects/parrotDeath.ogg"); // Efecto loro muerte
+        this.load.audio("effectGorila", "resources/audio/effects/enemies/gorila.ogg"); // Efecto gorila ataque
+        this.load.audio("effectBaseGorila", "resources/audio/effects/enemies/baseGorila.ogg"); // Efecto gorila
+        this.load.audio("effectDeathGorila", "resources/audio/effects/enemies/gorilaDeath.ogg"); // Efecto gorila muerte
+        this.load.audio("effectParrot", "resources/audio/effects/enemies/parrot.ogg"); // Efecto loro ataque
+        this.load.audio("effectBaseParrot", "resources/audio/effects/enemies/baseParrot.ogg"); // Efecto loro
+        this.load.audio("effectDeathParrot", "resources/audio/effects/enemies/parrotDeath.ogg"); // Efecto loro muerte
+        this.load.audio("effectGuardian", "resources/audio/effects/enemies/guardian.ogg"); // Efecto guardian ataque
+        this.load.audio("effectDrone", "resources/audio/effects/enemies/drone2.ogg"); // Efecto dron ataque
+        this.load.audio("effectBall", "resources/audio/effects/enemies/ball.ogg"); // Efecto bola ataque
 
-        this.load.audio("effectWalk", "resources/audio/effects/bow2.ogg"); // Efecto pasos          /////////////////////////////////////////
-        this.load.audio("effectGorilaRelic", "resources/audio/effects/gorilaRelic.ogg"); // Efecto reliquia ////////////////////////////////
+        //Reliquias
+        this.load.audio("effectGorilaRelic", "resources/audio/effects/enemies/gorilaRelic.ogg"); // Efecto reliquia gorila
+        this.load.audio("effectParrotRelic", "resources/audio/effects/enemies/parrotRelic.ogg"); // Efecto reliquia loro
 
         //Efectos intro
-        this.load.audio("effectIntroDoor", "resources/audio/effects/introDoor.ogg"); // Efecto puerta   ////////////////////////////////////
+        this.load.audio("effectIntroDoor", "resources/audio/effects/doorClosed.ogg"); // Efecto puerta   ////////////////////////////////////
 
         //Interfaz
         this.load.spritesheet('vidas',

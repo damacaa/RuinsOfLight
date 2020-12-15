@@ -325,6 +325,7 @@ class Player extends Phaser.GameObjects.Sprite {
     Jump() {
         if (!this.attacking && this.body.blocked.down && this.canMove) {
             this.body.setVelocityY(-450);
+            this.scene.sound.play("effectJump");
         }
     }
 
