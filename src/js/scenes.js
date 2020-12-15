@@ -19,7 +19,7 @@ let relicY;
 
 let numberOfLevels = 2;
 
-let godMode = true; //Vida infinita para los jugadores
+let godMode = false; //Vida infinita para los jugadores
 
 function ResetGame() {
     p0Health = 6;
