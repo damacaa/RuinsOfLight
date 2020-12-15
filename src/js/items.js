@@ -189,7 +189,7 @@ class HealthPotion extends Phaser.GameObjects.Sprite {
     TakePotion(potion, player) {
         potion.destroy();
 
-        if (player.health < 1000) {
+        if (player.health < 6) {
             player.health++;
             player.scene.health.UpdateLifes();
             player.scene.sound.play("effectPotion");
