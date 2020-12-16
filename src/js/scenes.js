@@ -387,7 +387,7 @@ class Dungeons extends BaseScene {
     }
 
     UpdateStage() {
-        if (hasRelic && skip) {
+        if (hasRelic && skip && !this.previousDungeonDoor.open) {
             this.previousDungeonDoor.Open();
             this.cameras.main.flash(1000);
         }
