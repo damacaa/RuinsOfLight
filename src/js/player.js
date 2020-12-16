@@ -323,6 +323,7 @@ class Player extends Phaser.GameObjects.Sprite {
             this.fallingAttack = false;
 
             if (this.health > 0) {
+                
                 if(!godMode){this.health--;}
                 
                 this.body.setVelocityY(-300);
