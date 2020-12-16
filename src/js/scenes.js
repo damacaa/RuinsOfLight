@@ -21,6 +21,14 @@ let numberOfLevels = 2;
 
 let godMode = false; //Vida infinita para los jugadores
 
+let skip = false;
+
+function SkipRelic(){
+    godMode = true;
+    skip = true;
+    hasRelic = true;
+}
+
 function ResetGame() {
     p0Health = 6;
     p1Health = 6;
@@ -35,6 +43,9 @@ function ResetGame() {
     hasRelic = false;
     firstTimeBoss = true;
     defeatedBosses = 0;
+
+    godMode = false;
+    skip = false;
 }
 
 class AltarRoom extends BaseScene {
@@ -182,7 +193,7 @@ class BossRoom extends BaseScene {
                 yoyo: true,
                 repeat: -1
             });
-    
+
             this.tweens.add({
                 targets: this.controls1,
                 y: this.controls1.y - 5,
@@ -271,6 +282,8 @@ class Dungeons extends BaseScene {
         this.levelId = levelX + "_" + levelY;
 
         this.LoadTileMap('map' + this.levelId);
+
+        this.previousDungeonDoor = null;
 
         for (let index = 0; index < this.map.width * 32; index += 159) {
             this.add.sprite(index, 0, 'background').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
@@ -374,7 +387,7 @@ class Dungeons extends BaseScene {
     }
 
     UpdateStage() {
-        if (levelX == 1 && hasRelic && !this.previousDungeonDoor.open) {
+        if (hasRelic && skip) {
             this.previousDungeonDoor.Open();
             this.cameras.main.flash(1000);
         }
