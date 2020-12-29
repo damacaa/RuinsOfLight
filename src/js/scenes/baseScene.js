@@ -1,3 +1,53 @@
+//https://www.youtube.com/watch?v=1P8jvnj85e4
+
+let p0Health;
+let p1Health;
+
+let p0Weapon;
+let p1Weapon;
+
+let levelX;
+let levelY;
+let whereAreTheyComingFrom;
+
+let hasRelic;
+let firstTimeBoss;
+var defeatedBosses;
+
+//Nivel en el que se encuntra la reliquia
+let relicX;
+let relicY;
+
+let numberOfLevels = 2;
+
+let godMode = false; //Vida infinita para los jugadores
+
+let skip = false;
+
+function SkipRelic() {
+    skip = true;
+    hasRelic = true;
+}
+
+function ResetGame() {
+    p0Health = 6;
+    p1Health = 6;
+
+    p0Weapon = 0;
+    p1Weapon = 0;
+
+    levelX = 1;
+    levelY = 1;
+    whereAreTheyComingFrom = 0;
+
+    hasRelic = false;
+    firstTimeBoss = true;
+    defeatedBosses = 0;
+
+    godMode = false;
+    skip = false;
+}
+
 class BaseScene extends Phaser.Scene {
     constructor(key) {
         super(key);
@@ -219,9 +269,6 @@ class BaseScene extends Phaser.Scene {
     }
 
     create() {
-        //Activa el shader que difumina las luces
-        this.cameras.main.setRenderToTexture(customPipeline);
-
         //Crea listas
         this.playerProjectiles = this.physics.add.group();
         this.enemyProjectiles = this.physics.add.group();
@@ -249,11 +296,15 @@ class BaseScene extends Phaser.Scene {
         this.camera1 = this.cameras.add(250, 10, 220, 115);
         this.camera1.setOrigin(0.5, 0.5).setBackgroundColor('rgba(21, 7, 4, 1)');
 
-        if(this.swordPlayer){
+        if (this.swordPlayer) {
             this.camera1.startFollow(this.swordPlayer);
         }
 
         this.camera1.visible = false;
+
+        //Activa el shader que difumina las luces
+        this.camera.setRenderToTexture(customPipeline);
+        this.camera1.setRenderToTexture(customPipeline);
 
         //Crea el escenario
         this.CreateStage();
@@ -261,7 +312,7 @@ class BaseScene extends Phaser.Scene {
         this.physics.add.overlap(this.players, this.enemyProjectiles, this.ProjectileDamage, null, this);
         this.physics.add.overlap(this.enemies, this.playerProjectiles, this.ProjectileDamage, null, this);
 
-        this.health = new Health(this, 40, 10, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0, 0);
+        this.health = new PlayerHealthBar(this, 40, 10, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0, 0);
         this.health.UpdateLifes();
 
         this.camera1.ignore(this.health);
@@ -282,7 +333,7 @@ class BaseScene extends Phaser.Scene {
         this.wallLayer = this.map.createStaticLayer('Pared', this.wallTiles, 0, 0).setDepth(-1);
 
         this.groundTiles = this.map.addTilesetImage('Tile_sheet', 'atlas');
-        this.groundLayer = this.map.createStaticLayer('Suelo', this.groundTiles, 0, 0);
+        this.groundLayer = this.map.createStaticLayer('Suelo', this.groundTiles, 0, 0).setDepth(4);
 
         //Colisiones
         this.groundLayer.setCollisionBetween(1, 28);

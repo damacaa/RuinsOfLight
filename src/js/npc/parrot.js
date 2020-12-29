@@ -60,7 +60,7 @@ class Parrot extends Enemy {
         this.awake = true;
         this.body.allowGravity = false;
         this.anims.play('parrotWakeUp', true);
-        this.healthBar = new StatusBar(this.scene, this, 'GREAT PARROT GUARDIAN');
+        this.healthBar = new BossHealthBar(this.scene, this, 'GREAT PARROT GUARDIAN');
 
 
         this.scene.physics.add.overlap(this.hitBox, this.scene.players, this.scene.MeleeDamage, null, this.scene);
@@ -94,7 +94,6 @@ class Parrot extends Enemy {
 
 
         this.anims.play('dead2', true);
-        //console.log("Hello");
         this.canMove = false;
 
         this.healthBar.Death();
@@ -102,13 +101,6 @@ class Parrot extends Enemy {
         this.scene.sound.stopAll();
         this.scene.sound.play("music", { loop: true }, { volume: 2 });
         this.scene.sound.play("effectDeathParrot");
-
-
-        
-
-        /*this.once('animationcomplete', () => {
-            //this.destroy();
-        });*/
     }
 
     Update() {

@@ -119,6 +119,32 @@ var CustomPipeline = new Phaser.Class({
         }
 });
 
+/*$(document).ready(function () {
+
+    $.getJSON('/my/url', function (data) {
+
+    });
+
+    $.ajax({
+        type: 'POST',
+        url: 'https://www.googleapis.com/books/v1/volumes?q=harry+potter',
+        data: data
+    }).done(function (data) {
+        console.log(data);
+    });
+
+    $.ajax({
+        type: 'GET',
+        url: 'https://www.googleapis.com/books/v1/volumes?q=harry+potter',
+        success: function (resp) {
+
+        },
+        error: function () {
+
+        }
+    });
+});*/
+
 var config;
 var game;
 var customPipeline;

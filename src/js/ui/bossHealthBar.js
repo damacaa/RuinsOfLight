@@ -1,6 +1,6 @@
 //https://www.youtube.com/watch?v=dJwjv5LfJPs&ab_channel=NDCConferences
 
-class StatusBar extends Phaser.GameObjects.Sprite {
+class BossHealthBar extends Phaser.GameObjects.Sprite {
     constructor(scene, currentBoss, nombreBoss) {
         super(scene, currentBoss, nombreBoss);
 
@@ -16,7 +16,7 @@ class StatusBar extends Phaser.GameObjects.Sprite {
             fontFamily: '"CambriaB"',
             fontSize: '14px'
             , fill: '#ffffff'
-        }).setScrollFactor(0).setOrigin(0.5, 0.5);
+        }).setScrollFactor(0).setOrigin(0.5, 0.5).setDepth(10);
 
         this.maxHealth = currentBoss.health;
     }
