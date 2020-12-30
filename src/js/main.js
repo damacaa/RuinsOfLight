@@ -165,7 +165,7 @@ window.onload = function () {
 
             arcade: {
                 gravity: { y: 981 },
-                //debug: true
+                debug: true
             }
         },
         scene: [MainMenu, AltarRoom, BossRoom, Dungeons, GameOver, Credits]

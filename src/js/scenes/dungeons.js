@@ -28,7 +28,7 @@ class Dungeons extends BaseScene {
             this.add.sprite(index, 0, 'background').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
         }
 
-        //Añade a cada nivel los items
+        //Añade a cada nivel las puertas
         switch (levelX) {
             case 1:
                 //1.1
@@ -43,13 +43,6 @@ class Dungeons extends BaseScene {
                 this.door1 = new DungeonDoor(this, 7 * 32, 15 * 32, "2_1");
                 this.door2 = new DungeonDoor(this, 65 * 32, 9 * 32, "2_2");
 
-                new Spawner(this, 21 * 32, 0);
-                new Spawner(this, 50 * 32, 0);
-                new Spawner(this, 26 * 32, 18 * 32);
-                new Spawner(this, 65 * 32, 23 * 32);
-                new Spawner(this, 3 * 32, 27 * 32);
-                new Spawner(this, 60 * 32, 11 * 32);
-
                 break;
 
             case 2:
@@ -57,19 +50,11 @@ class Dungeons extends BaseScene {
                     case 1:
                         //2.1
                         this.previousDungeonDoor = new DungeonStairs(this, 32, 5 * 32, "2_1");
-
-                        if (!hasRelic && relicX == levelX && relicY == levelY) {
-                            new Relic(this, 9 * 32, 5 * 32);
-                        }
                         break;
 
                     case 2:
                         //2.2
                         this.previousDungeonDoor = new DungeonStairs(this, 32, 7 * 32, "2_2");
-
-                        if (!hasRelic && relicX == levelX && relicY == levelY) {
-                            new Relic(this, 7 * 32, 7 * 32);
-                        }
                         break;
 
                     default:
@@ -81,13 +66,27 @@ class Dungeons extends BaseScene {
                 break;
         }
 
-        //Añade pociones
+        //https://medium.com/@alizah.lalani/collecting-objects-in-phaser-3-platformer-games-using-tiled-4e9298cbfc85
         for (let i = 0; i < this.map.width; i++) {
             for (let j = 0; j < this.map.width; j++) {
                 let tile = this.map.getTileAt(i, j);
-                let rand = Math.random();
-                if (rand > 0.95 && tile && (this.map.getTileAt(i, j).index == 2 || this.map.getTileAt(i, j).index == 26)) {
-                    this.potion = new HealthPotion(this, i * 32, (j - 1) * 32);
+
+                if (tile) {
+
+                    //Pociones
+                    let rand = Math.random();
+                    if (rand > 0.95 && (tile.index == 2 || tile.index == 26)) {
+                        this.potion = new HealthPotion(this, i * 32, (j - 1) * 32);
+                    }
+
+                    //Enemigos
+                    if (tile.index == 33) {
+                        new Spawner(this, i * 32, j * 32);
+                    }
+
+                    if (tile.index == 34 && !hasRelic && relicX == levelX && relicY == levelY) {
+                        new Relic(this, i * 32, j * 32 - 48 );
+                    }
                 }
             }
         }
@@ -121,7 +120,7 @@ class Dungeons extends BaseScene {
             default:
                 break;
         }
-        
+
         this.sound.stopAll();
         this.musicBGDungeon = this.sound.play("music", { loop: true }, { volume: 2 });
     }
@@ -136,3 +135,4 @@ class Dungeons extends BaseScene {
 
 
 
+ 

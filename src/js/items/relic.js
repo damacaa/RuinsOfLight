@@ -10,6 +10,8 @@ class Relic extends Phaser.GameObjects.Sprite {
         this.setDepth(0);
         this.scene.physics.add.overlap(this, scene.players, this.GetRelic, null, scene);
 
+        this.setOrigin(0,0);
+
 
         this.scene.tweens.add({
             targets: this,

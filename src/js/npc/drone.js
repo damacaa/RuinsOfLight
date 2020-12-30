@@ -89,7 +89,9 @@ class Drone extends Enemy {
                 this.secondaryTarget = this.scene.bowPlayer;
             }
 
-            this.body.setVelocityY(Math.abs(this.primaryTarget.y - this.y) - Math.abs(this.primaryTarget.x - this.x));
+            if (this.primaryTarget.y - this.y < 100) {
+                this.body.setVelocityY(Math.abs(this.primaryTarget.y - this.y) - Math.abs(this.primaryTarget.x - this.x));
+            } else { this.body.setVelocityY(20); }
 
             if (this.body.blocked.left || this.body.blocked.right) { this.body.setVelocityY(100); }
 
@@ -106,6 +108,8 @@ class Drone extends Enemy {
                     this.anims.play('flyLeft', true);
                 }
             } else {
+
+                this.body.setVelocityX(0);
 
                 if (this.primaryTarget.x < this.x) {
                     this.flipX = false;
@@ -129,13 +133,13 @@ class Drone extends Enemy {
     }
 
     Attack() {
-        this.canMove = false;
+        //this.canMove = false;
         //this.body.setVelocityX(0);
         //this.body.setVelocityY(0);
         this.canAttack = false;
         this.attacking = true;
 
-        this.shotDown = new Shot(this.scene, this.x, this.y, this.flipX, this.primaryTarget.x, this.primaryTarget.y);
+        this.shotDown = new Shot(this.scene, this.x, this.y+8, this.flipX, this.primaryTarget.x, this.primaryTarget.y+8);
         this.scene.sound.play("effectDrone");
 
         this.scene.time.delayedCall(this.wait, function () {
@@ -146,7 +150,7 @@ class Drone extends Enemy {
 
 class Shot extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, droneDir, targetx, targety) {
-        super(scene, x, y, "shot");
+        super(scene, x, y, "droneShotKey");
 
         this.speed = 200;
 
@@ -155,6 +159,8 @@ class Shot extends Phaser.GameObjects.Sprite {
         scene.enemyProjectiles.add(this);
         this.body.setAllowGravity(false);
         this.body.setSize(6, 6, true);
+
+        this.setOrigin(0.5, 0.5);
 
         this.scene.anims.create({
             key: 'droneShot',

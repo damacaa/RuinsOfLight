@@ -71,49 +71,49 @@ class BaseScene extends Phaser.Scene {
     preload() {
         //Personajes
         this.load.spritesheet('p0noWeapon',
-            '/resources/animations/players/p0noWeapon.png', {
+            'resources/animations/players/p0noWeapon.png', {
             frameWidth: 80,
             frameHeight: 64
         }
         );
 
         this.load.spritesheet('p0sword',
-            '/resources/animations/players/p0Sword.png', {
+            'resources/animations/players/p0Sword.png', {
             frameWidth: 80,
             frameHeight: 64
         }
         );
 
         this.load.spritesheet('p0bow',
-            '/resources/animations/players/p0Bow.png', {
+            'resources/animations/players/p0Bow.png', {
             frameWidth: 80,
             frameHeight: 64
         }
         );
 
         this.load.spritesheet('p1noWeapon',
-            '/resources/animations/players/p1noWeapon.png', {
+            'resources/animations/players/p1noWeapon.png', {
             frameWidth: 80,
             frameHeight: 64
         }
         );
 
         this.load.spritesheet('p1sword',
-            '/resources/animations/players/p1Sword.png', {
+            'resources/animations/players/p1Sword.png', {
             frameWidth: 80,
             frameHeight: 64
         }
         );
 
         this.load.spritesheet('p1bow',
-            '/resources/animations/players/p1Bow.png', {
+            'resources/animations/players/p1Bow.png', {
             frameWidth: 80,
             frameHeight: 64
         }
         );
 
         this.load.spritesheet('arrow',
-            '/resources/animations/players/Flecha.png', {
+            'resources/animations/players/Flecha.png', {
             frameWidth: 21,
             frameHeight: 3
         }
@@ -121,28 +121,28 @@ class BaseScene extends Phaser.Scene {
 
         //Enemigos
         this.load.spritesheet('greatGorila',
-            '/resources/animations/enemies/Gorila/Gorila.png', {
+            'resources/animations/enemies/Gorila/Gorila.png', {
             frameWidth: 256,
             frameHeight: 256
         }
         );
 
         this.load.spritesheet('greatParrot',
-            '/resources/animations/enemies/Parrot/Parrot.png', {
+            'resources/animations/enemies/Parrot/Parrot.png', {
             frameWidth: 256,
             frameHeight: 256
         }
         );
 
         this.load.spritesheet('gorilaProjectileKey',
-            '/resources/animations/enemies/Gorila/GorilaProjectile.png', {
+            'resources/animations/enemies/Gorila/GorilaProjectile.png', {
             frameWidth: 64,
             frameHeight: 32
         }
         );
 
         this.load.spritesheet('ball',
-            '/resources/animations/enemies/Ball/Ball.png', {
+            'resources/animations/enemies/Ball/Ball.png', {
             frameWidth: 63,
             frameHeight: 63
         }
@@ -150,21 +150,21 @@ class BaseScene extends Phaser.Scene {
 
 
         this.load.spritesheet('drone',
-            '/resources/animations/enemies/Drone/Drone.png', {
+            'resources/animations/enemies/Drone/Drone.png', {
             frameWidth: 32,
             frameHeight: 32
         }
         );
 
         this.load.spritesheet('droneShotKey',
-            '/resources/animations/enemies/Drone/DroneShot.png', {
+            'resources/animations/enemies/Drone/DroneShot.png', {
             frameWidth: 6,
             frameHeight: 6
         }
         );
 
         this.load.spritesheet('guardian',
-            '/resources/animations/enemies/Guardian/guardian.png', {
+            'resources/animations/enemies/Guardian/guardian.png', {
             frameWidth: 129,
             frameHeight: 90
 
@@ -172,7 +172,7 @@ class BaseScene extends Phaser.Scene {
         );
 
         this.load.spritesheet('swordAltar',
-            '/resources/img/Items/Altares/AltarEspada.png', {
+            'resources/img/Items/Altares/AltarEspada.png', {
             frameWidth: 32,
             frameHeight: 32
         }
@@ -180,30 +180,29 @@ class BaseScene extends Phaser.Scene {
 
 
         this.load.spritesheet('bowAltar',
-            '/resources/img/Items/Altares/AltarArco.png', {
+            'resources/img/Items/Altares/AltarArco.png', {
             frameWidth: 32,
             frameHeight: 32
         }
         );
 
         this.load.spritesheet('puertaEntrada',
-            '/resources/img/Items/Arcos de Paso/Entrada.png', {
+            'resources/img/Items/Arcos de Paso/Entrada.png', {
             frameWidth: 64,
             frameHeight: 64
         }
         );
 
         //Escenario
-        this.load.image('puerta', '/resources/img/Items/Arcos de Paso/Arco de Paso.png');
-        this.load.image('escalerasL', '/resources/img/Items/Escaleras/escaleras_laterales.png');
-        this.load.image('wall', '/resources/img/tiles/BrickWall.png');
-        this.load.image('bossBackground', '/resources/img/bossBackground.png');
-        this.load.image('background', '/resources/img/background.png');
-        this.load.image('relic', '/resources/img/Items/Reliquia/Reliquia.png')
-        this.load.image('healthPotion', '/resources/img/Items/Potions/HealthPotion.png')
-        this.load.image('sword', '/resources/img/Items/Weapons/Sword.png')
-        this.load.image('bow', '/resources/img/Items/Weapons/Bow.png')
-        this.load.image('bossAltar', '/resources/img/Items/Altares/AltarBoss.png')
+        this.load.image('puerta', 'resources/img/Items/Arcos de Paso/Arco de Paso.png');
+        this.load.image('escalerasL', 'resources/img/Items/Escaleras/escaleras_laterales.png');
+        this.load.image('bossBackground', 'resources/img/bossBackground.png');
+        this.load.image('background', 'resources/img/background.png');
+        this.load.image('relic', 'resources/img/Items/Reliquia/Reliquia.png')
+        this.load.image('healthPotion', 'resources/img/Items/Potions/HealthPotion.png')
+        this.load.image('sword', 'resources/img/Items/Weapons/Sword.png')
+        this.load.image('bow', 'resources/img/Items/Weapons/Bow.png')
+        this.load.image('bossAltar', 'resources/img/Items/Altares/AltarBoss.png')
 
         this.load.image('atlas', 'resources/levels/Tile_sheet.png');
         this.load.tilemapTiledJSON('altarRoom', 'resources/levels/AltarRoom.json');
@@ -247,21 +246,21 @@ class BaseScene extends Phaser.Scene {
 
         //Interfaz
         this.load.spritesheet('vidas',
-            '/resources/img/Interfaz/Vida2.png', {
+            'resources/img/Interfaz/Vida2.png', {
             frameWidth: 154,
             frameHeight: 8
         }
         );
 
         this.load.spritesheet('controls',
-            '/resources/img/Interfaz/Controls.png', {
+            'resources/img/Interfaz/Controls.png', {
             frameWidth: 55,
             frameHeight: 47
         }
         );
 
         this.load.spritesheet('Attackcontrols',
-            '/resources/img/Interfaz/AttackControls.png', {
+            'resources/img/Interfaz/AttackControls.png', {
             frameWidth: 17,
             frameHeight: 18
         }
@@ -335,8 +334,10 @@ class BaseScene extends Phaser.Scene {
         this.groundTiles = this.map.addTilesetImage('Tile_sheet', 'atlas');
         this.groundLayer = this.map.createStaticLayer('Suelo', this.groundTiles, 0, 0).setDepth(4);
 
+        
+
         //Colisiones
-        this.groundLayer.setCollisionBetween(1, 28);
+        this.groundLayer.setCollisionBetween(1, 34);
 
         this.physics.add.collider(this.players, this.groundLayer);
         this.physics.add.collider(this.enemies, this.groundLayer);

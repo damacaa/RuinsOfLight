@@ -8,18 +8,18 @@ class MainMenu extends Phaser.Scene {
 
     preload() {
         this.load.spritesheet('intro',
-            '/resources/img/intro.png', {
+            'resources/img/intro.png', {
             frameWidth: 480,
             frameHeight: 270
         }
         );
 
-        this.load.image('title', '/resources/img/Interfaz/Menu/Title.png');
-        this.load.image('newGame', '/resources/img/Interfaz/Menu/Buttons1.png');
-        this.load.image('credits', '/resources/img/Interfaz/Menu/Buttons2.png');
-        this.load.image('skip', '/resources/img/Interfaz/Menu/Buttons4.png');
+        this.load.image('title', 'resources/img/Interfaz/Menu/Title.png');
+        this.load.image('newGame', 'resources/img/Interfaz/Menu/Buttons1.png');
+        this.load.image('credits', 'resources/img/Interfaz/Menu/Buttons2.png');
+        this.load.image('skip', 'resources/img/Interfaz/Menu/Buttons4.png');
 
-        this.load.image('menuBackground', '/resources/img/Interfaz/Menu/menuBackground.png');
+        this.load.image('menuBackground', 'resources/img/Interfaz/Menu/menuBackground.png');
 
         this.load.audio("music", "resources/audio/music.ogg");
 
@@ -203,7 +203,7 @@ class Credits extends Phaser.Scene {
 
     preload() {
         this.load.spritesheet('endCredits',
-            '/resources/img/Interfaz/EndCredits/Credits.png', {
+            'resources/img/Interfaz/EndCredits/Credits.png', {
             frameWidth: 480,
             frameHeight: 270
         }
@@ -250,7 +250,7 @@ class GameOver extends Phaser.Scene {
 
     preload() {
 
-        this.load.image('gameOver', '/resources/img/Interfaz/Game Over/Game Over.png');
+        this.load.image('gameOver', 'resources/img/Interfaz/Game Over/Game Over.png');
     }
 
     create() {
