@@ -281,3 +281,44 @@ class GameOver extends Phaser.Scene {
     update(time, delta) { }
 
 }
+
+class LeaderBoard extends Phaser.Scene {
+
+    constructor() {
+        super('leaderBoard');
+
+    }
+
+    preload() {
+
+        
+    }
+
+    create() {
+
+        this.camera = this.cameras.main;
+
+        this.gO = this.add.image(240, 135, 'gameOver').setOrigin(0.5, 0.5);
+
+        this.time.delayedCall(2000, function () {
+            this.text = this.add.text(240, 250, 'CLICK TO PLAY AGAIN', {
+                fontFamily: '"CambriaB"',
+                fontSize: '12px'
+            }).setOrigin(0.5).setDepth(10);
+
+
+            this.input.on('pointerdown', function (event) {
+
+                this.scene.start('mainMenu');
+
+
+            }, this);
+        }, [], this);
+
+        this.sound.stopAll();
+        this.musicBGGameOver = this.sound.play("gameOverMusic", { loop: true }, { volume: 2 });
+    }
+
+    update(time, delta) { }
+
+}

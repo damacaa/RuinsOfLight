@@ -20,7 +20,6 @@ var CustomPipeline = new Phaser.Class({
                 uniform sampler2D u_texture;
                 uniform float resolution;
                 uniform float radius;
-                uniform vec2 dir;
 
                 void main() {
                     //this will be our RGBA sum
@@ -29,90 +28,53 @@ var CustomPipeline = new Phaser.Class({
                     //our original texcoord for this fragment
                     vec2 tc = outTexCoord;
 
-
                     //the amount to blur, i.e. how far off center to sample from 
                     //1.0 -> blur by one pixel
                     //2.0 -> blur by two pixels, etc.
                     float blur = radius / resolution;
 
-                    //the direction of our blur
-                    //(1.0, 0.0) -> x-axis blur
-                    //(0.0, 1.0) -> y-axis blur
-                    float hstep = dir.x;
-                    float vstep = dir.y;
-
                     bool hasLight = false;
-                    float remaining = 1.0;
-
-                    //apply blurring, using a 9-tap filter with predefined gaussian weights 
-                    //if(texture2D(u_texture, vec2(tc.x, tc.y)) == vec4(238, 238, 186, 1)){}
 
                     vec4 neighbour;
+                    vec4 minNeighbour;
 
-                    neighbour = vec4(texture2D(u_texture, vec2(tc.x - 4.0 * blur * hstep, tc.y - 4.0 * blur * vstep)).rgb,1.0);
-                    if(neighbour.r > 0.92 && neighbour.g > 0.92 && neighbour.b > 0.71){
-                        sum += texture2D(u_texture, vec2(tc.x - 4.0 * blur * hstep, tc.y - 4.0 * blur * vstep)) * 0.0162162162;
-                        remaining = remaining-0.0162162162;
-                        hasLight = true;
+                    float dist;
+                    float minDist = 10.0;
+
+                    for(int i=-4;i<=4;i++) {
+                        for(int j=-4;j<=4;j++) {
+                            
+                            neighbour = vec4(texture2D(u_texture, vec2(tc.x + float(i) * blur , tc.y + float(j) * blur )).rgb,1.0);
+
+                            if(neighbour.r > 0.92 && neighbour.g > 0.92 && neighbour.b > 0.71){
+
+                                    dist = sqrt(float((i*i)+(j*j)));
+
+                                    if(dist<minDist){
+                                        minDist = dist;
+                                        minNeighbour=neighbour;
+                                    }
+                                    hasLight = true;
+                            }
+                        }
                     }
 
-                    neighbour = vec4(texture2D(u_texture, vec2(tc.x - 3.0 * blur * hstep, tc.y - 3.0 * blur * vstep)).rgb,1.0);
-                    if(neighbour.r > 0.92 && neighbour.g > 0.92 && neighbour.b > 0.71){
-                        sum += texture2D(u_texture, vec2(tc.x - 3.0 * blur * hstep, tc.y - 3.0 * blur * vstep)) * 0.0540540541;
-                        remaining = remaining- 0.0540540541;
-                        hasLight = true;
-                    }
-
-                    neighbour = vec4(texture2D(u_texture, vec2(tc.x - 2.0 * blur * hstep, tc.y - 2.0 * blur * vstep)).rgb,1.0);
-                    if(neighbour.r > 0.92 && neighbour.g > 0.92 && neighbour.b > 0.71){
-                        sum += texture2D(u_texture, vec2(tc.x - 2.0 * blur * hstep, tc.y - 2.0 * blur * vstep)) * 0.1216216216;
-                        remaining = remaining- 0.1216216216;
-                        hasLight = true;
-                    }
-
-                    neighbour = vec4(texture2D(u_texture, vec2(tc.x - 1.0 * blur * hstep, tc.y - 1.0 * blur * vstep)).rgb,1.0);
-                    if(neighbour.r > 0.92 && neighbour.g > 0.92 && neighbour.b > 0.71){
-                        sum += texture2D(u_texture, vec2(tc.x - 1.0 * blur * hstep, tc.y - 1.0 * blur * vstep)) * 0.1945945946;
-                        remaining = remaining- 0.1945945946;
-                        hasLight = true;
-                    }
-
-                    neighbour = vec4(texture2D(u_texture, vec2(tc.x + 1.0 * blur * hstep, tc.y + 1.0 * blur * vstep)).rgb,1.0);
-                    if(neighbour.r > 0.92 && neighbour.g > 0.92 && neighbour.b > 0.71){
-                        sum += texture2D(u_texture, vec2(tc.x + 1.0 * blur * hstep, tc.y + 1.0 * blur * vstep)) * 0.1945945946;
-                        remaining = remaining- 0.1945945946;
-                        hasLight = true;
-                    }
-
-                    neighbour = vec4(texture2D(u_texture, vec2(tc.x + 2.0 * blur * hstep, tc.y + 2.0 * blur * vstep)).rgb,1.0);
-                    if(neighbour.r > 0.92 && neighbour.g > 0.92 && neighbour.b > 0.71){
-                        sum += texture2D(u_texture, vec2(tc.x + 2.0 * blur * hstep, tc.y + 2.0 * blur * vstep)) * 0.1216216216;
-                        remaining = remaining- 0.1216216216;
-                        hasLight = true;
-                    }
-
-                    neighbour = vec4(texture2D(u_texture, vec2(tc.x + 3.0 * blur * hstep, tc.y + 3.0 * blur * vstep)).rgb,1.0);
-                    if(neighbour.r > 0.92 && neighbour.g > 0.92 && neighbour.b > 0.71){
-                        sum += texture2D(u_texture, vec2(tc.x + 3.0 * blur * hstep, tc.y + 3.0 * blur * vstep)) * 0.0540540541;
-                        remaining = remaining- 0.0540540541;
-                        hasLight = true;
-                    }
-
-                    neighbour = vec4(texture2D(u_texture, vec2(tc.x + 4.0 * blur * hstep, tc.y + 4.0 * blur * vstep)).rgb,1.0);
-                    if(neighbour.r > 0.92 && neighbour.g > 0.92 && neighbour.b > 0.71){
-                        sum += texture2D(u_texture, vec2(tc.x + 4.0 * blur * hstep, tc.y + 4.0 * blur * vstep)) * 0.0162162162;
-                        remaining = remaining- 0.0162162162;
-                        hasLight = true;
-                    }
-
-                    sum += texture2D(u_texture, vec2(tc.x, tc.y)) * remaining;
+                    vec4 col = texture2D(u_texture, vec2(tc.x, tc.y));
 
                     if(hasLight){
-                        gl_FragColor = vec4(sum.rgb, 1.0);
-                        //gl_FragColor = vec4(1.0,0.0,0.0,1.0);
-                    }else{
-                        gl_FragColor = vec4(texture2D(u_texture, vec2(tc.x, tc.y)).rgb, 1.0);
+
+                        float attenuation = 1.0 / (1.0 + (1.5*minDist*minDist));
+                        float remaining = 1.0-attenuation;
+
+                        col *= remaining;
+
+                        col += minNeighbour * attenuation;
                     }
+                    
+                    vec2 distToCenter = vec2(tc.x-0.5, tc.y-0.5);
+                    float fDistToCenter = sqrt((distToCenter.x * distToCenter.x) + (distToCenter.y * distToCenter.y));
+                    gl_FragColor = vec4(col.rgb * (1.0 / (1.0 + (5.0*fDistToCenter*fDistToCenter))), 1.0);
+                    
             }
             `
             });
@@ -156,16 +118,16 @@ window.onload = function () {
         roundPixels: false,
         scale: {
             mode: Phaser.Scale.FIT,// Phaser.Scale.FIT || Phaser.Scale.RESIZE
-            parent: 'phaser-example',
+            autoCenter: Phaser.Scale.CENTER_BOTH,
             width: 480,
-            height: 270
+            height: 270,
         },
         physics: {
             default: 'arcade',
 
             arcade: {
                 gravity: { y: 981 },
-                debug: true
+                //debug: true
             }
         },
         scene: [MainMenu, AltarRoom, BossRoom, Dungeons, GameOver, Credits]
@@ -176,6 +138,5 @@ window.onload = function () {
     customPipeline = game.renderer.addPipeline('Custom', new CustomPipeline(game));
     customPipeline.setFloat1('resolution', game.config.width);
     customPipeline.setFloat1('radius', 1.0);
-    customPipeline.setFloat2('dir', 1.0, 1.0);
 }
 

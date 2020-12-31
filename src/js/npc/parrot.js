@@ -41,7 +41,7 @@ class Parrot extends Enemy {
             repeat: 0
         });
 
-        this.health = 2000;
+        this.health = 20;
         this.wait = 1000;
 
         this.hitBox = this.scene.physics.add.image(this.x, this.y, null);
@@ -92,6 +92,7 @@ class Parrot extends Enemy {
         this.body.allowGravity = true;
         this.flipX = false;
 
+        this.hitBox.body.enable = false;
 
         this.anims.play('dead2', true);
         this.canMove = false;

@@ -339,6 +339,7 @@ class Player extends Phaser.GameObjects.Sprite {
 
                 }, [], this);
             } else {
+                this.body.setVelocityX(0);
                 this.scene.LoadScene('gameOver');
             }
         }

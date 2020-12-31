@@ -81,7 +81,7 @@ class Dungeons extends BaseScene {
 
                     //Enemigos
                     if (tile.index == 33) {
-                        new Spawner(this, i * 32, j * 32);
+                        new Spawner(this, i * 32 + 16, j * 32 + 16);
                     }
 
                     if (tile.index == 34 && !hasRelic && relicX == levelX && relicY == levelY) {
