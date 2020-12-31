@@ -1,5 +1,5 @@
 
-class Health extends Phaser.GameObjects.Sprite {
+class PlayerHealthBar extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, player0, player1, vidas) {
         super(scene, x, y, vidas);
 

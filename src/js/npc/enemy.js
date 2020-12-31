@@ -22,7 +22,7 @@ class Enemy extends Phaser.GameObjects.Sprite {
     this.wait = 2000;
     this.awake = false;
     this.speed = 100;
-    this.dieDistance = 300;
+    this.dieDistance = 1000;
 
     this.primaryTarget;
     this.secondaryTarget;

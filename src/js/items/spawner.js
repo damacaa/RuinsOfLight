@@ -12,7 +12,7 @@ class Spawner extends Phaser.GameObjects.Sprite {
         this.canSpawnEnemies = false;
         this.nextSpawnTime = 0;
         this.spawnWait = 3000;
-        this.maxEnemies = 20;
+        this.maxEnemies = 50;
 
         this.setOrigin(0,0);
 
@@ -20,20 +20,9 @@ class Spawner extends Phaser.GameObjects.Sprite {
     }
 
     Update(time, delta) {
-        if (this.canSpawnEnemies && !this.scene.camera.worldView.contains(this.x, this.y) && !this.scene.camera1.worldView.contains(this.x, this.y)) {
+        if (this.canSpawnEnemies && (this.scene.camera.worldView.contains(this.x, this.y) || this.scene.camera1.worldView.contains(this.x, this.y))) {
 
-            let rand = Math.random();
-
-            if (rand < 0.4) {
-                let randomEnemy = new Ball(this.scene, this.x, this.y);
-                randomEnemy.WakeUp();
-            } else if (rand < 0.7) {
-                let randomEnemy = new Drone(this.scene, this.x, this.y);
-                randomEnemy.WakeUp();
-            } else if (rand < 1) {
-                let randomEnemy = new Guardian(this.scene, this.x, this.y);
-                randomEnemy.WakeUp();
-            }
+            this.Spawn();
 
             this.nextSpawnTime = time + this.spawnWait;
             this.canSpawnEnemies = false;
@@ -42,6 +31,21 @@ class Spawner extends Phaser.GameObjects.Sprite {
 
         } else if (this.nextSpawnTime <= time && this.scene.entities.length < this.maxEnemies) {
             this.canSpawnEnemies = true;
+        }
+    }
+
+    Spawn(){
+        let rand = Math.random();
+
+        if (rand < 0.4) {
+            let randomEnemy = new Ball(this.scene, this.x+16, this.y+16);
+            randomEnemy.WakeUp();
+        } else if (rand < 0.7) {
+            let randomEnemy = new Drone(this.scene, this.x+16, this.y+40);
+            randomEnemy.WakeUp();
+        } else if (rand < 1) {
+            let randomEnemy = new Guardian(this.scene, this.x+16, this.y+16);
+            randomEnemy.WakeUp();
         }
     }
 }

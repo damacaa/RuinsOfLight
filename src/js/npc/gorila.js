@@ -8,58 +8,55 @@ class GreatGorila extends Enemy {
         this.body.offset.x = 90;
         this.body.offset.y = 108;
 
-        {
-            this.scene.anims.create({
-                key: 'gorilaWakeUp',
-                frames: this.scene.anims.generateFrameNumbers(gorilaKey, { start: 0, end: 4 }),
-                frameRate: 3,
-                repeat: 0
-            });
+        this.scene.anims.create({
+            key: 'gorilaWakeUp',
+            frames: this.scene.anims.generateFrameNumbers(gorilaKey, { start: 0, end: 4 }),
+            frameRate: 3,
+            repeat: 0
+        });
 
-            this.scene.anims.create({
-                key: 'gorilaSleep',
-                frames: this.scene.anims.generateFrameNumbers(gorilaKey, { start: 4, end: 0 }),
-                frameRate: 3,
-                repeat: 0
-            });
+        this.scene.anims.create({
+            key: 'gorilaSleep',
+            frames: this.scene.anims.generateFrameNumbers(gorilaKey, { start: 4, end: 0 }),
+            frameRate: 3,
+            repeat: 0
+        });
 
-            this.scene.anims.create({
-                key: 'idleLeft',
-                frames: this.scene.anims.generateFrameNumbers(gorilaKey, { start: 5, end: 6 }),
-                frameRate: 2,
-                repeat: -1
-            });
+        this.scene.anims.create({
+            key: 'idleLeft',
+            frames: this.scene.anims.generateFrameNumbers(gorilaKey, { start: 5, end: 6 }),
+            frameRate: 2,
+            repeat: -1
+        });
 
-            this.scene.anims.create({
-                key: 'walkLeft',
-                frames: this.scene.anims.generateFrameNumbers(gorilaKey, { start: 7, end: 10 }),
-                frameRate: 2,
-                repeat: -1
-            });
+        this.scene.anims.create({
+            key: 'walkLeft',
+            frames: this.scene.anims.generateFrameNumbers(gorilaKey, { start: 7, end: 10 }),
+            frameRate: 2,
+            repeat: -1
+        });
 
-            this.scene.anims.create({
-                key: 'smash',
-                frames: this.scene.anims.generateFrameNumbers(gorilaKey, { start: 11, end: 13 }),
-                frameRate: 4,
-                repeat: 0
-            });
+        this.scene.anims.create({
+            key: 'smash',
+            frames: this.scene.anims.generateFrameNumbers(gorilaKey, { start: 11, end: 13 }),
+            frameRate: 4,
+            repeat: 0
+        });
 
-            this.scene.anims.create({
-                key: 'explosionG',
-                frames: this.scene.anims.generateFrameNumbers(gorilaKey, { start: 14, end: 18 }),
-                frameRate: 8,
-                repeat: 0
-            });
+        this.scene.anims.create({
+            key: 'explosionG',
+            frames: this.scene.anims.generateFrameNumbers(gorilaKey, { start: 14, end: 18 }),
+            frameRate: 8,
+            repeat: 0
+        });
 
-            this.scene.anims.create({
-                key: 'dead',
-                frames: this.scene.anims.generateFrameNumbers(gorilaKey, { start: 19, end: 27 }),
-                frameRate: 4,
-                repeat: 0
-            });
-        }
+        this.scene.anims.create({
+            key: 'dead',
+            frames: this.scene.anims.generateFrameNumbers(gorilaKey, { start: 19, end: 27 }),
+            frameRate: 4,
+            repeat: 0
+        });
 
-        
         this.health = 4000;
         this.wait = 4000;
 
@@ -72,7 +69,7 @@ class GreatGorila extends Enemy {
     WakeUp() {
         this.awake = true;
         this.anims.play('gorilaWakeUp', true);
-        this.healthBar = new StatusBar(this.scene, this, 'GREAT GORILA GUARDIAN');
+        this.healthBar = new BossHealthBar(this.scene, this, 'GREAT GORILA GUARDIAN');
         this.setDepth(2);
 
         this.once('animationcomplete', () => {
@@ -98,10 +95,6 @@ class GreatGorila extends Enemy {
         this.scene.sound.stopAll();
         this.scene.sound.play("music", { loop: true }, { volume: 2 });
         this.scene.sound.play("effectDeathGorila");
-
-        /*this.once('animationcomplete', () => {
-            this.destroy();
-        });*/
     }
 
     Update() {
