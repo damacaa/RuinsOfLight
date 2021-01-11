@@ -1,0 +1,38 @@
+package com.group8.ruins_of_light;
+
+public class Record {
+	
+	private long id;
+	
+	private String nombre1;
+	private String nombre2;
+	private int puntuacion;
+	
+
+	public Record() {
+	}
+
+	public Record(String nombre1,String nombre2, int puntuacion) {
+		super();
+		this.nombre1 = nombre1;
+		this.nombre2 = nombre2;
+		this.puntuacion = puntuacion;
+	}
+	
+	public String GetNames() {
+		return nombre1 +"-"+ nombre2;
+	}
+	
+	public int GetScore() {
+		return puntuacion;
+	}
+	
+	public void SetId(long id) {
+		this.id = id;
+	}
+	
+	@Override
+	public String toString() {
+		return nombre1 + nombre2 + String.valueOf(puntuacion);
+	}
+}
