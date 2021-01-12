@@ -29,8 +29,6 @@ class MainMenu extends Phaser.Scene {
     }
 
     create() {
-        joinGame();
-
         ResetGame();
 
         this.camera = this.cameras.main;
@@ -85,6 +83,9 @@ class MainMenu extends Phaser.Scene {
         this.newGame.on('pointerdown', function (event) {
 
             if (this.step == 0) {
+
+                
+
                 this.step++;
                 this.bg.setFrame(this.step);
                 this.title.destroy();
@@ -104,9 +105,15 @@ class MainMenu extends Phaser.Scene {
                 this.text = this.add.text(240, 260, 'CLICK TO CONTINUE', {
                     fontFamily: '"CambriaB"',
                     fontSize: '10px'
-                }).setOrigin(0.5).setDepth(10);; //, stroke: '0f0f0f', strokeThickness: 20
+                }).setOrigin(0.5).setDepth(10); //, stroke: '0f0f0f', strokeThickness: 20
 
                 this.input.on('pointerdown', function (event) {
+
+                    if (!canJoin) {
+                        console.log(canJoin);
+                        this.scene.start('mainMenu');
+                        console.log("No te puedes unir");
+                    }
 
                     if (this.step < 7) {
                         this.step++;
@@ -177,7 +184,9 @@ class MainMenu extends Phaser.Scene {
         }, this);
     }
 
-    update(time, delta) { }
+    update(time, delta) {
+        checkServer();
+     }
 
     EnableFullScreen() {
 
@@ -240,7 +249,9 @@ class Credits extends Phaser.Scene {
 
     }
 
-    update(time, delta) { }
+    update(time, delta) {
+        checkServer();
+     }
 
 }
 
@@ -281,7 +292,9 @@ class GameOver extends Phaser.Scene {
         this.musicBGGameOver = this.sound.play("gameOverMusic", { loop: true }, { volume: 2 });
     }
 
-    update(time, delta) { }
+    update(time, delta) {
+        checkServer();
+     }
 
 }
 
@@ -296,13 +309,13 @@ class LeaderBoard extends Phaser.Scene {
     }
 
     create() {
-        
-        loadRecords();
-        
+
+
+
 
         for (let i = 0; i < records.length; i++) {
             //console.log(records[i])
-            this.text = this.add.text(240, 20 + (25 * i), records[i], {
+            this.text = this.add.text(240, 20 + (25 * i), records[i].nombre1 + records[i].nombre2, {
                 fontFamily: '"CambriaB"',
                 fontSize: '20px'
             }).setOrigin(0.5).setDepth(10);
@@ -321,6 +334,8 @@ class LeaderBoard extends Phaser.Scene {
         this.musicBGGameOver = this.sound.play("gameOverMusic", { loop: true }, { volume: 2 });*/
     }
 
-    update(time, delta) { }
+    update(time, delta) { 
+        checkServer();
+    }
 
 }
