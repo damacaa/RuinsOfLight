@@ -42,19 +42,15 @@ function ResetGame() {
     levelY = 1;
     whereAreTheyComingFrom = 0;
 
-    hasRelic = true;
+    hasRelic = false;
     firstTimeBoss = true;
-    defeatedBosses = 1;
+    defeatedBosses = 0;
 
     godMode = false;
     skip = false;
     
     
     loadRecords();
-
-    //createRecord("a", "b", 1);
-    //createRecord("a", "c", 2);
-    //createRecord("b", "b", 3);
 }
 
 class BaseScene extends Phaser.Scene {
