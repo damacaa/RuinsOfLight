@@ -46,6 +46,13 @@ function ResetGame() {
 
     godMode = false;
     skip = false;
+    
+    joinGame();
+    loadRecords();
+
+    //createRecord("a", "b", 1);
+    //createRecord("a", "c", 2);
+    //createRecord("b", "b", 3);
 }
 
 class BaseScene extends Phaser.Scene {
@@ -428,9 +435,6 @@ class BaseScene extends Phaser.Scene {
 
     MeleeDamage(weapon, target) {
         target.Hurt(10);
-
-        //let dir = target.x - weapon.x;
-        //target.body.setVelocityX(dir);
     }
 
     ProjectileDamage(target, projectile) {
@@ -455,10 +459,13 @@ class BaseScene extends Phaser.Scene {
             this.camera1.visible = true;
         } else { this.camera1.visible = false; }
 
-        if (new Date() - lastTimeChecked > 3000) {
-            lastTimeChecked = new Date();
-        } else {
+        checkServer();
 
+        if (!isOnline) {
+            //Falta mejorar
+            this.LoadScene('mainMenu');
+            ResetGame();
+            //joinGame();
         }
     }
 
