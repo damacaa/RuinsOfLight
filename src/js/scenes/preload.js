@@ -221,6 +221,7 @@ class Preload extends Phaser.Scene {
             this.load.image('newGame', 'resources/img/Interfaz/Menu/Buttons1.png');
             this.load.image('credits', 'resources/img/Interfaz/Menu/Buttons2.png');
             this.load.image('skip', 'resources/img/Interfaz/Menu/Buttons4.png');
+            this.load.image('records', 'resources/img/Interfaz/Menu/Buttons5.png');
 
             this.load.image('menuBackground', 'resources/img/Interfaz/Menu/menuBackground.png');
 
