@@ -80,6 +80,8 @@ class MainMenu extends BaseMenuScene {
 
         this.newGame = this.add.image(65, 90, 'newGame').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
         this.credits = this.add.image(65, 130, 'credits').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
+        this.records = this.add.image(65, 170, 'records').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
+
 
         this.step = 0;
 
@@ -130,6 +132,7 @@ class MainMenu extends BaseMenuScene {
                 this.title.destroy();
                 this.newGame.destroy();
                 this.credits.destroy();
+                this.records.destroy();
 
                 //Saltar la introducción
                 this.skip = this.add.image(440, 10, 'skip').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
@@ -203,16 +206,16 @@ class MainMenu extends BaseMenuScene {
                 }, this);
                 this.sound.stopAll();
                 this.musicBGMainMenu = this.sound.play("music", { loop: true }, { volume: 2 });
-
-
             }
-
         }, this);
 
 
         this.credits.on('pointerdown', function (event) {
-
             //this.scene.start('credits');
+            this.scene.start('credits');
+        }, this);
+
+        this.records.on('pointerdown', function (event) {
             this.scene.start('leaderBoard');
         }, this);
     }
