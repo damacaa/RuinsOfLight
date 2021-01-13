@@ -1,26 +1,23 @@
-let username;
-
 class BaseMenuScene extends Phaser.Scene {
     constructor(key) {
         super(key);
+        this.loading = false;
     }
 
     update() {
         checkServer();
-
-        if (!isOnline) {
-            //Falta mejorar
-            this.LoadScene('nameInput');
-            ResetGame();
-        }
     }
 
     LoadScene(key) {
-        this.cameras.main.fadeOut(500);
+        if (!this.loading) {
+            this.loading = true;
+            this.cameras.main.fadeOut(500);
 
-        this.cameras.main.once('camerafadeoutcomplete', () => {
-            this.scene.start(key);
-        });
+            this.cameras.main.once('camerafadeoutcomplete', () => {
+                this.loading = false;
+                this.scene.start(key);
+            });
+        }
     }
 }
 
@@ -36,20 +33,24 @@ class InputName extends BaseMenuScene {
     }
 
     create() {
-        username = null;
-        while (username == null || username.length < 3) {
-            username = prompt();
-            player = { nick: username, tiempo: 9999999 }
-        }
+        this.scene.launch('ui');
+        
+        this.loading = false;
 
-        console.log(username);
+        this.time.delayedCall(100, function () {
+            player.nick = null;
+            while (player.nick == null || player.nick.length < 1) {
+                //player.nick = prompt();
+                player.nick = Math.random().toString(36).substring(7).toUpperCase();;
+            }
 
-        joinGame();
+            joinGame();
+        }, [], this);    
     }
 
     update(time, delta) {
-        console.log(canJoin);
-        if (canJoin) { this.scene.start('mainMenu'); }
+        
+        if (canJoin) { this.LoadScene('mainMenu'); }
     }
 }
 
@@ -63,27 +64,12 @@ class MainMenu extends BaseMenuScene {
     }
 
     preload() {
-        this.load.spritesheet('intro',
-            'resources/img/intro.png', {
-            frameWidth: 480,
-            frameHeight: 270
-        }
-        );
-
-        this.load.image('title', 'resources/img/Interfaz/Menu/Title.png');
-        this.load.image('newGame', 'resources/img/Interfaz/Menu/Buttons1.png');
-        this.load.image('credits', 'resources/img/Interfaz/Menu/Buttons2.png');
-        this.load.image('skip', 'resources/img/Interfaz/Menu/Buttons4.png');
-
-        this.load.image('menuBackground', 'resources/img/Interfaz/Menu/menuBackground.png');
-
-        this.load.audio("music", "resources/audio/music.ogg");
-
-        //Efectos intro
-        this.load.audio("effectIntroDoor", "resources/audio/effects/doorClosed.ogg"); // Efecto puerta
+        
     }
 
     create() {
+
+        
         ResetGame();
 
         this.camera = this.cameras.main;
@@ -257,17 +243,13 @@ class Credits extends BaseMenuScene {
     }
 
     preload() {
-        this.load.spritesheet('endCredits',
-            'resources/img/Interfaz/EndCredits/Credits.png', {
-            frameWidth: 480,
-            frameHeight: 270
-        }
-        );
-        this.load.audio("winMusic", "resources/audio/musicWin.ogg"); // Musica victoria
+        
 
     }
 
     create() {
+
+        ui.Clear();
 
         this.anims.create({
             key: 'credits',
@@ -303,10 +285,11 @@ class GameOver extends BaseMenuScene {
 
     preload() {
 
-        this.load.image('gameOver', 'resources/img/Interfaz/Game Over/Game Over.png');
+        
     }
 
     create() {
+        ui.Clear();
 
         this.camera = this.cameras.main;
 
@@ -345,11 +328,11 @@ class LeaderBoard extends BaseMenuScene {
     create() {
 
 
-        for (let i = 0; i < records.length; i++) {
+        for (let i = 0; i < Math.min(records.length,7); i++) {
             //console.log(records[i])
-            this.text = this.add.text(240, 20 + (25 * i), records[i].nombre1 + " & " + records[i].nombre2 + ": " + records[i].puntuacion, {
-                fontFamily: '"CambriaB"',
-                fontSize: '20px'
+            this.text = this.add.text(240, 75 + (25 * i), records[i].nombre1 + " & " + records[i].nombre2 + ": " + records[i].puntuacion, {
+                fontFamily: '"PressStart2P-Regular"',
+                fontSize: '12px'
             }).setOrigin(0.5).setDepth(10);
         }
 

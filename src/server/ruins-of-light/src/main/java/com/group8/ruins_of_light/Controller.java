@@ -157,7 +157,7 @@ public class Controller {
 				return pl.getOnline();
 			}
         }
-		
+	
 		return false;
 	}
 	
@@ -168,7 +168,7 @@ public class Controller {
 		for (Player pl : players) {
 			java.util.Date currentDate = new java.util.Date();
 
-			if((currentDate.getTime() - pl.getDate().getTime())>10000) {//(d2.getTime()-d1.getTime())
+			if((currentDate.getTime() - pl.getDate().getTime())>3000) {//(d2.getTime()-d1.getTime())
 				pl.setOnline(false);
 				System.out.println(pl.getNick() + " ha abandonado la partida");
 				indexToDelete = count;

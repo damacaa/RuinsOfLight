@@ -332,7 +332,7 @@ class Player extends Phaser.GameObjects.Sprite {
                 this.scene.sound.play("effectHurt");
                 this.attacking = false;
                 this.fallingAttack = false;
-                this.scene.health.UpdateLifes();
+                ui.healthBar.Update();
 
                 this.scene.time.delayedCall(1000, function () {
                     this.canAttack = true; this.canMove = true; this.isHurt = false;

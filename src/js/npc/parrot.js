@@ -66,7 +66,10 @@ class Parrot extends Enemy {
         this.scene.physics.add.overlap(this.hitBox, this.scene.players, this.scene.MeleeDamage, null, this.scene);
 
         this.once('animationcomplete', () => {
-            this.scene.cameras.main.shake(750, .01);
+
+            if(this.awake){
+            this.scene.camera.shake(750, .01);
+            this.scene.camera1.shake(750, .01);
             this.anims.play('parrotIdle', true);
             this.canMove = true;
             this.canAttack = false;
@@ -76,11 +79,12 @@ class Parrot extends Enemy {
 
             //this.body.velocity.y = -200;
             this.body.setAccelerationY(-500);
+            }
         });
     }
 
     Die() {
-        this.scene.camera.flash(1000);
+        ui.camera.flash(1000);
         this.awake = false;
 
         defeatedBosses++;
@@ -146,7 +150,8 @@ class Parrot extends Enemy {
                     this.canMove = true;
                     this.attacking = false;
                     this.body.setAccelerationY(-500);
-                    this.scene.cameras.main.shake(750, .01);
+                    this.scene.camera.shake(750, .01);
+                    this.scene.camera1.shake(750, .01);
                 }
             }
         }
