@@ -69,7 +69,10 @@ class GreatGorila extends Enemy {
     WakeUp() {
         this.awake = true;
         this.anims.play('gorilaWakeUp', true);
-        this.healthBar = new BossHealthBar(this.scene, this, 'GREAT GORILA GUARDIAN');
+
+        this.healthBar = new BossHealthBar(ui, this, 'GREAT GORILA GUARDIAN');
+        //ui.bossBar =
+
         this.setDepth(2);
 
         this.once('animationcomplete', () => {
@@ -82,7 +85,7 @@ class GreatGorila extends Enemy {
     }
 
     Die() {
-        this.scene.camera.flash(1000);
+        ui.camera.flash(1000);
         defeatedBosses++;
 
         this.awake = false;
@@ -165,7 +168,8 @@ class GreatGorila extends Enemy {
             this.fireballRight = new FireBall(this.scene, this.x, this.y + 112, false, this.flipX);
             //this.attacking = true;
             this.anims.play('explosionG', true);
-            this.scene.cameras.main.shake(750, .01);
+            this.scene.camera.shake(750, .01);
+            this.scene.camera1.shake(750, .01);
             this.once('animationcomplete', () => {
 
                 this.attacking = false;

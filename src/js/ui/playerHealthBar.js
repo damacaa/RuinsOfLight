@@ -1,14 +1,10 @@
 
 class PlayerHealthBar extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, player0, player1, vidas) {
+    constructor(scene, x, y, vidas) {
         super(scene, x, y, vidas);
 
         this.scene = scene;
         this.scene.add.existing(this);
-
-        this.vidas = vidas;
-        this.player0 = player0;
-        this.player1 = player1;
 
         //P1 LLENO DE VIDA
         scene.anims.create({
@@ -365,14 +361,18 @@ class PlayerHealthBar extends Phaser.GameObjects.Sprite {
             repeat: -1,
         });
 
-
+        this.Hide();
     }
 
-    UpdateLifes() {
+    Hide(){this.visible = false;}
+
+    Update() {
+        
+        this.visible = true;
         //variable de acceso al primer switch
-        var id = this.player0.health;
+        var id = currentScene.player0.health;
         //variable de acceso a los casos del switch anidado
-        var id2 = this.player1.health;
+        var id2 = currentScene.player1.health;
 
         switch (id) {
             case 6:

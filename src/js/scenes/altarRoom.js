@@ -13,6 +13,7 @@ class AltarRoom extends BaseScene {
         this.player1.x = 100;
 
         this.bg = this.add.sprite(0, -32, 'bossBackground').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
+
         //Crea escenario
         this.LoadTileMap('altarRoom');
 
@@ -65,7 +66,7 @@ class AltarRoom extends BaseScene {
 
             this.time.delayedCall(1000, function () {
                 if (this.bowAltar.activated && this.swordAltar.activated && this.bowAltar.player != this.swordAltar.player) {
-                    this.cameras.main.flash(1000);
+                    ui.camera.flash(1000);
 
                     this.swordAltar.done = true;
                     this.bowAltar.done = true;

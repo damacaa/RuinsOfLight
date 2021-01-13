@@ -1,12 +1,12 @@
 let lastTimeChecked = new Date();
-//let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 
 let records = [];
 let players = [];
-let player;
+let player = {nick: null};
 
-let isOnline = true;
+let isOnline = false;
 let canJoin = false;
+let joining = false;
 
 //Load records from server
 function loadRecords() {
@@ -55,28 +55,47 @@ function createRecord(name1, name2, score) {
     })
 }
 
-function joinGame() {
-    $.ajax({
-        method: "POST",
-        url: 'http://localhost:8080/join/',
-        data: JSON.stringify(player),
-        processData: false,
-        headers: {
-            "Content-Type": "application/json"
-        }
-    }).done(function (hasJoined) {
-
-        canJoin = hasJoined;
-    }).fail(function (jqXHR, textStatus, errorThrown) {
-        console.log("No se ha podido unir")
-    })
+function joinGame(doneFunc, failFunc) {
+    if (!joining) {
+        joining = true;
+        $.ajax({
+            method: "POST",
+            url: 'http://localhost:8080/join/',
+            data: JSON.stringify(player),
+            processData: false,
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).done(function (hasJoined) {
+            //console.log("Join: " + hasJoined);
+            canJoin = hasJoined;
+            isOnline = hasJoined;
+            if (doneFunc) { doneFunc(); }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            console.log("No se ha podido unir")
+            if (failFunc) { failFunc(); }
+        }).always(function () {
+            joining = false;
+        })
+    }
 }
 
 function checkServer() {
     if (new Date() - lastTimeChecked > 500) {
         lastTimeChecked = new Date();
         checkPlayer();
-    } 
+        loadPayers();
+    }
+
+    if (!isOnline) {
+        //Falta mejorar
+
+        joinGame(null, function (scene) {
+            //canJoin = false;
+            //ResetGame();
+            //currentScene.LoadScene('nameInput');
+        });
+    }
 }
 
 function checkPlayer() {
@@ -91,5 +110,8 @@ function checkPlayer() {
     }).done(function (hasChecked) {
         isOnline = hasChecked;
         console.log("Online: " + isOnline);
+
+    }).fail(function(){
+        isOnline = false;
     })
 }

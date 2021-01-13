@@ -70,10 +70,15 @@ var CustomPipeline = new Phaser.Class({
 
                         col += minNeighbour * attenuation;
                     }
+
+                    //col = vec4(1);
                     
                     vec2 distToCenter = vec2(tc.x-0.5, tc.y-0.5);
                     float fDistToCenter = sqrt((distToCenter.x * distToCenter.x) + (distToCenter.y * distToCenter.y));
-                    gl_FragColor = vec4(col.rgb * (1.0 / (1.0 + (5.0*fDistToCenter*fDistToCenter))), 1.0);
+
+                    float fade = (1.0 / (0.7 + (5.0*fDistToCenter*fDistToCenter)));
+
+                    gl_FragColor = vec4(col.rgb * fade, 1.0);
                     
             }
             `
@@ -104,13 +109,26 @@ window.onload = function () {
                 //debug: true
             }
         },
-        scene: [InputName, MainMenu, AltarRoom, BossRoom, Dungeons, GameOver, Credits, LeaderBoard]
+        scene: [Preload, InputName, MainMenu, AltarRoom, BossRoom, Dungeons, GameOver, Credits, LeaderBoard, UI]
     }
+
+    loadFont("Early GameBoy","resources/fonts/Early GameBoy.ttf");
+    loadFont("PressStart2P-Regular","resources/fonts/PressStart2P-Regular.ttf");
 
     game = new Phaser.Game(config);
 
     customPipeline = game.renderer.addPipeline('Custom', new CustomPipeline(game));
     customPipeline.setFloat1('resolution', game.config.width);
     customPipeline.setFloat1('radius', 1.0);
+}
+
+//https://stackoverflow.com/questions/51217147/how-to-use-a-local-font-in-phaser-3
+function loadFont(name, url) {
+    var newFont = new FontFace(name, `url(${url})`);
+    newFont.load().then(function (loaded) {
+        document.fonts.add(loaded);
+    }).catch(function (error) {
+        return error;
+    });
 }
 

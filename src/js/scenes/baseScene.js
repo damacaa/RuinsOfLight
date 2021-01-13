@@ -26,6 +26,8 @@ let godMode = false; //Vida infinita para los jugadores
 
 let skip = false;
 
+let currentScene;
+
 function SkipRelic() {
     skip = true;
     hasRelic = true;
@@ -48,8 +50,7 @@ function ResetGame() {
 
     godMode = false;
     skip = false;
-    
-    
+
     loadRecords();
 }
 
@@ -74,205 +75,15 @@ class BaseScene extends Phaser.Scene {
     }
 
     preload() {
-        //Personajes
-        this.load.spritesheet('p0noWeapon',
-            'resources/animations/players/p0noWeapon.png', {
-            frameWidth: 80,
-            frameHeight: 64
-        }
-        );
-
-        this.load.spritesheet('p0sword',
-            'resources/animations/players/p0Sword.png', {
-            frameWidth: 80,
-            frameHeight: 64
-        }
-        );
-
-        this.load.spritesheet('p0bow',
-            'resources/animations/players/p0Bow.png', {
-            frameWidth: 80,
-            frameHeight: 64
-        }
-        );
-
-        this.load.spritesheet('p1noWeapon',
-            'resources/animations/players/p1noWeapon.png', {
-            frameWidth: 80,
-            frameHeight: 64
-        }
-        );
-
-        this.load.spritesheet('p1sword',
-            'resources/animations/players/p1Sword.png', {
-            frameWidth: 80,
-            frameHeight: 64
-        }
-        );
-
-        this.load.spritesheet('p1bow',
-            'resources/animations/players/p1Bow.png', {
-            frameWidth: 80,
-            frameHeight: 64
-        }
-        );
-
-        this.load.spritesheet('arrow',
-            'resources/animations/players/Flecha.png', {
-            frameWidth: 21,
-            frameHeight: 3
-        }
-        );
-
-        //Enemigos
-        this.load.spritesheet('greatGorila',
-            'resources/animations/enemies/Gorila/Gorila.png', {
-            frameWidth: 256,
-            frameHeight: 256
-        }
-        );
-
-        this.load.spritesheet('greatParrot',
-            'resources/animations/enemies/Parrot/Parrot.png', {
-            frameWidth: 256,
-            frameHeight: 256
-        }
-        );
-
-        this.load.spritesheet('gorilaProjectileKey',
-            'resources/animations/enemies/Gorila/GorilaProjectile.png', {
-            frameWidth: 64,
-            frameHeight: 32
-        }
-        );
-
-        this.load.spritesheet('ball',
-            'resources/animations/enemies/Ball/Ball.png', {
-            frameWidth: 63,
-            frameHeight: 63
-        }
-        );
-
-
-        this.load.spritesheet('drone',
-            'resources/animations/enemies/Drone/Drone.png', {
-            frameWidth: 32,
-            frameHeight: 32
-        }
-        );
-
-        this.load.spritesheet('droneShotKey',
-            'resources/animations/enemies/Drone/DroneShot.png', {
-            frameWidth: 6,
-            frameHeight: 6
-        }
-        );
-
-        this.load.spritesheet('guardian',
-            'resources/animations/enemies/Guardian/guardian.png', {
-            frameWidth: 129,
-            frameHeight: 90
-
-        }
-        );
-
-        this.load.spritesheet('swordAltar',
-            'resources/img/Items/Altares/AltarEspada.png', {
-            frameWidth: 32,
-            frameHeight: 32
-        }
-        );
-
-
-        this.load.spritesheet('bowAltar',
-            'resources/img/Items/Altares/AltarArco.png', {
-            frameWidth: 32,
-            frameHeight: 32
-        }
-        );
-
-        this.load.spritesheet('puertaEntrada',
-            'resources/img/Items/Arcos de Paso/Entrada.png', {
-            frameWidth: 64,
-            frameHeight: 64
-        }
-        );
-
-        //Escenario
-        this.load.image('puerta', 'resources/img/Items/Arcos de Paso/Arco de Paso.png');
-        this.load.image('escalerasL', 'resources/img/Items/Escaleras/escaleras_laterales.png');
-        this.load.image('bossBackground', 'resources/img/bossBackground.png');
-        this.load.image('background', 'resources/img/background.png');
-        this.load.image('relic', 'resources/img/Items/Reliquia/Reliquia.png')
-        this.load.image('healthPotion', 'resources/img/Items/Potions/HealthPotion.png')
-        this.load.image('sword', 'resources/img/Items/Weapons/Sword.png')
-        this.load.image('bow', 'resources/img/Items/Weapons/Bow.png')
-        this.load.image('bossAltar', 'resources/img/Items/Altares/AltarBoss.png')
-
-        this.load.image('atlas', 'resources/levels/Tile_sheet.png');
-        this.load.tilemapTiledJSON('altarRoom', 'resources/levels/AltarRoom.json');
-        this.load.tilemapTiledJSON('bossRoom', 'resources/levels/BossRoom.json');
-
-        //Musica
-        this.load.audio("music", "resources/audio/music.ogg"); // Musica fondo
-        this.load.audio("battleMusic", "resources/audio/musicBattle.ogg"); // Musica fondo batalla
-        this.load.audio("gameOverMusic", "resources/audio/musicGameOver.ogg"); // Musica derrota
-        this.load.audio("winMusic", "resources/audio/musicWin.ogg"); // Musica victoria
-
-        //Efectos jugadores
-        this.load.audio("effectSword", "resources/audio/effects/players/sword.ogg"); // Efecto espada
-        this.load.audio("effectSword2", "resources/audio/effects/players/sword2.ogg"); // Efecto espada
-        this.load.audio("effectSword3", "resources/audio/effects/players/sword3.ogg"); // Efecto espada
-        this.load.audio("effectSwordFall", "resources/audio/effects/players/swordFall.ogg"); // Efecto espada caida
-        this.load.audio("effectBow", "resources/audio/effects/players/bow2.ogg"); // Efecto arco
-        this.load.audio("effectHurt", "resources/audio/effects/players/hurt.ogg"); // Efecto daño
-        this.load.audio("effectJump", "resources/audio/effects/players/jump.ogg"); // Efecto daño
-
-        //Efectos enemigos
-        this.load.audio("effectGorila", "resources/audio/effects/enemies/gorila.ogg"); // Efecto gorila ataque
-        this.load.audio("effectBaseGorila", "resources/audio/effects/enemies/baseGorila.ogg"); // Efecto gorila
-        this.load.audio("effectDeathGorila", "resources/audio/effects/enemies/gorilaDeath.ogg"); // Efecto gorila muerte
-        this.load.audio("effectParrot", "resources/audio/effects/enemies/parrot.ogg"); // Efecto loro ataque
-        this.load.audio("effectBaseParrot", "resources/audio/effects/enemies/baseParrot.ogg"); // Efecto loro
-        this.load.audio("effectDeathParrot", "resources/audio/effects/enemies/parrotDeath.ogg"); // Efecto loro muerte
-        this.load.audio("effectGuardian", "resources/audio/effects/enemies/guardian.ogg"); // Efecto guardian ataque
-        this.load.audio("effectDrone", "resources/audio/effects/enemies/drone2.ogg"); // Efecto dron ataque
-        this.load.audio("effectBall", "resources/audio/effects/enemies/ball.ogg"); // Efecto bola ataque
-
-        //Reliquias
-        this.load.audio("effectGorilaRelic", "resources/audio/effects/enemies/gorilaRelic.ogg"); // Efecto reliquia gorila
-        this.load.audio("effectParrotRelic", "resources/audio/effects/enemies/parrotRelic.ogg"); // Efecto reliquia loro
-
-
-        //Efectos intro
-        this.load.audio("effectIntroDoor", "resources/audio/effects/doorClosed.ogg"); // Efecto puerta   ////////////////////////////////////
-        this.load.audio("effectPotion", "resources/audio/effects/potion.ogg"); // Efecto pocion
-
-
-        //Interfaz
-        this.load.spritesheet('vidas',
-            'resources/img/Interfaz/Vida2.png', {
-            frameWidth: 154,
-            frameHeight: 8
-        }
-        );
-
-        this.load.spritesheet('controls',
-            'resources/img/Interfaz/Controls.png', {
-            frameWidth: 55,
-            frameHeight: 47
-        }
-        );
-
-        this.load.spritesheet('Attackcontrols',
-            'resources/img/Interfaz/AttackControls.png', {
-            frameWidth: 17,
-            frameHeight: 18
-        }
-        );
+        
     }
 
     create() {
+        currentScene = this;
+
+        
+
+
         //Crea listas
         this.playerProjectiles = this.physics.add.group();
         this.enemyProjectiles = this.physics.add.group();
@@ -304,6 +115,7 @@ class BaseScene extends Phaser.Scene {
             this.camera1.startFollow(this.swordPlayer);
         }
 
+        this.camera.visible = true;
         this.camera1.visible = false;
 
         //Activa el shader que difumina las luces
@@ -316,17 +128,15 @@ class BaseScene extends Phaser.Scene {
         this.physics.add.overlap(this.players, this.enemyProjectiles, this.ProjectileDamage, null, this);
         this.physics.add.overlap(this.enemies, this.playerProjectiles, this.ProjectileDamage, null, this);
 
-        this.health = new PlayerHealthBar(this, 40, 10, this.player0, this.player1, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0, 0);
-        this.health.UpdateLifes();
-
-        this.camera1.ignore(this.health);
-
-        this.fading = true;
+        this.fading = false;
 
         this.camera.fadeIn(500);
-        this.cameras.main.once('camerafadeincomplete', () => {
+        this.camera1.fadeIn(500);
+        this.camera.once('camerafadeincomplete', () => {
             this.fading = false;
         });
+
+        ui.healthBar.Update();
     }
 
     LoadTileMap(key) {
@@ -338,8 +148,6 @@ class BaseScene extends Phaser.Scene {
 
         this.groundTiles = this.map.addTilesetImage('Tile_sheet', 'atlas');
         this.groundLayer = this.map.createStaticLayer('Suelo', this.groundTiles, 0, 0).setDepth(4);
-
-
 
         //Colisiones
         this.groundLayer.setCollisionBetween(1, 34);
@@ -448,6 +256,7 @@ class BaseScene extends Phaser.Scene {
 
     update(time, delta) {
         //console.log(1000/delta);//Muestra fps
+
         this.entities.forEach(element => element.Update(time, delta));
         this.CheckInputs(delta);
 
@@ -458,25 +267,19 @@ class BaseScene extends Phaser.Scene {
         } else { this.camera1.visible = false; }
 
         checkServer();
-
-        if (!isOnline) {
-            //Falta mejorar
-            this.LoadScene('nameInput');
-            canJoin = false;
-            console.log("caca de vaca")
-        }
     }
 
     LoadScene(key) {
         if (!this.fading) {
             this.fading = true;
-            this.cameras.main.fadeOut(500);
+            this.camera.fadeOut(500);
+            this.camera1.fadeOut(500);
             p0Health = this.player0.health;
             p1Health = this.player1.health;
             this.entities = [];
 
-            this.cameras.main.once('camerafadeoutcomplete', () => {
-                this.scene.start(key);
+            this.camera.once('camerafadeoutcomplete', () => {
+                this.scene.start(key);  
             });
         }
     }

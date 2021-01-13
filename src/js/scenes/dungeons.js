@@ -85,7 +85,7 @@ class Dungeons extends BaseScene {
                     }
 
                     if (tile.index == 34 && !hasRelic && relicX == levelX && relicY == levelY) {
-                        new Relic(this, i * 32, j * 32 - 48 );
+                        new Relic(this, i * 32, j * 32 - 48);
                     }
                 }
             }
@@ -128,11 +128,10 @@ class Dungeons extends BaseScene {
     UpdateStage() {
         if (hasRelic && skip && !this.previousDungeonDoor.open) {
             this.previousDungeonDoor.Open();
-            this.cameras.main.flash(1000);
+            ui.camera.flash(1000);
         }
     }
 }
 
 
 
- 
