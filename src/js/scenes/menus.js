@@ -2,10 +2,12 @@ class BaseMenuScene extends Phaser.Scene {
     constructor(key) {
         super(key);
         this.loading = false;
+        
     }
 
     update() {
         checkServer();
+        inGame = false;
     }
 
     LoadScene(key) {
@@ -33,7 +35,7 @@ class InputName extends BaseMenuScene {
     }
 
     create() {
-        this.scene.launch('ui');
+        this.scene.launch('ui'); 
         
         this.loading = false;
 
@@ -81,7 +83,6 @@ class MainMenu extends BaseMenuScene {
         this.newGame = this.add.image(65, 90, 'newGame').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
         this.credits = this.add.image(65, 130, 'credits').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
         this.records = this.add.image(65, 170, 'records').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
-
 
         this.step = 0;
 
@@ -133,7 +134,8 @@ class MainMenu extends BaseMenuScene {
                 this.newGame.destroy();
                 this.credits.destroy();
                 this.records.destroy();
-
+                
+                
                 //Saltar la introducción
                 this.skip = this.add.image(440, 10, 'skip').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
                 this.skip.on('pointerdown', function (event) {
@@ -218,7 +220,8 @@ class MainMenu extends BaseMenuScene {
         this.records.on('pointerdown', function (event) {
             this.scene.start('leaderBoard');
         }, this);
-    }
+
+     }
 
     EnableFullScreen() {
 
@@ -252,7 +255,7 @@ class Credits extends BaseMenuScene {
 
     create() {
 
-        ui.Clear();
+        
 
         this.anims.create({
             key: 'credits',
@@ -292,7 +295,7 @@ class GameOver extends BaseMenuScene {
     }
 
     create() {
-        ui.Clear();
+        
 
         this.camera = this.cameras.main;
 
