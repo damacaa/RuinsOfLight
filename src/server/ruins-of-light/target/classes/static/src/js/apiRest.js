@@ -8,8 +8,7 @@ let isOnline = false;
 let canJoin = false;
 let joining = false;
 
-let origin = window.location.origin;
-console.log(origin)
+let origin = window.location.origin; //url in browser
 
 //Load records from server
 function loadRecords() {
@@ -23,7 +22,7 @@ function loadRecords() {
     })
 }
 
-//Load records from server
+//Load players from server
 function loadPayers() {
     $.ajax({
         method: "GET",
@@ -45,12 +44,12 @@ function createRecord(name1, name2, score) {
 
     $.ajax({
         method: "POST",
-        url: origin+ '/records/',
+        url: origin + '/records/',
         data: JSON.stringify(record),
         processData: false,
         headers: {
-        "Content-Type": "application/json"
-    }
+            "Content-Type": "application/json"
+        }
     }).done(function (recordReceived) {
         console.log("Record created: " + JSON.stringify(recordReceived));
     }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -58,10 +57,11 @@ function createRecord(name1, name2, score) {
     })
 }
 
+//Join the server
 function joinGame(doneFunc, failFunc) {
     if (!joining) {
         joining = true;
-        console.log("Conectando con: "+origin)
+        console.log("Conectando con: " + origin)
         $.ajax({
             method: "POST",
             url: origin + '/join/',
@@ -76,10 +76,10 @@ function joinGame(doneFunc, failFunc) {
             isOnline = hasJoined;
             if (doneFunc) { doneFunc(); }
         }).fail(function (jqXHR, textStatus, errorThrown) {
-            console.log("No se ha podido conectar con: "+origin)
-            origin = 'http://localhost:8080';
+            console.log("No se ha podido conectar con: " + origin)
+            origin = 'http://localhost:8080'; //if default path doesn't work, try local host
             joining = false;
-            joinGame();
+            joinGame();//if can't join try again
             if (failFunc) { failFunc(); }
         }).always(function () {
             joining = false;
@@ -87,6 +87,7 @@ function joinGame(doneFunc, failFunc) {
     }
 }
 
+//Check players every x seconds
 function checkServer() {
     if (new Date() - lastTimeChecked > 500) {
         lastTimeChecked = new Date();
@@ -95,20 +96,17 @@ function checkServer() {
     }
 
     if (!isOnline) {
-        //Falta mejorar
-
         joinGame(null, function (scene) {
-            //canJoin = false;
-            //ResetGame();
-            //currentScene.LoadScene('nameInput');
+            console.log("Reconectando...");
         });
     }
 }
 
+//Check player connection
 function checkPlayer() {
     $.ajax({
         method: "POST",
-        url: origin+'/check/',
+        url: origin + '/check/',
         data: JSON.stringify(player),
         processData: false,
         headers: {
@@ -116,8 +114,6 @@ function checkPlayer() {
         }
     }).done(function (hasChecked) {
         isOnline = hasChecked;
-        console.log("Online: " + isOnline);
-
     }).fail(function () {
         isOnline = false;
     })

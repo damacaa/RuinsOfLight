@@ -135,8 +135,6 @@ public class Controller {
 	@ResponseStatus(HttpStatus.CREATED)
 	public boolean unirsePartida(@RequestBody Player p) {
 
-		System.out.println(p.getNick() + " está uniendose");
-
 		for (Player pl : players) {
 			if (pl.getNick().equals(p.getNick())) {
 				System.out.println(p.getNick() + " no se ha podido unir");

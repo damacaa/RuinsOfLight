@@ -71,7 +71,6 @@ class GreatGorila extends Enemy {
         this.anims.play('gorilaWakeUp', true);
 
         this.healthBar = new BossHealthBar(ui, this, 'GREAT GORILA GUARDIAN');
-        //ui.bossBar =
 
         this.setDepth(2);
 

@@ -2,7 +2,7 @@ class BaseMenuScene extends Phaser.Scene {
     constructor(key) {
         super(key);
         this.loading = false;
-        
+
     }
 
     update() {
@@ -21,6 +21,22 @@ class BaseMenuScene extends Phaser.Scene {
             });
         }
     }
+
+    EnableFullScreen() {
+
+        var FKey = this.input.keyboard.addKey('F');
+
+        FKey.on('down', function () {
+
+            if (this.scale.isFullscreen) {
+                this.scale.stopFullscreen();
+            }
+            else {
+                this.scale.startFullscreen();
+            }
+
+        }, this);
+    }
 }
 
 
@@ -30,16 +46,9 @@ class InputName extends BaseMenuScene {
         super('nameInput');
     }
 
-    preload() {
-        this.load.spritesheet('block',
-            'resources/img/input/block.png', {
-            frameWidth: 96,
-            frameHeight: 32
-        }
-        );
-    }
-
     create() {
+        this.EnableFullScreen();
+
         this.scene.launch('ui');
 
         this.loading = false;
@@ -57,30 +66,36 @@ class InputName extends BaseMenuScene {
         let chars = [
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
             'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-            'U', 'V', 'W', 'X', 'Y', 'Z', 'DEL', 'OK'
+            'U', 'V', 'W', 'X', 'Y', 'Z', '_', '.', 'DEL', 'OK'
         ];
 
         let buttons = [];
 
-        let x = 100;
-        let y = 120;
+        let x = 80;
+        let y = 130;
 
         let name = '';
 
         this.add.text(240, 40, "Enter your name", {
             fontFamily: '"PressStart2P-Regular"',
-            fontSize: '10px'
+            fontSize: '10px',
+            color: '#eeeeba',
+            align: 'center'
         }).setOrigin(0.5);
 
-        let playerText = this.add.text(240, 80, name, {
+        let playerText = this.add.text(240, 85, name, {
             fontFamily: '"PressStart2P-Regular"',
-            fontSize: '32px'
+            fontSize: '32px',
+            color: '#eeeeba',
+            align: 'center'
         }).setOrigin(0.5);
 
         for (let char of chars) {
             let c = this.add.text(x, y, char, {
                 fontFamily: '"PressStart2P-Regular"',
-                fontSize: '20px'
+                fontSize: '16px',
+                color: '#eeeeba',
+                align: 'center'
             });
 
             c.setAlign('center');
@@ -101,14 +116,14 @@ class InputName extends BaseMenuScene {
                         block.setFrame(1);
                     }
 
-                    x += 75;
+                    x += 55;
 
                     break;
 
                 case 'OK':
 
                     c.Press = function () {
-                        if (name.length > 2) {
+                        if (name.length > 0) {
                             if (!this.ok) {
                                 player.nick = name;
                                 joinGame();
@@ -122,7 +137,7 @@ class InputName extends BaseMenuScene {
                     }
 
                     break;
-                case 'Z':
+                case '.':
                     c.Press = function () {
                         if (name.length < 10) {
                             name += char;
@@ -134,8 +149,8 @@ class InputName extends BaseMenuScene {
                         block.setFrame(0);
                     }
 
-                    x = 290;
-                    y += 40;
+                    x = 350;
+                    y += 25;
                     break;
 
                 default:
@@ -152,9 +167,9 @@ class InputName extends BaseMenuScene {
                     }
 
                     x += 30;
-                    if (x > 390) {
-                        x = 100;
-                        y += 40;
+                    if (x > 410) {
+                        x = 80;
+                        y += 35;
                     }
                     break;
             }
@@ -168,8 +183,8 @@ class InputName extends BaseMenuScene {
 
             c.on('pointerover', function (pointer, x, y) {
 
-                block.x = c.x - 2;
-                block.y = c.y - 2;
+                block.x = c.x;
+                block.y = c.y;
 
                 c.AdjustBlock();
             }, this);
@@ -177,40 +192,23 @@ class InputName extends BaseMenuScene {
             buttons.push(c);
         }
 
-        let index = 0;
-        let block = this.add.sprite(buttons[index].x, buttons[index].y, 'block').setOrigin(0.5);
-
         this.input.keyboard.on('keyup', function (event) {
 
-            if (event.keyCode === 37) {
-                //  left
-                if (index > 0) { index--; }
-            }
-            else if (event.keyCode === 39) {
-                //  right
-                if (index < buttons.length - 1) { index++; }
-            }
-            else if (event.keyCode === 38) {
-                //  up
-                index -= 10;
-                if (index < 0) {
-                    index = 0;
-                }
-            }
-            else if (event.keyCode === 40) {
-                //  down
-                if (index + 11 < buttons.length - 1) {
-                    index += 10;
-                }
-            }
-            else if (event.keyCode === 13 || event.keyCode === 32) {
+
+            if (event.keyCode === 13 || event.keyCode === 32) {
                 buttons[index].Press();
+            } else if (event.keyCode === 13) {
+
             }
+
             block.x = buttons[index].x - 2;
             block.y = buttons[index].y - 2;
 
             buttons[index].AdjustBlock();
         });
+
+        let index = 0;
+        let block = this.add.sprite(buttons[index].x, buttons[index].y, 'block').setOrigin(0.5);
     }
 
     update(time, delta) {
@@ -228,17 +226,17 @@ class MainMenu extends BaseMenuScene {
 
     }
 
-    preload() {
-        
-    }
-
     create() {
+        this.EnableFullScreen();
 
-        
+        if (!this.scale.isFullscreen) {
+            this.scale.startFullscreen();
+        }
+
         ResetGame();
 
         this.camera = this.cameras.main;
-        this.EnableFullScreen();
+
 
         this.title = this.add.image(170, 40, 'title').setOrigin(0.5, 0.5).setDepth(10);
         this.bg = this.add.sprite(240, 135, 'intro').setOrigin(0.5, 0.5);
@@ -246,7 +244,7 @@ class MainMenu extends BaseMenuScene {
         this.newGame = this.add.image(65, 90, 'newGame').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
         this.leaderBoard = this.add.image(65, 130, 'leaderBoard').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
         this.credits = this.add.image(65, 170, 'credits').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
-        
+
 
         this.step = 0;
 
@@ -298,8 +296,8 @@ class MainMenu extends BaseMenuScene {
                 this.newGame.destroy();
                 this.credits.destroy();
                 this.leaderBoard.destroy();
-                
-                
+
+
                 //Saltar la introducción
                 this.skip = this.add.image(440, 10, 'skip').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
                 this.skip.on('pointerdown', function (event) {
@@ -311,8 +309,8 @@ class MainMenu extends BaseMenuScene {
                 }, this);
 
                 this.text = this.add.text(240, 260, 'CLICK TO CONTINUE', {
-                    fontFamily: '"CambriaB"',
-                    fontSize: '10px'
+                    fontFamily: '"PressStart2P-Regular"',
+                    fontSize: '8px'
                 }).setOrigin(0.5).setDepth(10); //, stroke: '0f0f0f', strokeThickness: 20
 
                 this.input.on('pointerdown', function (event) {
@@ -378,35 +376,18 @@ class MainMenu extends BaseMenuScene {
 
         this.credits.on('pointerdown', function (event) {
 
-         
+
             this.scene.start('credits');
         }, this);
 
         this.leaderBoard.on('pointerdown', function (event) {
 
-            
+
             this.scene.start('leaderBoard');
         }, this);
 
-        
+
     }
-
-    EnableFullScreen() {
-
-        var FKey = this.input.keyboard.addKey('F');
-
-        FKey.on('down', function () {
-
-            if (this.scale.isFullscreen) {
-                this.scale.stopFullscreen();
-            }
-            else {
-                this.scale.startFullscreen();
-            }
-
-        }, this);
-    }
-
 }
 
 class Credits extends BaseMenuScene {
@@ -416,14 +397,8 @@ class Credits extends BaseMenuScene {
 
     }
 
-    preload() {
-        
-
-    }
-
     create() {
-
-        
+        this.EnableFullScreen();
 
         this.anims.create({
             key: 'credits',
@@ -457,13 +432,8 @@ class GameOver extends BaseMenuScene {
 
     }
 
-    preload() {
-
-        
-    }
-
     create() {
-        
+        this.EnableFullScreen();
 
         this.camera = this.cameras.main;
 
@@ -494,31 +464,79 @@ class LeaderBoard extends BaseMenuScene {
     constructor() {
         super('leaderBoard');
     }
-
-    preload() {
-
-    }
-
+    
     create() {
+        this.EnableFullScreen();
+
         this.lB = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
 
-        this.back = this.add.image(65, 220, 'back').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
+        this.back = this.add.image(65, 220, 'continue').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
 
         this.back.on('pointerdown', function (event) {
-            
+
             this.scene.start('mainMenu');
         }, this);
 
 
-        for (let i = 0; i < Math.min(records.length,7); i++) {
-            //console.log(records[i])
-            this.text = this.add.text(240, 75 + (25 * i), records[i].nombre1 + " & " + records[i].nombre2 + ": " + records[i].puntuacion, {
-                fontFamily: '"PressStart2P-Regular"',
-                fontSize: '12px'
-            }).setOrigin(0.5).setDepth(10);
-        }
 
-        /*this.sound.stopAll();
-        this.musicBGGameOver = this.sound.play("gameOverMusic", { loop: true }, { volume: 2 });*/
+
+
+        for (let i = 0; i < Math.min(records.length, 7); i++) {
+            var hour = 0;
+            var min = 0;
+            var seg = 0;
+            var points = records[i].puntuacion;
+            //console.log(records[i])
+            while (points > 0) {
+                if (points >= 3600) {
+                    hour++;
+                    var points = points - 3600;
+                } else if (points < 3600 && points >= 60) {
+
+                    min++;
+                    var points = points - 60;
+                } else if (points < 60 && points > 0) {
+
+                    seg++;
+                    var points = points - 1;
+                }
+            }
+
+            if (min < 10) { min = "0" + min }
+            if (seg < 10) { seg = "0" + seg }
+
+            this.text = this.add.text(110, 40, "PLAYERS", {
+                fontFamily: '"PressStart2P-Regular"',
+                fontSize: '16px',
+                color: '#eeeeba'
+
+            }).setOrigin(0).setDepth(10);
+
+            this.text = this.add.text(110, 65 + (20 * i), records[i].nombre1 + " & " + records[i].nombre2 + ":", {
+                fontFamily: '"PressStart2P-Regular"',
+                fontSize: '8px',
+                color: '#eeeeba'
+
+            }).setOrigin(0).setDepth(10);
+
+
+            this.text = this.add.text(345, 40, "TIME", {
+                fontFamily: '"PressStart2P-Regular"',
+                fontSize: '16px',
+                color: '#eeeeba',
+                align: 'right'
+
+            }).setOrigin(0).setDepth(10);
+
+            this.text = this.add.text(345, 65 + (20 * i), hour + ":" + min + ":" + seg + "s", {
+                fontFamily: '"PressStart2P-Regular"',
+                fontSize: '8px',
+                color: '#eeeeba',
+                align: 'right'
+
+            }).setOrigin(0).setDepth(10);
+
+
+        }
     }
 }

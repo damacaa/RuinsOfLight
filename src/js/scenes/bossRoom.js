@@ -4,7 +4,6 @@ class BossRoom extends BaseScene {
     }
 
     CreateStage() {
-        createRecord(player.nick, "amigo", ((new Date() - startTime) / 1000));
         this.camera.startFollow(this.bowPlayer, true);
         this.bg = this.add.sprite(0, -32, 'bossBackground').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
         //this.bg = this.add.sprite(240 + 480, 135, 'intro').setOrigin(0.5, 0.5).setScrollFactor(.25).setDepth(-1).flipX = true;
@@ -100,7 +99,7 @@ class BossRoom extends BaseScene {
             } else {
                 if (defeatedBosses == 2) {
                     if(!this.exitDoor.open){
-                        createRecord(player.nick, "amigo", ((new Date() - startTime) / 1000));
+                        createRecord(player.nick, "FRIEND", ((new Date() - startTime) / 1000));
                         this.exitDoor.Open();
                     }
                 } else {

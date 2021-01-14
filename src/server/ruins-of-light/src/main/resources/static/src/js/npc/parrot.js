@@ -41,7 +41,7 @@ class Parrot extends Enemy {
             repeat: 0
         });
 
-        this.health = 20;
+        this.health = 2000;
         this.wait = 1000;
 
         this.hitBox = this.scene.physics.add.image(this.x, this.y, null);

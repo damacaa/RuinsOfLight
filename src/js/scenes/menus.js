@@ -21,6 +21,22 @@ class BaseMenuScene extends Phaser.Scene {
             });
         }
     }
+
+    EnableFullScreen() {
+
+        var FKey = this.input.keyboard.addKey('F');
+
+        FKey.on('down', function () {
+
+            if (this.scale.isFullscreen) {
+                this.scale.stopFullscreen();
+            }
+            else {
+                this.scale.startFullscreen();
+            }
+
+        }, this);
+    }
 }
 
 
@@ -30,16 +46,9 @@ class InputName extends BaseMenuScene {
         super('nameInput');
     }
 
-    preload() {
-        this.load.spritesheet('block',
-            'resources/img/input/block.png', {
-            frameWidth: 64,
-            frameHeight: 32
-        }
-        );
-    }
-
     create() {
+        this.EnableFullScreen();
+
         this.scene.launch('ui');
 
         this.loading = false;
@@ -57,7 +66,7 @@ class InputName extends BaseMenuScene {
         let chars = [
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
             'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-            'U', 'V', 'W', 'X', 'Y', 'Z','_','.', 'DEL', 'OK'
+            'U', 'V', 'W', 'X', 'Y', 'Z', '_', '.', 'DEL', 'OK'
         ];
 
         let buttons = [];
@@ -188,7 +197,7 @@ class InputName extends BaseMenuScene {
 
             if (event.keyCode === 13 || event.keyCode === 32) {
                 buttons[index].Press();
-            }else if(event.keyCode === 13){
+            } else if (event.keyCode === 13) {
 
             }
 
@@ -217,17 +226,17 @@ class MainMenu extends BaseMenuScene {
 
     }
 
-    preload() {
-
-    }
-
     create() {
+        this.EnableFullScreen();
 
+        if (!this.scale.isFullscreen) {
+            this.scale.startFullscreen();
+        }
 
         ResetGame();
 
         this.camera = this.cameras.main;
-        this.EnableFullScreen();
+
 
         this.title = this.add.image(170, 40, 'title').setOrigin(0.5, 0.5).setDepth(10);
         this.bg = this.add.sprite(240, 135, 'intro').setOrigin(0.5, 0.5);
@@ -300,8 +309,8 @@ class MainMenu extends BaseMenuScene {
                 }, this);
 
                 this.text = this.add.text(240, 260, 'CLICK TO CONTINUE', {
-                    fontFamily: '"CambriaB"',
-                    fontSize: '10px'
+                    fontFamily: '"PressStart2P-Regular"',
+                    fontSize: '8px'
                 }).setOrigin(0.5).setDepth(10); //, stroke: '0f0f0f', strokeThickness: 20
 
                 this.input.on('pointerdown', function (event) {
@@ -379,23 +388,6 @@ class MainMenu extends BaseMenuScene {
 
 
     }
-
-    EnableFullScreen() {
-
-        var FKey = this.input.keyboard.addKey('F');
-
-        FKey.on('down', function () {
-
-            if (this.scale.isFullscreen) {
-                this.scale.stopFullscreen();
-            }
-            else {
-                this.scale.startFullscreen();
-            }
-
-        }, this);
-    }
-
 }
 
 class Credits extends BaseMenuScene {
@@ -405,14 +397,8 @@ class Credits extends BaseMenuScene {
 
     }
 
-    preload() {
-
-
-    }
-
     create() {
-
-
+        this.EnableFullScreen();
 
         this.anims.create({
             key: 'credits',
@@ -446,13 +432,8 @@ class GameOver extends BaseMenuScene {
 
     }
 
-    preload() {
-
-
-    }
-
     create() {
-
+        this.EnableFullScreen();
 
         this.camera = this.cameras.main;
 
@@ -483,12 +464,10 @@ class LeaderBoard extends BaseMenuScene {
     constructor() {
         super('leaderBoard');
     }
-
-    preload() {
-
-    }
-
+    
     create() {
+        this.EnableFullScreen();
+
         this.lB = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
 
         this.back = this.add.image(65, 220, 'continue').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
@@ -502,33 +481,60 @@ class LeaderBoard extends BaseMenuScene {
 
 
 
-        for (let i = 0; i < Math.min(records.length,7); i++) {
-            var hour=0;
-            var min=0;
-            var seg=0;
-            var points=records[i].puntuacion;
+        for (let i = 0; i < Math.min(records.length, 7); i++) {
+            var hour = 0;
+            var min = 0;
+            var seg = 0;
+            var points = records[i].puntuacion;
             //console.log(records[i])
-           while (points>0){
-            if (points>=3600){
-                hour++;
-                var points= points-3600;
-            }else if (points<3600&&points>=60){
+            while (points > 0) {
+                if (points >= 3600) {
+                    hour++;
+                    var points = points - 3600;
+                } else if (points < 3600 && points >= 60) {
 
-                min++;
-                var points=points-60;
-            } else if (points<60&&points>0){
+                    min++;
+                    var points = points - 60;
+                } else if (points < 60 && points > 0) {
 
-                seg++;
-                var points=points-1;
+                    seg++;
+                    var points = points - 1;
+                }
             }
-           }
 
-            this.text = this.add.text(240, 55 + (25 * i), records[i].nombre1 + " & " + records[i].nombre2 + ": " + hour + " horas " + min + " minutos " + seg + " segundos " ,{
+            if (min < 10) { min = "0" + min }
+            if (seg < 10) { seg = "0" + seg }
+
+            this.text = this.add.text(110, 40, "PLAYERS", {
+                fontFamily: '"PressStart2P-Regular"',
+                fontSize: '16px',
+                color: '#eeeeba'
+
+            }).setOrigin(0).setDepth(10);
+
+            this.text = this.add.text(110, 65 + (20 * i), records[i].nombre1 + " & " + records[i].nombre2 + ":", {
                 fontFamily: '"PressStart2P-Regular"',
                 fontSize: '8px',
                 color: '#eeeeba'
 
-            }).setOrigin(0.5).setDepth(10);
+            }).setOrigin(0).setDepth(10);
+
+
+            this.text = this.add.text(345, 40, "TIME", {
+                fontFamily: '"PressStart2P-Regular"',
+                fontSize: '16px',
+                color: '#eeeeba',
+                align: 'right'
+
+            }).setOrigin(0).setDepth(10);
+
+            this.text = this.add.text(345, 65 + (20 * i), hour + ":" + min + ":" + seg + "s", {
+                fontFamily: '"PressStart2P-Regular"',
+                fontSize: '8px',
+                color: '#eeeeba',
+                align: 'right'
+
+            }).setOrigin(0).setDepth(10);
 
 
         }

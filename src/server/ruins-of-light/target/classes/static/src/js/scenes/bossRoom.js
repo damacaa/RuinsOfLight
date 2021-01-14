@@ -99,7 +99,7 @@ class BossRoom extends BaseScene {
             } else {
                 if (defeatedBosses == 2) {
                     if(!this.exitDoor.open){
-                        createRecord(player.nick, "amigo", ((new Date() - startTime) / 1000));
+                        createRecord(player.nick, "FRIEND", ((new Date() - startTime) / 1000));
                         this.exitDoor.Open();
                     }
                 } else {

@@ -9,7 +9,7 @@ class UI extends BaseMenuScene {
 
         this.playing = false;
         this.pause = false;
-        this.maxNames = 5;
+        this.maxNames = 7;
     }
 
     preload() {
@@ -29,34 +29,32 @@ class UI extends BaseMenuScene {
 
         this.healthBar = new PlayerHealthBar(this, 40, 10, 'vidas').setScrollFactor(0).setOrigin(0, 0);
 
-        this.text = this.add.text(170, 40, "", {
+        this.text = this.add.text(240, 40, "", {
             fontFamily: '"PressStart2P-Regular"',
             fontSize: '8px',
             color: '#eeeeba',
             align: 'center'
-        }).setDepth(10).setScrollFactor(0).setLineSpacing(7);
+        }).setDepth(10).setOrigin(0.5, 0).setScrollFactor(0).setLineSpacing(7);
 
         this.pauseButton = this.add.sprite(435, 228, 'signal').setOrigin(0).setDepth(10).setInteractive();
         this.pauseButton.on('pointerdown', function (event) {
             this.Pause();
         }, this);
 
-        this.continueButton = this.add.image(244, 220, 'continue').setOrigin(0.5, 0.5).setDepth(10).setInteractive().setActive(false).setVisible(false);
+        this.continueButton = this.add.image(65, 220, 'continue').setOrigin(0.5, 0.5).setDepth(10).setInteractive().setActive(false).setVisible(false);
         this.continueButton.on('pointerdown', function (event) {
             this.Continue();
         }, this);
 
-        ///this.rect = this.add.rectangle(0, 0, 480, 270, 0x000);
-        //this.rect.setOrigin(0).setActive(false).setVisible(false);
-    this.bground = this.add.sprite(0, 0, 'endCredits').setFrame(10).setOrigin(0).setDepth(9);
-    this.bground.setActive(false).setVisible(false);
+        this.bground = this.add.sprite(0, 0, 'endCredits').setFrame(10).setOrigin(0).setDepth(9);
+        this.bground.setActive(false).setVisible(false);
 
         this.Continue();
 
     }
 
     Pause() {
-        
+
         this.pauseButton.setActive(false).setVisible(false);
         this.continueButton.setActive(true).setVisible(true);
         //this.rect.setActive(true).setVisible(true);
@@ -104,13 +102,13 @@ class UI extends BaseMenuScene {
             }
 
         }
-        if(this.pauseButton.active){
-            if(isOnline){
+        if (this.pauseButton.active) {
+            if (isOnline) {
                 this.pauseButton.setFrame(2);
-            }else{
+            } else {
                 this.pauseButton.setFrame(3);
             }
-            if(!inGame){
+            if (!inGame) {
                 this.healthBar.setVisible(false);
             }
         }
