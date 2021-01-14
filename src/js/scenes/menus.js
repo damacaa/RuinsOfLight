@@ -45,6 +45,8 @@ class InputName extends BaseMenuScene {
         this.loading = false;
         this.ok = false;
 
+        this.bground = this.add.sprite(0, 0, 'endCredits').setFrame(10).setOrigin(0);
+
         //https://labs.phaser.io/edit.html?src=src/input/keyboard/enter%20name.js
 
 
