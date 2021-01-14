@@ -41,7 +41,7 @@ class UI extends BaseMenuScene {
             this.Pause();
         }, this);
 
-        this.continueButton = this.add.image(244, 220, 'continue').setOrigin(0.5, 0.5).setDepth(10).setInteractive().setActive(false).setVisible(false);
+        this.continueButton = this.add.image(65, 220, 'continue').setOrigin(0.5, 0.5).setDepth(10).setInteractive().setActive(false).setVisible(false);
         this.continueButton.on('pointerdown', function (event) {
             this.Continue();
         }, this);

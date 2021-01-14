@@ -43,8 +43,14 @@ public class Record {
 		this.nombre2 = nombre2;
 		this.puntuacion = puntuacion;
 	}
+	
+	public boolean isBetter(Record r1) {
+	   int record1 = r1.getPuntuacion();
 
-
+		   //ascending order
+		   return(puntuacion<record1);
+	 }
+	
 
 	@Override
 	public String toString() {

@@ -17,9 +17,9 @@ Integrantes:
 https://trello.com/b/W579zLya/ruins-of-light
 
 0.-DATOS DEL PROYECTO 
-Título: Ruins Of Light Game Design Document Diciembre 2020 
+Título: Ruins Of Light Game Design Document Enero 2021
 
-Fase 2: JER2021-MOS-08
+Fase 3: JER2021-MOS-08
 
 Equipo de Desarrollo: Sergio Montes Veredas. Sara Fuente Águila. Juan Jesús Rodríguez Sánchez. María Hidalga de la Fuente. Daniel Martí Casanova.
 
@@ -30,7 +30,7 @@ Plataformas 2D: los jugadores tienen que saltar sobre plataformas suspendidas o 
 
 Plataforma: El navegador de PC.
 
-Versión:1.0
+Versión:2.0
 
 Sinopsis del Juego: Dos hermanos tratan de encontrar las ruinas de una antigua civilización. Tras varios años de investigación encuentran un templo antiguo en el que quedan atrapados y las defensas de la antigua civilización tratarán de no dejarles escapar con vida.
 
@@ -114,6 +114,8 @@ Altares: Pedestales o soportes donde reposan ambas armas.
 
 
 Espada: Arma que permite atacar a los enemigos terrestres. Su portador podrá elegir la dirección del ataque. Arco: Arma que permite atacar a los enemigos a distancia. Su portador podrá elegir la dirección del ataque. 
+
+Spawner: Lugar en el que se generan aleatoriamente todo tipo de enemigos. Se reconocen por ser un bloque con el logo de un calavera negra.
 
 
 3.-INTERFAZ Esta sección abarca los elementos visibles que componen la pantalla de juego. Inicialmente se mostrarán los bocetos y el equipo de diseño se encargará de su actualización dentro del presente documento. También se describen los conceptos relacionados con la apariencia del juego, paleta de colores, ambientación...

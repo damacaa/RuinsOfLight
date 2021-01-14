@@ -69,7 +69,8 @@ class InputName extends BaseMenuScene {
 
         this.add.text(240, 40, "Enter your name", {
             fontFamily: '"PressStart2P-Regular"',
-            fontSize: '10px'
+            fontSize: '10px',
+            color: '#eeeeba'
         }).setOrigin(0.5);
 
         let playerText = this.add.text(240, 80, name, {
@@ -244,8 +245,9 @@ class MainMenu extends BaseMenuScene {
         this.bg = this.add.sprite(240, 135, 'intro').setOrigin(0.5, 0.5);
 
         this.newGame = this.add.image(65, 90, 'newGame').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
-        this.credits = this.add.image(65, 130, 'credits').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
-        this.records = this.add.image(65, 170, 'records').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
+        this.leaderBoard = this.add.image(65, 130, 'leaderBoard').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
+        this.credits = this.add.image(65, 170, 'credits').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
+        
 
         this.step = 0;
 
@@ -296,7 +298,7 @@ class MainMenu extends BaseMenuScene {
                 this.title.destroy();
                 this.newGame.destroy();
                 this.credits.destroy();
-                this.records.destroy();
+                this.leaderBoard.destroy();
                 
                 
                 //Saltar la introducción
@@ -376,15 +378,19 @@ class MainMenu extends BaseMenuScene {
 
 
         this.credits.on('pointerdown', function (event) {
-            //this.scene.start('credits');
+
+         
             this.scene.start('credits');
         }, this);
 
-        this.records.on('pointerdown', function (event) {
+        this.leaderBoard.on('pointerdown', function (event) {
+
+            
             this.scene.start('leaderBoard');
         }, this);
 
-     }
+        
+    }
 
     EnableFullScreen() {
 
@@ -495,24 +501,49 @@ class LeaderBoard extends BaseMenuScene {
     }
 
     create() {
+        this.lB = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
+
+        this.back = this.add.image(65, 220, 'continue').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
+
+        this.back.on('pointerdown', function (event) {
+            
+            this.scene.start('mainMenu');
+        }, this);
+
+       
+        
 
 
         for (let i = 0; i < Math.min(records.length,7); i++) {
+            var hour=0;
+            var min=0;
+            var seg=0;
+            var points=records[i].puntuacion;
             //console.log(records[i])
-            this.text = this.add.text(240, 75 + (25 * i), records[i].nombre1 + " & " + records[i].nombre2 + ": " + records[i].puntuacion, {
+           while (points>0){
+            if (points>=3600){
+                hour++;
+                var points= points-3600;
+            }else if (points<3600&&points>=60){
+            
+                min++;
+                var points=points-60;
+            } else if (points<60&&points>0){
+            
+                seg++;
+                var points=points-1;
+            }
+           } 
+            
+            this.text = this.add.text(240, 55 + (25 * i), records[i].nombre1 + " & " + records[i].nombre2 + ": " + hour + " horas " + min + " minutos " + seg + " segundos " ,{
                 fontFamily: '"PressStart2P-Regular"',
-                fontSize: '12px'
+                fontSize: '8px',
+                color: '#eeeeba'
+                
             }).setOrigin(0.5).setDepth(10);
+
+            
         }
-
-        this.time.delayedCall(100, function () {
-
-            this.input.on('pointerdown', function (event) {
-
-                this.scene.start('mainMenu');
-
-            }, this);
-        }, [], this);
 
         /*this.sound.stopAll();
         this.musicBGGameOver = this.sound.play("gameOverMusic", { loop: true }, { volume: 2 });*/

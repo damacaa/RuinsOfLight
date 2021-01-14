@@ -1,7 +1,7 @@
 package com.group8.ruins_of_light;
 
 import java.util.Collection;
-
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Comparator;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -74,27 +75,13 @@ public class Controller {
 		String n2 = parts[1];
 		int p = Integer.parseInt( parts[2]);
 		
-		records.add(new Record(n1,n2,p));
+		nuevoRecord(new Record(n1,n2,p));
+		
+		//records.add(new Record(n1,n2,p));
 	}
+		
 	
-	private void EscribirRecord(Record r) {
-		
-		/*File file = new File("records.txt");
-        FileWriter fr = null;
-        try {
-            fr = new FileWriter(file);
-            fr.write(r.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally{
-            //close resources
-            try {
-                fr.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }*/
-		
+	private void EscribirRecord(Record r) {	
 		try {
 		    Files.write(Paths.get("records.txt"), (r.toString()+"\n").getBytes(), StandardOpenOption.APPEND);
 		}catch (IOException e) {
@@ -117,10 +104,24 @@ public class Controller {
 	@ResponseStatus(HttpStatus.CREATED)
 	public Record nuevoRecord(@RequestBody Record record) {
 		System.out.println( "Nuevo record: "+ record.toString());
+		int contador=0;
+		boolean encontrado=false;
+			
+		for(int i=0;i<records.size();i++) {
+			if(record.isBetter(records.get(i))) {
+				contador=i;
+				encontrado=true;
+				break;
+				}
+		}
 		
-		records.add(record);
-		
+		if(encontrado) {
+			records.add(contador,record);
+		}else {
+			records.add(record);
+		}
 		EscribirRecord(record);
+		
 		
 		return record;
 	}
