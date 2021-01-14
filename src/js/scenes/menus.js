@@ -2,7 +2,7 @@ class BaseMenuScene extends Phaser.Scene {
     constructor(key) {
         super(key);
         this.loading = false;
-        
+
     }
 
     update() {
@@ -185,11 +185,11 @@ class InputName extends BaseMenuScene {
 
         this.input.keyboard.on('keyup', function (event) {
 
-       
+
             if (event.keyCode === 13 || event.keyCode === 32) {
                 buttons[index].Press();
             }else if(event.keyCode === 13){
-                
+
             }
 
             block.x = buttons[index].x - 2;
@@ -218,12 +218,12 @@ class MainMenu extends BaseMenuScene {
     }
 
     preload() {
-        
+
     }
 
     create() {
 
-        
+
         ResetGame();
 
         this.camera = this.cameras.main;
@@ -235,7 +235,7 @@ class MainMenu extends BaseMenuScene {
         this.newGame = this.add.image(65, 90, 'newGame').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
         this.leaderBoard = this.add.image(65, 130, 'leaderBoard').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
         this.credits = this.add.image(65, 170, 'credits').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
-        
+
 
         this.step = 0;
 
@@ -287,8 +287,8 @@ class MainMenu extends BaseMenuScene {
                 this.newGame.destroy();
                 this.credits.destroy();
                 this.leaderBoard.destroy();
-                
-                
+
+
                 //Saltar la introducción
                 this.skip = this.add.image(440, 10, 'skip').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
                 this.skip.on('pointerdown', function (event) {
@@ -367,17 +367,17 @@ class MainMenu extends BaseMenuScene {
 
         this.credits.on('pointerdown', function (event) {
 
-         
+
             this.scene.start('credits');
         }, this);
 
         this.leaderBoard.on('pointerdown', function (event) {
 
-            
+
             this.scene.start('leaderBoard');
         }, this);
 
-        
+
     }
 
     EnableFullScreen() {
@@ -406,13 +406,13 @@ class Credits extends BaseMenuScene {
     }
 
     preload() {
-        
+
 
     }
 
     create() {
 
-        
+
 
         this.anims.create({
             key: 'credits',
@@ -448,11 +448,11 @@ class GameOver extends BaseMenuScene {
 
     preload() {
 
-        
+
     }
 
     create() {
-        
+
 
         this.camera = this.cameras.main;
 
@@ -491,20 +491,46 @@ class LeaderBoard extends BaseMenuScene {
     create() {
         this.lB = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
 
-        this.back = this.add.image(65, 220, 'back').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
+        this.back = this.add.image(65, 220, 'continue').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
 
         this.back.on('pointerdown', function (event) {
-            
+
             this.scene.start('mainMenu');
         }, this);
 
 
+
+
+
         for (let i = 0; i < Math.min(records.length,7); i++) {
+            var hour=0;
+            var min=0;
+            var seg=0;
+            var points=records[i].puntuacion;
             //console.log(records[i])
-            this.text = this.add.text(240, 75 + (25 * i), records[i].nombre1 + " & " + records[i].nombre2 + ": " + records[i].puntuacion, {
+           while (points>0){
+            if (points>=3600){
+                hour++;
+                var points= points-3600;
+            }else if (points<3600&&points>=60){
+
+                min++;
+                var points=points-60;
+            } else if (points<60&&points>0){
+
+                seg++;
+                var points=points-1;
+            }
+           }
+
+            this.text = this.add.text(240, 55 + (25 * i), records[i].nombre1 + " & " + records[i].nombre2 + ": " + hour + " horas " + min + " minutos " + seg + " segundos " ,{
                 fontFamily: '"PressStart2P-Regular"',
-                fontSize: '12px'
+                fontSize: '8px',
+                color: '#eeeeba'
+
             }).setOrigin(0.5).setDepth(10);
+
+
         }
     }
 }
