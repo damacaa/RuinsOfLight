@@ -26,6 +26,8 @@ let godMode = false; //Vida infinita para los jugadores
 
 let skip = false;
 
+let inGame = false;
+
 let currentScene;
 
 function SkipRelic() {
@@ -72,6 +74,9 @@ class BaseScene extends Phaser.Scene {
         this.entities = [];
 
         this.fading;
+
+        
+        
     }
 
     preload() {
@@ -81,7 +86,7 @@ class BaseScene extends Phaser.Scene {
     create() {
         currentScene = this;
 
-        
+        inGame = true;
 
 
         //Crea listas
