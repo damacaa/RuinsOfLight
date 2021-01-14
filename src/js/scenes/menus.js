@@ -297,7 +297,7 @@ class MainMenu extends BaseMenuScene {
                 this.title.destroy();
                 this.newGame.destroy();
                 this.credits.destroy();
-                this.records.destroy();
+                this.leaderBoard.destroy();
                 
                 
                 //Saltar la introducción
