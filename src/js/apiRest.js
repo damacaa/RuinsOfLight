@@ -2,17 +2,20 @@ let lastTimeChecked = new Date();
 
 let records = [];
 let players = [];
-let player = {nick: null};
+let player = { nick: null };
 
 let isOnline = false;
 let canJoin = false;
 let joining = false;
 
+let origin = window.location.origin;
+console.log(origin)
+
 //Load records from server
 function loadRecords() {
     $.ajax({
         method: "GET",
-        url: 'http://localhost:8080/records/'
+        url: origin + '/records/'
     }).done(function (result) {
         records = result;
     }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -24,7 +27,7 @@ function loadRecords() {
 function loadPayers() {
     $.ajax({
         method: "GET",
-        url: 'http://localhost:8080/players/'
+        url: origin + '/players/'
     }).done(function (result) {
         players = result;
     }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -42,12 +45,12 @@ function createRecord(name1, name2, score) {
 
     $.ajax({
         method: "POST",
-        url: 'http://localhost:8080/records/',
+        url: origin+ '/records/',
         data: JSON.stringify(record),
         processData: false,
         headers: {
-            "Content-Type": "application/json"
-        }
+        "Content-Type": "application/json"
+    }
     }).done(function (recordReceived) {
         console.log("Record created: " + JSON.stringify(recordReceived));
     }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -58,9 +61,10 @@ function createRecord(name1, name2, score) {
 function joinGame(doneFunc, failFunc) {
     if (!joining) {
         joining = true;
+        console.log("Conectando con: "+origin)
         $.ajax({
             method: "POST",
-            url: 'http://localhost:8080/join/',
+            url: origin + '/join/',
             data: JSON.stringify(player),
             processData: false,
             headers: {
@@ -72,7 +76,10 @@ function joinGame(doneFunc, failFunc) {
             isOnline = hasJoined;
             if (doneFunc) { doneFunc(); }
         }).fail(function (jqXHR, textStatus, errorThrown) {
-            console.log("No se ha podido unir")
+            console.log("No se ha podido conectar con: "+origin)
+            origin = 'http://localhost:8080';
+            joining = false;
+            joinGame();
             if (failFunc) { failFunc(); }
         }).always(function () {
             joining = false;
@@ -101,7 +108,7 @@ function checkServer() {
 function checkPlayer() {
     $.ajax({
         method: "POST",
-        url: 'http://localhost:8080/check/',
+        url: origin+'/check/',
         data: JSON.stringify(player),
         processData: false,
         headers: {
@@ -111,7 +118,7 @@ function checkPlayer() {
         isOnline = hasChecked;
         console.log("Online: " + isOnline);
 
-    }).fail(function(){
+    }).fail(function () {
         isOnline = false;
     })
 }
