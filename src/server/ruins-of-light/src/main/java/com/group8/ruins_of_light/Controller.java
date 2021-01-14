@@ -46,46 +46,47 @@ public class Controller {
 
 	private List<Record> records = new ArrayList<Record>();
 	private List<Player> players = new ArrayList<Player>();
-	
+	private boolean doneReading = false;
+
 	public Controller() {
-		//https://www.journaldev.com/709/java-read-file-line-by-line
+		// https://www.journaldev.com/709/java-read-file-line-by-line
 		BufferedReader reader;
 		try {
-			reader = new BufferedReader(new FileReader(
-					"records.txt"));
-			
+			reader = new BufferedReader(new FileReader("records.txt"));
+
 			String line = reader.readLine();
-			
+
 			while (line != null) {
 				CrearRecord(line);
 				line = reader.readLine();
-				//CrearRecord(line);
 			}
+
+			doneReading = true;
+
 			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
 	}
-	
+
 	private void CrearRecord(String s) {
 		String[] parts = s.split("-");
 		String n1 = parts[0];
 		String n2 = parts[1];
+
 		int p = Integer.parseInt( parts[2]);
 		
 		nuevoRecord(new Record(n1,n2,p));
-		
-		//records.add(new Record(n1,n2,p));
 	}
 		
 	
-	private void EscribirRecord(Record r) {	
+
+
+	private void EscribirRecord(Record r) {
 		try {
-		    Files.write(Paths.get("records.txt"), (r.toString()+"\n").getBytes(), StandardOpenOption.APPEND);
-		}catch (IOException e) {
-		    //exception handling left as an exercise for the reader
+			Files.write(Paths.get("records.txt"), (r.toString() + "\n").getBytes(), StandardOpenOption.APPEND);
+		} catch (IOException e) {
+			// exception handling left as an exercise for the reader
 		}
 	}
 
@@ -94,7 +95,7 @@ public class Controller {
 
 		return records;
 	}
-	
+
 	@GetMapping("players/")
 	public List<Player> players() {
 		return players;
@@ -103,123 +104,86 @@ public class Controller {
 	@PostMapping("records/")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Record nuevoRecord(@RequestBody Record record) {
-		System.out.println( "Nuevo record: "+ record.toString());
-		int contador=0;
-		boolean encontrado=false;
-			
-		for(int i=0;i<records.size();i++) {
-			if(record.isBetter(records.get(i))) {
-				contador=i;
-				encontrado=true;
+
+		System.out.println("Nuevo record: " + record.toString());
+		int contador = 0;
+		boolean encontrado = false;
+
+		for (int i = 0; i < records.size(); i++) {
+			if (record.isBetter(records.get(i))) {
+				contador = i;
+				encontrado = true;
 				break;
-				}
+			}
 		}
-		
-		if(encontrado) {
-			records.add(contador,record);
-		}else {
+
+		if (encontrado) {
+			records.add(contador, record);
+		} else {
 			records.add(record);
 		}
-		EscribirRecord(record);
-		
-		
+
+		if (doneReading) {
+			EscribirRecord(record);
+		}
+
+
 		return record;
 	}
-	
+
 	@PostMapping("join/")
 	@ResponseStatus(HttpStatus.CREATED)
 	public boolean unirsePartida(@RequestBody Player p) {
-		
+
 		System.out.println(p.getNick() + " está uniendose");
-		
+
 		for (Player pl : players) {
-			if(pl.getNick().equals(p.getNick())) {
+			if (pl.getNick().equals(p.getNick())) {
 				System.out.println(p.getNick() + " no se ha podido unir");
 				return false;
 			}
-        }
-		
+		}
+
 		System.out.println(p.getNick() + " se ha unido correctamente");
-		
-		p.setDate(new java.util.Date());//https://stackabuse.com/how-to-get-current-date-and-time-in-java/
+
+		p.setDate(new java.util.Date());// https://stackabuse.com/how-to-get-current-date-and-time-in-java/
 		p.setOnline(true);
 		players.add(p);
-		
+
 		return true;
 	}
-	
+
 	@PostMapping("check/")
 	@ResponseStatus(HttpStatus.CREATED)
 	public boolean comprobarJugador(@RequestBody Player p) {
-		
+
 		for (Player pl : players) {
-			if(pl.getNick().equals(p.getNick())) {
+			if (pl.getNick().equals(p.getNick())) {
 				pl.setDate(new java.util.Date());
 				return pl.getOnline();
 			}
-        }
-	
+		}
+
 		return false;
 	}
-	
-	@Scheduled(fixedDelay=500)
-    public void CheckPayers() {
+
+	@Scheduled(fixedDelay = 500)
+	public void CheckPayers() {
 		int count = 0;
 		int indexToDelete = -1;
 		for (Player pl : players) {
 			java.util.Date currentDate = new java.util.Date();
 
-			if((currentDate.getTime() - pl.getDate().getTime())>3000) {//(d2.getTime()-d1.getTime())
+			if ((currentDate.getTime() - pl.getDate().getTime()) > 3000) {// (d2.getTime()-d1.getTime())
 				pl.setOnline(false);
 				System.out.println(pl.getNick() + " ha abandonado la partida");
 				indexToDelete = count;
 			}
 			count++;
-        }
-		
-		if(indexToDelete != -1)
-		players.remove(indexToDelete);
-		
-    }
-
-	/*@PutMapping("/{id}")
-	public ResponseEntity<Record> actulizaRecord(@PathVariable long id, @RequestBody Record recordActualizado) {
-
-		Record record;
-
-		if (record != null) {
-
-			recordActualizado.SetId(id);
-			// records.put(id, recordActualizado);
-
-			return new ResponseEntity<>(recordActualizado, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-	}*/
 
-	/*@GetMapping("/{id}")
-	public ResponseEntity<Record> getRecord(@PathVariable long id) {
+		if (indexToDelete != -1)
+			players.remove(indexToDelete);
 
-		Record record; // = records.get(id);
-
-		if (record != null) {
-			return new ResponseEntity<>(record, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-	}*/
-
-//	  @DeleteMapping("/{id}") public ResponseEntity<Record>
-//	  borraRecord(@PathVariable long id) {
-//	  
-//	  Record record = records.remove(id);
-//	  
-//	  if (record != null) { return new ResponseEntity<>(record, HttpStatus.OK); }
-//	  else { return new ResponseEntity<>(HttpStatus.NOT_FOUND); } }
-//	 
+	}
 }

@@ -9,7 +9,7 @@ class UI extends BaseMenuScene {
 
         this.playing = false;
         this.pause = false;
-        this.maxNames = 5;
+        this.maxNames = 7;
     }
 
     preload() {

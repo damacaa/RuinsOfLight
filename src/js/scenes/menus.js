@@ -33,7 +33,7 @@ class InputName extends BaseMenuScene {
     preload() {
         this.load.spritesheet('block',
             'resources/img/input/block.png', {
-            frameWidth: 96,
+            frameWidth: 64,
             frameHeight: 32
         }
         );
@@ -57,30 +57,36 @@ class InputName extends BaseMenuScene {
         let chars = [
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
             'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-            'U', 'V', 'W', 'X', 'Y', 'Z', 'DEL', 'OK'
+            'U', 'V', 'W', 'X', 'Y', 'Z','_','.', 'DEL', 'OK'
         ];
 
         let buttons = [];
 
-        let x = 100;
-        let y = 120;
+        let x = 80;
+        let y = 130;
 
         let name = '';
 
         this.add.text(240, 40, "Enter your name", {
             fontFamily: '"PressStart2P-Regular"',
-            fontSize: '10px'
+            fontSize: '10px',
+            color: '#eeeeba',
+            align: 'center'
         }).setOrigin(0.5);
 
-        let playerText = this.add.text(240, 80, name, {
+        let playerText = this.add.text(240, 85, name, {
             fontFamily: '"PressStart2P-Regular"',
-            fontSize: '32px'
+            fontSize: '32px',
+            color: '#eeeeba',
+            align: 'center'
         }).setOrigin(0.5);
 
         for (let char of chars) {
             let c = this.add.text(x, y, char, {
                 fontFamily: '"PressStart2P-Regular"',
-                fontSize: '20px'
+                fontSize: '16px',
+                color: '#eeeeba',
+                align: 'center'
             });
 
             c.setAlign('center');
@@ -101,14 +107,14 @@ class InputName extends BaseMenuScene {
                         block.setFrame(1);
                     }
 
-                    x += 75;
+                    x += 55;
 
                     break;
 
                 case 'OK':
 
                     c.Press = function () {
-                        if (name.length > 2) {
+                        if (name.length > 0) {
                             if (!this.ok) {
                                 player.nick = name;
                                 joinGame();
@@ -122,7 +128,7 @@ class InputName extends BaseMenuScene {
                     }
 
                     break;
-                case 'Z':
+                case '.':
                     c.Press = function () {
                         if (name.length < 10) {
                             name += char;
@@ -134,8 +140,8 @@ class InputName extends BaseMenuScene {
                         block.setFrame(0);
                     }
 
-                    x = 290;
-                    y += 40;
+                    x = 350;
+                    y += 25;
                     break;
 
                 default:
@@ -152,9 +158,9 @@ class InputName extends BaseMenuScene {
                     }
 
                     x += 30;
-                    if (x > 390) {
-                        x = 100;
-                        y += 40;
+                    if (x > 410) {
+                        x = 80;
+                        y += 35;
                     }
                     break;
             }
@@ -168,8 +174,8 @@ class InputName extends BaseMenuScene {
 
             c.on('pointerover', function (pointer, x, y) {
 
-                block.x = c.x - 2;
-                block.y = c.y - 2;
+                block.x = c.x;
+                block.y = c.y;
 
                 c.AdjustBlock();
             }, this);
@@ -177,40 +183,23 @@ class InputName extends BaseMenuScene {
             buttons.push(c);
         }
 
-        let index = 0;
-        let block = this.add.sprite(buttons[index].x, buttons[index].y, 'block').setOrigin(0.5);
-
         this.input.keyboard.on('keyup', function (event) {
 
-            if (event.keyCode === 37) {
-                //  left
-                if (index > 0) { index--; }
-            }
-            else if (event.keyCode === 39) {
-                //  right
-                if (index < buttons.length - 1) { index++; }
-            }
-            else if (event.keyCode === 38) {
-                //  up
-                index -= 10;
-                if (index < 0) {
-                    index = 0;
-                }
-            }
-            else if (event.keyCode === 40) {
-                //  down
-                if (index + 11 < buttons.length - 1) {
-                    index += 10;
-                }
-            }
-            else if (event.keyCode === 13 || event.keyCode === 32) {
+       
+            if (event.keyCode === 13 || event.keyCode === 32) {
                 buttons[index].Press();
+            }else if(event.keyCode === 13){
+                
             }
+
             block.x = buttons[index].x - 2;
             block.y = buttons[index].y - 2;
 
             buttons[index].AdjustBlock();
         });
+
+        let index = 0;
+        let block = this.add.sprite(buttons[index].x, buttons[index].y, 'block').setOrigin(0.5);
     }
 
     update(time, delta) {
@@ -517,8 +506,5 @@ class LeaderBoard extends BaseMenuScene {
                 fontSize: '12px'
             }).setOrigin(0.5).setDepth(10);
         }
-
-        /*this.sound.stopAll();
-        this.musicBGGameOver = this.sound.play("gameOverMusic", { loop: true }, { volume: 2 });*/
     }
 }
