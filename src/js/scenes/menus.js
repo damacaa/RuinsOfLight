@@ -81,8 +81,9 @@ class MainMenu extends BaseMenuScene {
         this.bg = this.add.sprite(240, 135, 'intro').setOrigin(0.5, 0.5);
 
         this.newGame = this.add.image(65, 90, 'newGame').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
-        this.credits = this.add.image(65, 130, 'credits').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
-        this.records = this.add.image(65, 170, 'records').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
+        this.leaderBoard = this.add.image(65, 130, 'leaderBoard').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
+        this.credits = this.add.image(65, 170, 'credits').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
+        
 
         this.step = 0;
 
@@ -213,15 +214,19 @@ class MainMenu extends BaseMenuScene {
 
 
         this.credits.on('pointerdown', function (event) {
-            //this.scene.start('credits');
+
+         
             this.scene.start('credits');
         }, this);
 
-        this.records.on('pointerdown', function (event) {
+        this.leaderBoard.on('pointerdown', function (event) {
+
+            
             this.scene.start('leaderBoard');
         }, this);
 
-     }
+        
+    }
 
     EnableFullScreen() {
 
@@ -332,6 +337,14 @@ class LeaderBoard extends BaseMenuScene {
     }
 
     create() {
+        this.lB = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
+
+        this.back = this.add.image(65, 220, 'back').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
+
+        this.back.on('pointerdown', function (event) {
+            
+            this.scene.start('mainMenu');
+        }, this);
 
 
         for (let i = 0; i < Math.min(records.length,7); i++) {
@@ -341,15 +354,6 @@ class LeaderBoard extends BaseMenuScene {
                 fontSize: '12px'
             }).setOrigin(0.5).setDepth(10);
         }
-
-        this.time.delayedCall(100, function () {
-
-            this.input.on('pointerdown', function (event) {
-
-                this.scene.start('mainMenu');
-
-            }, this);
-        }, [], this);
 
         /*this.sound.stopAll();
         this.musicBGGameOver = this.sound.play("gameOverMusic", { loop: true }, { volume: 2 });*/

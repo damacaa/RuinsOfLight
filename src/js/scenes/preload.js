@@ -220,9 +220,12 @@ class Preload extends Phaser.Scene {
             this.load.image('title', 'resources/img/Interfaz/Menu/Title.png');
             this.load.image('newGame', 'resources/img/Interfaz/Menu/Buttons1.png');
             this.load.image('credits', 'resources/img/Interfaz/Menu/Buttons2.png');
+            this.load.image('leaderBoard', 'resources/img/Interfaz/Menu/Buttons5.png');
             this.load.image('skip', 'resources/img/Interfaz/Menu/Buttons4.png');
             this.load.image('records', 'resources/img/Interfaz/Menu/Buttons5.png');
             
+            this.load.image('back', 'resources/img/Interfaz/Menu/Buttons7.png');
+
             this.load.image('menuBackground', 'resources/img/Interfaz/Menu/menuBackground.png');
 
             this.load.audio("music", "resources/audio/music.ogg");
@@ -236,6 +239,18 @@ class Preload extends Phaser.Scene {
                 frameWidth: 480,
                 frameHeight: 270
             }
+
+            
+            );
+
+            //LeaderBoard
+            this.load.spritesheet('leaderBoardBackground',
+                'resources/img/Interfaz/LeaderBoard/LeaderBoardBackground.png', {
+                frameWidth: 480,
+                frameHeight: 270
+            }
+
+            
             );
             this.load.audio("winMusic", "resources/audio/musicWin.ogg"); // Musica victoria
 
