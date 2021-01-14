@@ -31,27 +31,190 @@ class InputName extends BaseMenuScene {
     }
 
     preload() {
-
+        this.load.spritesheet('block',
+            'resources/img/input/block.png', {
+            frameWidth: 96,
+            frameHeight: 32
+        }
+        );
     }
 
     create() {
-        this.scene.launch('ui'); 
-        
-        this.loading = false;
+        this.scene.launch('ui');
 
-        this.time.delayedCall(100, function () {
-            player.nick = null;
-            while (player.nick == null || player.nick.length < 1) {
-                //player.nick = prompt();
-                player.nick = Math.random().toString(36).substring(7).toUpperCase();;
+        this.loading = false;
+        this.ok = false;
+
+        this.bground = this.add.sprite(0, 0, 'endCredits').setFrame(10).setOrigin(0);
+
+        //https://labs.phaser.io/edit.html?src=src/input/keyboard/enter%20name.js
+
+
+        for (let index = 0; index < game.width * 32; index += 159) {
+            this.add.sprite(index, 0, 'background').setOrigin(0, 0);
+        }
+
+        let chars = [
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+            'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+            'U', 'V', 'W', 'X', 'Y', 'Z', 'DEL', 'OK'
+        ];
+
+        let buttons = [];
+
+        let x = 100;
+        let y = 120;
+
+        let name = '';
+
+        this.add.text(240, 40, "Enter your name", {
+            fontFamily: '"PressStart2P-Regular"',
+            fontSize: '10px'
+        }).setOrigin(0.5);
+
+        let playerText = this.add.text(240, 80, name, {
+            fontFamily: '"PressStart2P-Regular"',
+            fontSize: '32px'
+        }).setOrigin(0.5);
+
+        for (let char of chars) {
+            let c = this.add.text(x, y, char, {
+                fontFamily: '"PressStart2P-Regular"',
+                fontSize: '20px'
+            });
+
+            c.setAlign('center');
+
+            c.setOrigin(0.5);
+
+            switch (char) {
+                case 'DEL':
+
+                    c.Press = function () {
+                        if (name.length > 0) {
+                            name = name.slice(0, -1);
+                            playerText.text = name;
+                        }
+                    }
+
+                    c.AdjustBlock = function () {
+                        block.setFrame(1);
+                    }
+
+                    x += 75;
+
+                    break;
+
+                case 'OK':
+
+                    c.Press = function () {
+                        if (name.length > 2) {
+                            if (!this.ok) {
+                                player.nick = name;
+                                joinGame();
+                                this.ok = true;
+                            }
+                        }
+                    }
+
+                    c.AdjustBlock = function () {
+                        block.setFrame(1);
+                    }
+
+                    break;
+                case 'Z':
+                    c.Press = function () {
+                        if (name.length < 10) {
+                            name += char;
+                            playerText.text = name;
+                        }
+                    }
+
+                    c.AdjustBlock = function () {
+                        block.setFrame(0);
+                    }
+
+                    x = 290;
+                    y += 40;
+                    break;
+
+                default:
+                    c.Press = function () {
+
+                        if (name.length < 10) {
+                            name += char;
+                            playerText.text = name;
+                        }
+
+                    }
+                    c.AdjustBlock = function () {
+                        block.setFrame(0);
+                    }
+
+                    x += 30;
+                    if (x > 390) {
+                        x = 100;
+                        y += 40;
+                    }
+                    break;
             }
 
-            joinGame();
-        }, [], this);    
+            c.setInteractive();
+            c.on('pointerup', function (pointer, x, y) {
+
+                c.Press();
+
+            }, this);
+
+            c.on('pointerover', function (pointer, x, y) {
+
+                block.x = c.x - 2;
+                block.y = c.y - 2;
+
+                c.AdjustBlock();
+            }, this);
+
+            buttons.push(c);
+        }
+
+        let index = 0;
+        let block = this.add.sprite(buttons[index].x, buttons[index].y, 'block').setOrigin(0.5);
+
+        this.input.keyboard.on('keyup', function (event) {
+
+            if (event.keyCode === 37) {
+                //  left
+                if (index > 0) { index--; }
+            }
+            else if (event.keyCode === 39) {
+                //  right
+                if (index < buttons.length - 1) { index++; }
+            }
+            else if (event.keyCode === 38) {
+                //  up
+                index -= 10;
+                if (index < 0) {
+                    index = 0;
+                }
+            }
+            else if (event.keyCode === 40) {
+                //  down
+                if (index + 11 < buttons.length - 1) {
+                    index += 10;
+                }
+            }
+            else if (event.keyCode === 13 || event.keyCode === 32) {
+                buttons[index].Press();
+            }
+            block.x = buttons[index].x - 2;
+            block.y = buttons[index].y - 2;
+
+            buttons[index].AdjustBlock();
+        });
     }
 
     update(time, delta) {
-        
+
         if (canJoin) { this.LoadScene('mainMenu'); }
     }
 }

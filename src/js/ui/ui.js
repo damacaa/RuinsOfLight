@@ -27,7 +27,7 @@ class UI extends BaseMenuScene {
 
         this.camera = this.cameras.main;
 
-        this.healthBar = new PlayerHealthBar(this, 40, 10, 'vidas').setScrollFactor(0).setDepth(10).setOrigin(0, 0);
+        this.healthBar = new PlayerHealthBar(this, 40, 10, 'vidas').setScrollFactor(0).setOrigin(0, 0);
 
         this.text = this.add.text(170, 40, "", {
             fontFamily: '"PressStart2P-Regular"',
