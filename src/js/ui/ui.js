@@ -36,7 +36,7 @@ class UI extends BaseMenuScene {
             align: 'center'
         }).setDepth(10).setScrollFactor(0).setLineSpacing(7);
 
-        this.pauseButton = this.add.sprite(434, 228, 'signal').setOrigin(0).setDepth(10).setInteractive();
+        this.pauseButton = this.add.sprite(435, 228, 'signal').setOrigin(0).setDepth(10).setInteractive();
         this.pauseButton.on('pointerdown', function (event) {
             this.Pause();
         }, this);
