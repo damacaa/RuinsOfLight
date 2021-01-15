@@ -194,17 +194,25 @@ class InputName extends BaseMenuScene {
 
         this.input.keyboard.on('keyup', function (event) {
 
-
             if (event.keyCode === 13 || event.keyCode === 32) {
-                buttons[index].Press();
-            } else if (event.keyCode === 13) {
+                //Enter or space
+                if (name.length > 0) {
+                    if (!this.ok) {
+                        player.nick = name;
+                        joinGame();
+                        this.ok = true;
+                    }
 
+                    console.log("Ey")
+                }
+
+            } else if (event.keyCode === 8 || event.keyCode === 46) {
+                //Return
+                if (name.length > 0) {
+                    name = name.slice(0, -1);
+                    playerText.text = name;
+                }
             }
-
-            block.x = buttons[index].x - 2;
-            block.y = buttons[index].y - 2;
-
-            buttons[index].AdjustBlock();
         });
 
         let index = 0;
@@ -212,7 +220,6 @@ class InputName extends BaseMenuScene {
     }
 
     update(time, delta) {
-
         if (canJoin) { this.LoadScene('mainMenu'); }
     }
 }
@@ -223,7 +230,6 @@ class MainMenu extends BaseMenuScene {
 
         this.step = 0;
         this.steps = 11;
-
     }
 
     create() {
@@ -236,7 +242,6 @@ class MainMenu extends BaseMenuScene {
         ResetGame();
 
         this.camera = this.cameras.main;
-
 
         this.title = this.add.image(170, 40, 'title').setOrigin(0.5, 0.5).setDepth(10);
         this.bg = this.add.sprite(240, 135, 'intro').setOrigin(0.5, 0.5);
@@ -464,7 +469,7 @@ class LeaderBoard extends BaseMenuScene {
     constructor() {
         super('leaderBoard');
     }
-    
+
     create() {
         this.EnableFullScreen();
 
@@ -477,8 +482,20 @@ class LeaderBoard extends BaseMenuScene {
             this.scene.start('mainMenu');
         }, this);
 
+        this.text = this.add.text(110, 40, "PLAYERS", {
+            fontFamily: '"PressStart2P-Regular"',
+            fontSize: '16px',
+            color: '#eeeeba'
 
+        }).setOrigin(0).setDepth(10);
 
+        this.text = this.add.text(345, 40, "TIME", {
+            fontFamily: '"PressStart2P-Regular"',
+            fontSize: '16px',
+            color: '#eeeeba',
+            align: 'right'
+
+        }).setOrigin(0).setDepth(10);
 
 
         for (let i = 0; i < Math.min(records.length, 7); i++) {
@@ -505,26 +522,12 @@ class LeaderBoard extends BaseMenuScene {
             if (min < 10) { min = "0" + min }
             if (seg < 10) { seg = "0" + seg }
 
-            this.text = this.add.text(110, 40, "PLAYERS", {
-                fontFamily: '"PressStart2P-Regular"',
-                fontSize: '16px',
-                color: '#eeeeba'
 
-            }).setOrigin(0).setDepth(10);
 
             this.text = this.add.text(110, 65 + (20 * i), records[i].nombre1 + " & " + records[i].nombre2 + ":", {
                 fontFamily: '"PressStart2P-Regular"',
                 fontSize: '8px',
                 color: '#eeeeba'
-
-            }).setOrigin(0).setDepth(10);
-
-
-            this.text = this.add.text(345, 40, "TIME", {
-                fontFamily: '"PressStart2P-Regular"',
-                fontSize: '16px',
-                color: '#eeeeba',
-                align: 'right'
 
             }).setOrigin(0).setDepth(10);
 
@@ -535,8 +538,6 @@ class LeaderBoard extends BaseMenuScene {
                 align: 'right'
 
             }).setOrigin(0).setDepth(10);
-
-
         }
     }
 }

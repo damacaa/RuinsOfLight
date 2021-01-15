@@ -66,6 +66,13 @@ public class Controller {
 			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.out.println("Creando records.txt");
+			File myObj = new File("records.txt");
+			try {
+				myObj.createNewFile();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}			
 		}
 	}
 
@@ -74,13 +81,10 @@ public class Controller {
 		String n1 = parts[0];
 		String n2 = parts[1];
 
-		int p = Integer.parseInt( parts[2]);
-		
-		nuevoRecord(new Record(n1,n2,p));
-	}
-		
-	
+		int p = Integer.parseInt(parts[2]);
 
+		nuevoRecord(new Record(n1, n2, p));
+	}
 
 	private void EscribirRecord(Record r) {
 		try {
@@ -126,7 +130,6 @@ public class Controller {
 		if (doneReading) {
 			EscribirRecord(record);
 		}
-
 
 		return record;
 	}
