@@ -4,7 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.CrossOrigin;   
 
-import java.awt.*; import javax.swing.*;
+import java.awt.*; 
+import javax.swing.*;
 
 @SpringBootApplication   
 @CrossOrigin
@@ -19,7 +20,7 @@ public class App
     //https://www.thoughtco.com/create-a-simple-window-using-jframe-2034069
     private static void createWindow() {
     	//Create and set up the window.
-    	JFrame frame = new JFrame("Simple GUI");
+    	JFrame frame = new JFrame("Ruins Of Light Server");
     	
     	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	
