@@ -53,11 +53,13 @@ class Parrot extends Enemy {
         this.primaryTarget = this.scene.swordPlayer;
         this.secondaryTarget = this.scene.bowPlayer;
 
+        this.body.enable = false;
         this.body.allowGravity = false;
     }
 
     WakeUp() {
         this.awake = true;
+        this.body.enable = true;
         this.body.allowGravity = false;
         this.anims.play('parrotWakeUp', true);
         this.healthBar = new BossHealthBar(this.scene, this, 'GREAT PARROT GUARDIAN');

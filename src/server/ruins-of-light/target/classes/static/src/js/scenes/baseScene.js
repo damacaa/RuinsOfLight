@@ -28,7 +28,10 @@ let skip = false;
 
 let inGame = false;
 
+let sceneCount = 0;
 let currentScene;
+
+let gamepad;
 
 function SkipRelic() {
     skip = true;
@@ -72,18 +75,23 @@ class BaseScene extends Phaser.Scene {
         this.health;
 
         this.entities = [];
+        this.messages = [];
 
         this.fading;
 
-        
-        
+        this.sceneIdx = sceneCount;
+        sceneCount++;
+
+        this.gamepad;
     }
 
     preload() {
-        
+
     }
 
     create() {
+        ui.EnableGameUI();
+
         currentScene = this;
 
         inGame = true;
@@ -142,6 +150,29 @@ class BaseScene extends Phaser.Scene {
         });
 
         ui.healthBar.Update();
+
+        this.points = [];
+
+        for (let i = 0; i < Math.min(this.map.width * this.map.height, 10000); i++) {
+            let rect = this.add.rectangle(Math.random() * this.map.width * 32, Math.random() * this.map.height * 32, 1, 1, 0xD79968).setDepth(10)
+            rect.vX = 0;
+            rect.vY = 0;
+
+            this.tweens.add({
+                targets: rect,
+                y: rect.y + 5,
+                alpha: 0.5,
+                duration: 2500,
+                ease: 'Sine.easeInOut',
+                yoyo: true,
+                repeat: -1
+            });
+
+            //rect.setScrollFactor(0.9);
+            this.points.push(rect);
+        }
+
+        this.messages = [];
     }
 
     LoadTileMap(key) {
@@ -168,49 +199,65 @@ class BaseScene extends Phaser.Scene {
     }
 
     CheckInputs(delta) {
-        //Controles jugador 0
-        let cursors0 = this.input.keyboard.addKeys({
-            up: Phaser.Input.Keyboard.KeyCodes.W,
-            down: Phaser.Input.Keyboard.KeyCodes.S,
-            left: Phaser.Input.Keyboard.KeyCodes.A,
-            right: Phaser.Input.Keyboard.KeyCodes.D
-        });
+        //https://labs.phaser.io/edit.html?src=src\input\gamepad\gamepad%20debug.js
+        this.gamepad = this.input.gamepad.gamepads[0];
 
-        var keyObj = this.input.keyboard.addKey('E'); // Get key object
+        if (this.gamepad && this.gamepad.connected) {
+            this.player0.Run(Math.round(this.gamepad.axes[0].value), delta);
+            this.player1.Run(Math.round(this.gamepad.axes[2].value), delta);
 
-        if (cursors0.left.isDown) {
-            this.player0.Run(-1, delta);
-        } else if (cursors0.right.isDown) {
-            this.player0.Run(1, delta);
+            if (this.gamepad.axes[1].value < -0.5) { this.player0.Jump(); }
+            if (this.gamepad.axes[3].value < -0.5) { this.player1.Jump(); }
+
+            if (this.gamepad.buttons[6].value > 0.5) { this.player0.Attack(); }
+            if (this.gamepad.buttons[6].value < 0.5) { this.player0.EnableAttack(); }
+            if (this.gamepad.buttons[7].value > 0.5) { this.player1.Attack(); }
+            if (this.gamepad.buttons[7].value < 0.5) { this.player1.EnableAttack(); }
         } else {
-            this.player0.Run(0, delta);
-        }
+            //P0
+            let cursors0 = this.input.keyboard.addKeys({
+                up: Phaser.Input.Keyboard.KeyCodes.W,
+                down: Phaser.Input.Keyboard.KeyCodes.S,
+                left: Phaser.Input.Keyboard.KeyCodes.A,
+                right: Phaser.Input.Keyboard.KeyCodes.D
+            });
 
-        if (cursors0.up.isDown) {
-            this.player0.Jump();
-        }
+            var keyObj = this.input.keyboard.addKey('E'); // Get key object
 
-        if (keyObj.isDown) {
-            this.player0.Attack();
-        }
+            if (cursors0.up.isDown) {
+                this.player0.Jump();
+            }
 
-        if (keyObj.isUp) {
-            this.player0.EnableAttack();
-        }
+            if (keyObj.isDown) {
+                this.player0.Attack();
+            }
 
-        //Controles jugador 1
-        let cursors1 = this.input.keyboard.createCursorKeys();
+            if (keyObj.isUp) {
+                this.player0.EnableAttack();
+            }
 
-        if (cursors1.left.isDown) {
-            this.player1.Run(-1, delta);
-        } else if (cursors1.right.isDown) {
-            this.player1.Run(1, delta);
-        } else {
-            this.player1.Run(0, delta);
-        }
+            if (cursors0.left.isDown) {
+                this.player0.Run(-1, delta);
+            } else if (cursors0.right.isDown) {
+                this.player0.Run(1, delta);
+            } else {
+                this.player0.Run(0, delta);
+            }
 
-        if (cursors1.up.isDown) {
-            this.player1.Jump();
+            //P1
+            let cursors1 = this.input.keyboard.createCursorKeys();
+
+            if (cursors1.left.isDown) {
+                this.player1.Run(-1, delta);
+            } else if (cursors1.right.isDown) {
+                this.player1.Run(1, delta);
+            } else {
+                this.player1.Run(0, delta);
+            }
+
+            if (cursors1.up.isDown) {
+                this.player1.Jump();
+            }
         }
 
         this.input.mouse.disableContextMenu();
@@ -225,7 +272,6 @@ class BaseScene extends Phaser.Scene {
     }
 
     EnableFullScreen() {
-
         var FKey = this.input.keyboard.addKey('F');
 
         FKey.on('down', function () {
@@ -284,8 +330,35 @@ class BaseScene extends Phaser.Scene {
             this.entities = [];
 
             this.camera.once('camerafadeoutcomplete', () => {
-                this.scene.start(key);  
+                this.scene.start(key);
             });
+        }
+    }
+
+    DrawMessages() {
+        const cloneMessages = [...this.messages];
+
+        for (let newMg of chats) {
+            //If the message is in the current scene
+            if (newMg.scene == (this.sceneIdx + levelX.toString() + levelY.toString())) {
+                let exists = false;
+                for (const oldMg of cloneMessages) {
+                    if (newMg.playerNick == oldMg.player) {
+                        oldMg.x = newMg.x;
+                        oldMg.y = newMg.y;
+                        oldMg.value = newMg.value;
+                        oldMg.date = newMg.date;
+                        oldMg.setFrame(newMg.value);
+
+                        exists = true;
+                    }
+                }
+
+                if (!exists) {
+                    let newMessage = new Message(this, newMg.x, newMg.y, newMg.playerNick, newMg.value);
+                    this.messages.push(newMessage);
+                }
+            }
         }
     }
 }

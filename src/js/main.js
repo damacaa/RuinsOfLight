@@ -100,6 +100,9 @@ window.onload = function () {
             autoCenter: Phaser.Scale.CENTER_BOTH,
             width: 480,
             height: 270,
+        }, 
+        input: {
+            gamepad: true
         },
         physics: {
             default: 'arcade',
@@ -112,8 +115,8 @@ window.onload = function () {
         scene: [Preload, InputName, MainMenu, AltarRoom, BossRoom, Dungeons, GameOver, Credits, LeaderBoard, UI]
     }
 
-    loadFont("Early GameBoy","resources/fonts/Early GameBoy.ttf");
-    loadFont("PressStart2P-Regular","resources/fonts/PressStart2P-Regular.ttf");
+    loadFont("Early GameBoy", "resources/fonts/Early GameBoy.ttf");
+    loadFont("PressStart2P-Regular", "resources/fonts/PressStart2P-Regular.ttf");
 
     game = new Phaser.Game(config);
 

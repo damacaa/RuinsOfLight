@@ -1,9 +1,20 @@
+
 class BaseMenuScene extends Phaser.Scene {
     constructor(key) {
         super(key);
         this.loading = false;
-
+        this.sceneIdx = -1;
     }
+
+    create(){
+        currentScene=this;
+        this.scene.launch('ui');
+        this.EnableFullScreen();
+
+        this.SetUp();
+    }
+
+    SetUp(){}
 
     update() {
         checkServer();
@@ -39,44 +50,31 @@ class BaseMenuScene extends Phaser.Scene {
     }
 }
 
-
 class InputName extends BaseMenuScene {
-
     constructor() {
         super('nameInput');
     }
 
-    create() {
-        this.EnableFullScreen();
-
-        this.scene.launch('ui');
+    SetUp() {
+        this.bground = this.add.sprite(0, 0, 'endCredits').setFrame(10).setOrigin(0);
 
         this.loading = false;
         this.ok = false;
 
-        this.bground = this.add.sprite(0, 0, 'endCredits').setFrame(10).setOrigin(0);
-
         //https://labs.phaser.io/edit.html?src=src/input/keyboard/enter%20name.js
-
-
         for (let index = 0; index < game.width * 32; index += 159) {
             this.add.sprite(index, 0, 'background').setOrigin(0, 0);
         }
 
+        let name = '';
         let chars = [
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
             'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
             'U', 'V', 'W', 'X', 'Y', 'Z', '_', '.', 'DEL', 'OK'
         ];
-
         let buttons = [];
 
-        let x = 80;
-        let y = 130;
-
-        let name = '';
-
-        this.add.text(240, 40, "Enter your name", {
+        this.add.text(240, 45, "ENTER YOUR NAME", {
             fontFamily: '"PressStart2P-Regular"',
             fontSize: '10px',
             color: '#eeeeba',
@@ -90,6 +88,9 @@ class InputName extends BaseMenuScene {
             align: 'center'
         }).setOrigin(0.5);
 
+        let x = 80;
+        let y = 130;
+
         for (let char of chars) {
             let c = this.add.text(x, y, char, {
                 fontFamily: '"PressStart2P-Regular"',
@@ -99,34 +100,43 @@ class InputName extends BaseMenuScene {
             });
 
             c.setAlign('center');
-
             c.setOrigin(0.5);
 
             switch (char) {
                 case 'DEL':
-
                     c.Press = function () {
                         if (name.length > 0) {
                             name = name.slice(0, -1);
                             playerText.text = name;
                         }
                     }
-
                     c.AdjustBlock = function () {
                         block.setFrame(1);
                     }
-
                     x += 55;
-
                     break;
 
                 case 'OK':
-
                     c.Press = function () {
                         if (name.length > 0) {
                             if (!this.ok) {
                                 player.nick = name;
-                                joinGame();
+                                joinGame(null, function () {
+                                    //if default path doesn't work, try local host or the other way around
+                                    if (origin == window.location.origin) {
+                                        origin = 'http://localhost:8080';
+                                    } else {
+                                        origin = window.location.origin;
+                                    }
+                                    
+                                    joining = false;
+
+                                    joinGame(null, function () {
+                                        //Client gives up and joins offline
+                                        joined = true;
+                                    });
+                                });
+                                c.alpha = 0.5;
                                 this.ok = true;
                             }
                         }
@@ -220,7 +230,7 @@ class InputName extends BaseMenuScene {
     }
 
     update(time, delta) {
-        if (canJoin) { this.LoadScene('mainMenu'); }
+        if (joined) { this.LoadScene('mainMenu'); }
     }
 }
 
@@ -232,9 +242,7 @@ class MainMenu extends BaseMenuScene {
         this.steps = 11;
     }
 
-    create() {
-        this.EnableFullScreen();
-
+    SetUp() {
         if (!this.scale.isFullscreen) {
             this.scale.startFullscreen();
         }
@@ -399,12 +407,9 @@ class Credits extends BaseMenuScene {
 
     constructor() {
         super('credits');
-
     }
 
-    create() {
-        this.EnableFullScreen();
-
+    SetUp() {
         this.anims.create({
             key: 'credits',
             frames: this.anims.generateFrameNumbers('endCredits', { start: 0, end: 70 }),
@@ -434,12 +439,9 @@ class GameOver extends BaseMenuScene {
 
     constructor() {
         super('gameOver');
-
     }
 
-    create() {
-        this.EnableFullScreen();
-
+    SetUp() {
         this.camera = this.cameras.main;
 
         this.gO = this.add.image(240, 135, 'gameOver').setOrigin(0.5, 0.5);
@@ -470,9 +472,7 @@ class LeaderBoard extends BaseMenuScene {
         super('leaderBoard');
     }
 
-    create() {
-        this.EnableFullScreen();
-
+    SetUp() {
         this.lB = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
 
         this.back = this.add.image(65, 220, 'continue').setOrigin(0.5, 0.5).setDepth(10).setInteractive();
