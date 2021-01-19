@@ -29,7 +29,7 @@ public class ChatController {
 	private List<Chat> chats = new ArrayList<Chat>();
 
 	@GetMapping("chats/")
-	public List<Chat> players() {
+	public List<Chat> chats() {
 		return chats;
 	}
 
@@ -53,7 +53,7 @@ public class ChatController {
 	}
 
 	@Scheduled(fixedDelay = 1000)
-	public void CheckPayers() {
+	public void CheckChats() {
 		int count = 0;
 		int indexToDelete = -1;
 
