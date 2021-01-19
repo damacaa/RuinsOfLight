@@ -12,7 +12,6 @@ class Relic extends Phaser.GameObjects.Sprite {
 
         this.setOrigin(0,0);
 
-
         this.scene.tweens.add({
             targets: this,
             y: y - 5,

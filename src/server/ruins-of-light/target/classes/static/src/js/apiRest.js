@@ -2,10 +2,11 @@ let lastTimeChecked = new Date();
 
 let records = [];
 let players = [];
+let chats = [];
 let player = { nick: null };
 
 let isOnline = false;
-let canJoin = false;
+let joined = false;
 let joining = false;
 
 let origin = window.location.origin; //url in browser
@@ -29,6 +30,8 @@ function loadPayers() {
         url: origin + '/players/'
     }).done(function (result) {
         players = result;
+        //https://stackoverflow.com/questions/23921683/javascript-move-an-item-of-an-array-to-the-front
+        players.sort(function (x, y) { return x.nick == player.nick ? -1 : y.nick == player.nick ? 1 : 0; });
     }).fail(function (jqXHR, textStatus, errorThrown) {
         console.log("Error")
     })
@@ -59,6 +62,7 @@ function createRecord(name1, name2, score) {
 
 //Join the server
 function joinGame(doneFunc, failFunc) {
+
     if (!joining) {
         joining = true;
         console.log("Conectando con: " + origin)
@@ -66,20 +70,22 @@ function joinGame(doneFunc, failFunc) {
             method: "POST",
             url: origin + '/join/',
             data: JSON.stringify(player),
-            processData: false,
             headers: {
                 "Content-Type": "application/json"
             }
         }).done(function (hasJoined) {
-            //console.log("Join: " + hasJoined);
-            canJoin = hasJoined;
+            if (hasJoined) {
+                console.log("Conectado correctamente a: " + origin);
+            } else {
+                console.log("Ya existe un usuario con ese nombre en: " + origin);
+                location.reload();
+            }
+
+            joined = hasJoined;
             isOnline = hasJoined;
             if (doneFunc) { doneFunc(); }
         }).fail(function (jqXHR, textStatus, errorThrown) {
-            console.log("No se ha podido conectar con: " + origin)
-            origin = 'http://localhost:8080'; //if default path doesn't work, try local host
-            joining = false;
-            joinGame();//if can't join try again
+            console.log("No se ha podido conectar con: " + origin);
             if (failFunc) { failFunc(); }
         }).always(function () {
             joining = false;
@@ -91,14 +97,15 @@ function joinGame(doneFunc, failFunc) {
 function checkServer() {
     if (new Date() - lastTimeChecked > 500) {
         lastTimeChecked = new Date();
-        checkPlayer();
-        loadPayers();
-    }
 
-    if (!isOnline) {
-        joinGame(null, function (scene) {
+        if (isOnline) {
+            checkPlayer();
+            loadPayers();
+            checkChat();
+        } else {
             console.log("Reconectando...");
-        });
+            joinGame();
+        }
     }
 }
 
@@ -116,5 +123,33 @@ function checkPlayer() {
         isOnline = hasChecked;
     }).fail(function () {
         isOnline = false;
+    })
+}
+
+function checkChat() {
+    $.ajax({
+        method: "GET",
+        url: origin + '/chats/'
+    }).done(function (chatHistory) {
+        chats = chatHistory;
+        if (currentScene.sceneIdx >= 0) {
+            currentScene.DrawMessages();
+        }
+    })
+}
+
+function createChat(value, scene, x, y) {
+    let chat = { playerNick: player.nick, scene: scene, value: value, date: new Date(), x: x, y: y };
+
+    $.ajax({
+        method: "POST",
+        url: origin + '/chats/',
+        data: JSON.stringify(chat),
+        processData: false,
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }).done(function () {
+        
     })
 }

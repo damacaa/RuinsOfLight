@@ -205,6 +205,12 @@ class Preload extends Phaser.Scene {
             }
             );
 
+            this.load.spritesheet('emoji',
+                'resources/img/Emojis/emojis.png', {
+                frameWidth: 16,
+                frameHeight: 16
+            }
+            );
         }
 
 
@@ -230,11 +236,8 @@ class Preload extends Phaser.Scene {
             this.load.image('leaderBoard', 'resources/img/Interfaz/Menu/Buttons5.png');
             this.load.image('skip', 'resources/img/Interfaz/Menu/Buttons4.png');
             this.load.image('records', 'resources/img/Interfaz/Menu/Buttons5.png');
-
             this.load.image('back', 'resources/img/Interfaz/Menu/Buttons7.png');
-
             this.load.image('menuBackground', 'resources/img/Interfaz/Menu/menuBackground.png');
-
             this.load.audio("music", "resources/audio/music.ogg");
 
             //Efectos intro
@@ -245,20 +248,16 @@ class Preload extends Phaser.Scene {
                 'resources/img/Interfaz/EndCredits/Credits.png', {
                 frameWidth: 480,
                 frameHeight: 270
-            }
-
-
-            );
+            });
 
             //LeaderBoard
             this.load.spritesheet('leaderBoardBackground',
                 'resources/img/Interfaz/LeaderBoard/LeaderBoardBackground.png', {
                 frameWidth: 480,
                 frameHeight: 270
-            }
+            });
 
-
-            );
+            this.load.image('continue', 'resources/img/Interfaz/Menu/Buttons6.png');
             this.load.audio("winMusic", "resources/audio/musicWin.ogg"); // Musica victoria
 
             //GameOver
@@ -269,5 +268,4 @@ class Preload extends Phaser.Scene {
     create() {
         this.scene.start('nameInput');
     }
-
 }
