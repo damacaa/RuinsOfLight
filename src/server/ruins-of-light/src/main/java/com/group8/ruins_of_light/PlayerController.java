@@ -63,7 +63,7 @@ public class PlayerController {
 	}
 
 	@Scheduled(fixedDelay = 500)
-	public void CheckPayers() {
+	public void CheckPlayers() {
 		int count = 0;
 		int indexToDelete = -1;
 		for (Player pl : players) {
