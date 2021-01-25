@@ -60,7 +60,9 @@ Diagrama de Flujo:
 
 Escenas:
 
+![alt tag](/resources/img/ReadMe/LogIn.png)
 ![alt tag](/resources/img/ReadMe/Menu.png)
+![alt tag](/resources/img/ReadMe/LeaderBoard.png)
 ![alt tag](/resources/img/ReadMe/Intro.png)
 ![alt tag](/resources/img/ReadMe/Cinematica.png)
 ![alt tag](/resources/img/ReadMe/Altares.png)
@@ -144,4 +146,52 @@ Efectos*: Ataque Espada, Ataque enemigos, Despertar y Muerte de guardianes jefes
 Arte conceptual: Guía de estilo: El estilo artístico empleado para los personajes y los escenarios es el pixel art. Los distintos personajes tendrán animaciones de movimiento, ataque, salto, etc. Los escenarios toman inspiración de antiguas civilizaciones. La arquitectura se caracteriza por emplear piedra con detalles de luz emisiva que representa la energía que recorre el templo y a sus guardianes. Galería de imágenes: Véanse imágenes en la carpeta de recursos del siguiente enlace.
 https://github.com/damacaa/RuinsOfLight/tree/main/resources
  
+
+5.-API REST:
+5.1.-Diagrama de clases y API REST: En el lado del servidor encontramos un diagrama de clases basado en la arquitectura software MVC (Modelo Vista Controlador), tal como el que se muestra en la siguiente imagen.
+![alt tag](/resources/img/ReadMe/MVC.png)
+
+
+5.2.- Instrucciones precisas para ejecutar la aplicación: compilación, cómo ejecutar el .jar, qué hace falta instalar en la máquina, qué URL cargar en el navegador para empezar a jugar, etc.
+
+¿Qué hace falta instalar? 
+Hay que tener instalado Java. Se ha desarrollado en la versión 1.8 y no se puede garantizar que funcione en versiones anteriores. De cara a futuras versiones podría suceder algo similar.
+Hay que tener instalado un navegador web. El equipo de desarrollo recomienda utilizar Google Chrome.
+
+Para compilar: Importar el proyecto en el STS, y ejecutarlo como “Maven build”. Esto generará un archivo .jar en la carpeta target.
+
+Para ejecutar el .jar: Se puede ejecutar haciendo doble click, pero no es recomendable. Para ejecutar se debe abrir una consola de comandos y escribir “java -jar rutaArchivo/nombreArchivo.jar”. No obstante, en la carpeta RuinsOfLight encontrarás el archivo .jar ya compilado así como un un archivo .bat de nombre runRolServer.bat, el cual permite arrancar el .jar y visualizar la consola al mismo tiempo sin tener que abrir la línea de comandos. Con el servidor abierto solo queda escribir “localhost:8080” en el navegador.
+
+
+5.3.- Métodos empleados para hacer peticiones al servidor 
+//PlayerController
+@GetMapping("players/")
+public List<Player> players(): devuelve la lista de jugadores que están online.
+
+@PostMapping("join/")
+public boolean unirsePartida(@RequestBody Player p): recibe un jugador y comprueba que en la lista de jugadores del servidor no haya un jugador con el mismo nombre. Si no lo hay, se añade a la lista de jugadores.
+
+@PostMapping("check/")
+public boolean comprobarJugador(@RequestBody Player p): este método recibe un jugador y comprueba si está en la lista de jugadores del servidor y actualiza última hora de conexión con la hora actua.
+
+@Scheduled(fixedDelay = 500)
+public void CheckPayers(): compara la última hora de conexión de cada uno de los jugadores con la hora actual. Si la diferencia entre estas es mayor a x segundos, el jugador en cuestión es borrado de la lista de jugadores.
+
+//RecordController
+@GetMapping("records/")
+public List<Record> records(): devuelve los récords almacenados en el servidor.
+
+@PostMapping("records/")
+public Record nuevoRecord(@RequestBody Record record): guarda en la lista de récords el récord que recibe y lo escribe en un fichero .txt, para que los récords tengan persistencia.
+
+//ChatController
+@GetMapping("chats/")
+public List<Chat> chats(): devuelve todos los mensajes en el servidor.
+
+@PostMapping("chats/")
+public boolean nuevoChat(@RequestBody Chat chat): guarda en la lista de chats el mensaje que recibe.
+
+@Scheduled(fixedDelay = 1000)
+public void CheckPayers(): compara la hora de creación de cada uno de los mensaje con la hora actual. Si la diferencia entre estas es mayor a x segundos, el mensaje en cuestión es borrado de la lista de mensajes.
+
 
