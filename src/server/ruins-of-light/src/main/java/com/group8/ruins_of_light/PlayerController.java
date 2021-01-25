@@ -21,7 +21,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 @RestController
 @RequestMapping("/")
-@EnableScheduling
+//@EnableScheduling
 @CrossOrigin
 
 public class PlayerController {
@@ -62,7 +62,7 @@ public class PlayerController {
 		return false;
 	}
 
-	@Scheduled(fixedDelay = 500)
+	/*@Scheduled(fixedDelay = 500)
 	public void CheckPlayers() {
 		int count = 0;
 		int indexToDelete = -1;
@@ -79,5 +79,5 @@ public class PlayerController {
 		if (indexToDelete != -1) {
 			players.remove(indexToDelete);
 		}
-	}
+	}*/
 }

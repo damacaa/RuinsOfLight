@@ -16,7 +16,7 @@ class Dungeons extends BaseScene {
 
     CreateStage() {
         ////https://www.html5gamedevs.com/topic/41691-cant-get-group-to-work/
-        this.camera.startFollow(this.bowPlayer, true);
+        if (isOnline) { this.camera.startFollow(this.player0, true); } else { this.camera.startFollow(this.bowPlayer, true); }
 
         this.levelId = levelX + "_" + levelY;
 
@@ -81,7 +81,7 @@ class Dungeons extends BaseScene {
 
                     //Enemigos
                     if (tile.index == 33) {
-                        new Spawner(this, i * 32 + 16, j * 32 + 16);
+                        //new Spawner(this, i * 32 + 16, j * 32 + 16);
                     }
 
                     if (tile.index == 34 && !hasRelic && relicX == levelX && relicY == levelY) {

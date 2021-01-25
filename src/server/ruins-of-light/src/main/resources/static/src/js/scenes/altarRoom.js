@@ -71,8 +71,19 @@ class AltarRoom extends BaseScene {
                     this.swordAltar.done = true;
                     this.bowAltar.done = true;
 
-                    this.swordAltar.player.SetWeapon(1);
-                    this.bowAltar.player.SetWeapon(2);
+                    if (isOnline) {
+                        if (this.player0 == this.swordAltar.player) {
+                            this.player0.SetWeapon(1);
+                            this.player1.SetWeapon(2);
+                        } else {
+                            this.player0.SetWeapon(2);
+                            this.player1.SetWeapon(1);
+                        }
+                    } else {
+                        this.swordAltar.player.SetWeapon(1);
+                        this.bowAltar.player.SetWeapon(2);
+                    }
+
 
                     this.swordAltar.Deactivate();
                     this.bowAltar.Deactivate();

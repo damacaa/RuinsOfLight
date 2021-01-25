@@ -22,7 +22,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 @RestController
 @RequestMapping("/")
-@EnableScheduling
+//@EnableScheduling
 
 public class ChatController {
 
@@ -52,7 +52,7 @@ public class ChatController {
 		return true;
 	}
 
-	@Scheduled(fixedDelay = 1000)
+	/*@Scheduled(fixedDelay = 1000)
 	public void CheckChats() {
 		int count = 0;
 		int indexToDelete = -1;
@@ -68,5 +68,5 @@ public class ChatController {
 
 		if (indexToDelete != -1)
 			chats.remove(indexToDelete);
-	}
+	}*/
 }

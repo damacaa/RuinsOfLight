@@ -266,6 +266,7 @@ class Preload extends Phaser.Scene {
     }
 
     create() {
+        this.input.mouse.disableContextMenu();    
         this.scene.start('nameInput');
     }
 }
