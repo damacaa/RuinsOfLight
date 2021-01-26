@@ -125,7 +125,7 @@ window.onload = function () {
                 //debug: true
             }
         },
-        scene: [Preload, InputName, MainMenu, AltarRoom, BossRoom, Dungeons, GameOver, Credits, LeaderBoard, UI]
+        scene: [Preload, InputName, MainMenu, WaitingRoom, AltarRoom, BossRoom, Dungeons, GameOver, Credits, LeaderBoard, UI]
     }
 
     loadFont("Early GameBoy", "resources/fonts/Early GameBoy.ttf");
