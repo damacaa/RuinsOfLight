@@ -1,35 +1,60 @@
 class Dog extends Phaser.GameObjects.Sprite {
   constructor(scene, x, y) {
-    super(scene, x, y, "droneShotKey");
+    super(scene, x, y, 'dog');
     this.speed = 200;
 
     this.scene = scene;
     this.scene.add.existing(this);
     this.scene.entities.push(this);
-
-    this.x = x;
-    this.y = y;
+    this.scene.physics.add.existing(this);
 
     //this.body.setAllowGravity(false);
     //this.body.setSize(6, 6, true);
 
     this.scene.anims.create({
-      key: 'droneShot',
-      frames: this.scene.anims.generateFrameNumbers('droneShotKey', { start: 0, end: 3 }),
+      key: 'dogWalk',
+      frames: this.scene.anims.generateFrameNumbers('dog', { start: 0, end: 3 }),
       frameRate: 4,
       repeat: -1
     });
 
-    this.anims.play('droneShot', true);
+    this.scene.anims.create({
+      key: 'dogIdle',
+      frames: this.scene.anims.generateFrameNumbers('dog', { start: 0, end: 0 }),
+      frameRate: 1,
+      repeat: -1
+    });
+
+    this.scene.anims.create({
+      key: 'dogJump',
+      frames: this.scene.anims.generateFrameNumbers('dog', { start: 4, end: 5 }),
+      frameRate: 1,
+      repeat: -1
+    });
+
+    this.scene.anims.create({
+      key: 'dogFall',
+      frames: this.scene.anims.generateFrameNumbers('dog', { start: 6, end: 7 }),
+      frameRate: 1,
+      repeat: -1
+    });
+
+    this.anims.play('dogWalk', true);
 
     this.setOrigin(0.5, 0.5);
     this.setDepth(3);
+    this.body.setSize(16, 16);
+    this.body.offset.x = 16;
+    this.body.offset.y = 16;
 
-    this.way;
+    this.way = [];
 
+    this.scene.physics.add.collider(this, this.scene.groundLayer);
   }
 
   FindWay(world, endX, endY) {
+    this.way = [];
+
     let startX = Math.round(this.x / 32);
     let startY = Math.round(this.y / 32);
 
@@ -62,7 +87,6 @@ class Dog extends Phaser.GameObjects.Sprite {
     start.ComputeFScore(endX, endY);
 
     let openList = [];
-    let closedList = [];
     openList.push(start);
 
     let current = openList[0];
@@ -89,14 +113,23 @@ class Dog extends Phaser.GameObjects.Sprite {
       }
 
       if (current.x == endX && current.y == endY) {
-        this.way = current;
         console.log("Found the way");
+        while (current.parent) {
+          let w = { x: current.x * 32 + 16, y: current.y * 32 + 16 };
+          this.scene.add.rectangle(w.x, w.y, 3, 3, 0xD79968).setDepth(10).setOrigin(0.5, 0.5);
+
+          this.way.push(w);
+          current = current.parent;
+        }
+
+        console.log(this.way[12]);
+
         break;
       } else {
         for (let i = -1; i < 2; i++) {
           for (let j = -1; j < 2; j++) {
 
-            if (i != 0 || j != 0) {//Not checking self
+            if (Math.abs(i + j) == 1) {//Not checking self i != 0 || j != 0 //Math.abs(i + j) == 1
               let currentX = current.x + i;
               let currentY = current.y + j;
 
@@ -109,11 +142,20 @@ class Dog extends Phaser.GameObjects.Sprite {
                   let newNode = new Node(neighbour, current);
                   let cost = neighbour.cost;
                   if (i == j) { cost *= 1.41; }
+
                   if (j < 0) { cost *= 5; }
-                  if (j > 0) { cost *= 0.5; }
+
+                  if (j > 0) {
+                    cost *= 0.5;
+                    if (i == 0) { cost = 0; }
+                  }
+
+                  let tile = world.getTileAt(currentX, currentY + 1);
+                  if (!tile) {
+                    cost *= 100;
+                  }
 
                   newNode.ComputeFScore(endX, endY, cost);
-
                   openList.push(newNode);
                 }
                 cells[current.x + i][current.y + j] = neighbour;
@@ -125,13 +167,47 @@ class Dog extends Phaser.GameObjects.Sprite {
     }
   }
 
-  Update() {
-    if (this.way) {
-      //console.log(this.way.x + ":" + this.way.y);
-      this.scene.add.rectangle(this.way.x * 32, this.way.y * 32, 3, 3, 0xD79968).setDepth(10).setOrigin(0.5, 0.5);
-      this.x = this.way.x;
-      this.y = this.way.y;
-      if (this.way.parent) { this.way = this.way.parent; }
+  Update(time, delta) {
+    //console.log(this.x, this.y);
+
+    if (this.way.length > 0) {
+      let idx = this.way.length - 1;
+      let x = Math.abs(this.way[idx].x - this.x) > 16;
+      let y = Math.abs(this.way[idx].y - this.y) > 32;
+
+      if (x || y) {
+        if (x) {
+          let dir;
+          let dif = this.way[idx].x - this.x;
+
+          if (dif > 0) {
+            dir = 1;
+            this.flipX = false;
+          } else {
+            dir = -1;
+            this.flipX = true;
+          }
+          this.body.setVelocityX(dir * this.speed);
+          if (this.body.blocked.left || this.body.blocked.right) { this.body.setVelocityY(-100); }
+        }
+        if (y) {
+          let speedY = this.way[idx].y - this.y + 32;
+          speedY = speedY / Math.abs(speedY);
+          if (speedY < 0) {
+            this.anims.play('dogJump', true);
+            this.body.setVelocityY(speedY * this.speed);
+          }
+          if (this.body.blocked.up) { this.body.setVelocityX(-100); }
+        }
+      } else {
+        this.way.pop()
+      }
+
+      //Animations
+      if (this.body.blocked.down) { this.anims.play('dogWalk', true); } else { if (this.body.velocityY > 0) { this.anims.play('dogFall', true); } }
+    } else {
+      this.anims.play('dogIdle', true);
+      this.body.setVelocityX(0);
     }
   }
 }

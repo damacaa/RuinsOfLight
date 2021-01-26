@@ -7,7 +7,7 @@ function Cell(state, x, y) {
     this.state = 0;
     if (state != 0) { this.state = -1; }
 
-    this.cost = 10;
+    this.cost = 100;
 
     //currentScene.add.rectangle(this.x * 32, this.y * 32, 32, 32, 0xffffff).setDepth(10).setOrigin(0.5, 0.5).setDepth(0);
 

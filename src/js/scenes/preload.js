@@ -112,11 +112,11 @@ class Preload extends Phaser.Scene {
 
             //IA
             this.load.spritesheet('dog',
-            'resources/img/animations/ia/perro.png', {
-            frameWidth: 32,
-            frameHeight: 32
-        }
-        );
+                'resources/animations/ia/perro.png', {
+                frameWidth: 32,
+                frameHeight: 32
+            }
+            );
 
             //Altares
             this.load.spritesheet('swordAltar',
@@ -276,7 +276,7 @@ class Preload extends Phaser.Scene {
     }
 
     create() {
-        this.input.mouse.disableContextMenu();    
+        this.input.mouse.disableContextMenu();
         this.scene.start('nameInput');
     }
 }

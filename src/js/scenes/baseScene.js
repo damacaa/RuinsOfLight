@@ -357,19 +357,21 @@ class BaseScene extends Phaser.Scene {
 
 //Check players every x seconds
 function checkServer() {
-    /*if (new Date() - lastTimeChecked > 500) {
-        lastTimeChecked = new Date();
+    if (isOnline) {
+        if (new Date() - lastTimeChecked > 1000) {
+            lastTimeChecked = new Date();
 
-        if (isOnline) {
-            checkPlayer();
-            loadPayers();
-            checkChat();
+            if (isOnline) {
+                checkPlayer();
+                loadPayers();
+                checkChat();
 
-        } else {
-            console.log("Reconectando...");
-            joinGame();
+            } else {
+                console.log("Reconectando...");
+                joinGame();
+            }
         }
-    }
 
-    if (inGame) { SendPlayerInfo(currentScene.player0); }*/
+        if (inGame) { SendPlayerInfo(currentScene.player0); }
+    }
 }
