@@ -110,6 +110,15 @@ class Preload extends Phaser.Scene {
             }
             );
 
+            //IA
+            this.load.spritesheet('dog',
+                'resources/animations/ia/perro.png', {
+                frameWidth: 32,
+                frameHeight: 32
+            }
+            );
+
+            //Altares
             this.load.spritesheet('swordAltar',
                 'resources/img/Items/Altares/AltarEspada.png', {
                 frameWidth: 32,
@@ -125,6 +134,7 @@ class Preload extends Phaser.Scene {
             }
             );
 
+            //Puerta
             this.load.spritesheet('puertaEntrada',
                 'resources/img/Items/Arcos de Paso/Entrada.png', {
                 frameWidth: 64,
@@ -266,7 +276,7 @@ class Preload extends Phaser.Scene {
     }
 
     create() {
-        this.input.mouse.disableContextMenu();    
+        this.input.mouse.disableContextMenu();
         this.scene.start('nameInput');
     }
 }

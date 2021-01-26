@@ -137,6 +137,7 @@ class InputName extends BaseMenuScene {
                                         joined = true;
                                     });
                                 });
+                                //joined = true;
                                 c.alpha = 0.5;
                                 this.ok = true;
                             }

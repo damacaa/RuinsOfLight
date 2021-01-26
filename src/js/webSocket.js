@@ -1,8 +1,9 @@
 
 
 $(document).ready(function () {
-
-    pConnection = new WebSocket('ws://127.0.0.1:8080/player');//https://stackoverflow.com/questions/59359280/react-app-error-failed-to-construct-websocket-an-insecure-websocket-connecti
+    //let o = origin.split("/")[2];//ngrok
+    let o = "localhost:8080";
+    pConnection = new WebSocket('ws://'+o+'/player');//https://stackoverflow.com/questions/59359280/react-app-error-failed-to-construct-websocket-an-insecure-websocket-connecti
 
     pConnection.onerror = function (e) {
         console.log("WS error: " + e);
@@ -22,6 +23,10 @@ $(document).ready(function () {
             default:
                 break;
         }
+    }
+
+    pConnection.onopen = function () {
+        gameMode = 2;
     }
 
     pConnection.onclose = function () {

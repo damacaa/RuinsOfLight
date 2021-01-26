@@ -93,10 +93,11 @@ class BossRoom extends BaseScene {
     UpdateStage() {
         if (this.currentBoss && !this.currentBoss.awake) {
             if (hasRelic) {
-                if (this.camera.worldView.contains(this.currentBoss.x, this.currentBoss.y)) {
+                if (Math.abs(this.currentBoss.x - this.player0.x) < 200 && Math.abs(this.currentBoss.x - this.player1.x) < 200) {
                     this.currentBoss.WakeUp();
                     hasRelic = false;
                 }
+
             } else {
                 if (defeatedBosses == 2) {
                     if (!this.exitDoor.open) {

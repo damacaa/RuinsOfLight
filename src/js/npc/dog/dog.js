@@ -42,7 +42,7 @@ class Dog extends Phaser.GameObjects.Sprite {
     this.anims.play('dogWalk', true);
 
     this.setOrigin(0.5, 0.5);
-    this.setDepth(3);
+    this.setDepth(9);
     this.body.setSize(16, 16);
     this.body.offset.x = 16;
     this.body.offset.y = 16;
@@ -55,8 +55,11 @@ class Dog extends Phaser.GameObjects.Sprite {
   FindWay(world, endX, endY) {
     this.way = [];
 
+    console.log(this.x, this.y);
     let startX = Math.round(this.x / 32);
     let startY = Math.round(this.y / 32);
+
+    console.log(startX, startY, " => ", endX, endY)
 
     let columns = world.width;
     let rows = world.height;
@@ -116,14 +119,10 @@ class Dog extends Phaser.GameObjects.Sprite {
         console.log("Found the way");
         while (current.parent) {
           let w = { x: current.x * 32 + 16, y: current.y * 32 + 16 };
-          //this.scene.add.rectangle(w.x, w.y, 3, 3, 0xD79968).setDepth(10).setOrigin(0.5, 0.5);
-
+          this.scene.add.rectangle(w.x, w.y, 3, 3, 0xD79968).setDepth(10).setOrigin(0.5, 0.5);
           this.way.push(w);
           current = current.parent;
         }
-
-        console.log(this.way[12]);
-
         break;
       } else {
         for (let i = -1; i < 2; i++) {
@@ -171,50 +170,55 @@ class Dog extends Phaser.GameObjects.Sprite {
     //console.log(this.x, this.y);
 
     if (this.way.length > 0) {
-      let idx = this.way.length - 1;
-      let x = Math.abs(this.way[idx].x - this.x) > 16;
-      let y = Math.abs(this.way[idx].y - this.y) > 32;
+      if (this.scene.camera.worldView.contains(this.x, this.y) || !this.body.blocked.down) {
+        let idx = this.way.length - 1;
+        let x = Math.abs(this.way[idx].x - this.x) > 16;
+        let y = Math.abs(this.way[idx].y - this.y) > 32;
 
-      if (x || y) {
-        if (x) {
-          let dir;
-          let dif = this.way[idx].x - this.x;
+        if (x || y) {
+          if (x) {
+            let dir;
+            let dif = this.way[idx].x - this.x;
 
-          if (dif > 0) {
-            dir = 1;
-            this.flipX = false;
-          } else {
-            dir = -1;
-            this.flipX = true;
+            if (dif > 0) {
+              dir = 1;
+              this.flipX = false;
+            } else {
+              dir = -1;
+              this.flipX = true;
+            }
+            this.body.setVelocityX(dir * this.speed);
+            if (this.body.blocked.left || this.body.blocked.right) { this.body.setVelocityY(-100); }
           }
-          this.body.setVelocityX(dir * this.speed);
-          if (this.body.blocked.left || this.body.blocked.right) { this.body.setVelocityY(-100); }
-        }
-        if (y) {
-          let speedY = this.way[idx].y - this.y + 32;
-          speedY = speedY / Math.abs(speedY);
-          if (speedY < 0) {
-            this.body.setVelocityY(speedY * this.speed);
+          if (y) {
+            let speedY = this.way[idx].y - this.y + 32;
+            speedY = speedY / Math.abs(speedY);
+            if (speedY < 0) {
+              this.body.setVelocityY(speedY * this.speed);
+            }
+            if (this.body.blocked.up) { this.body.setVelocityX(-100); }
           }
-          if (this.body.blocked.up) { this.body.setVelocityX(-100); }
-        }
-      } else {
-        this.way.pop()
-      }
-
-      //Animations
-      if (this.body.blocked.down) {
-        this.anims.play('dogWalk', true);
-      } else {
-        if (this.body.velocity.y> 0) {
-          this.anims.play('dogFall', true);
         } else {
-          this.anims.play('dogJump', true);
+          this.way.pop()
         }
+
+        //Animations
+        if (this.body.blocked.down) {
+          this.anims.play('dogWalk', true);
+        } else {
+          if (this.body.velocity.y > 0) {
+            this.anims.play('dogFall', true);
+          } else {
+            this.anims.play('dogJump', true);
+          }
+        }
+      } else {
+        this.body.setVelocityX(0);
+        this.anims.play('dogIdle', true);
       }
     } else {
-      this.anims.play('dogIdle', true);
       this.body.setVelocityX(0);
+      this.anims.play('dogIdle', true);
     }
   }
 }

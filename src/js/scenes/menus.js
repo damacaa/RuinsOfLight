@@ -378,30 +378,22 @@ class MainMenu extends BaseMenuScene {
                         this.cameras.main.fadeOut(500);
 
                         this.cameras.main.once('camerafadeoutcomplete', () => {
-                            this.scene.start('altarRoom');
+                            if (gameMode == 2) { this.LoadScene('altarRoom'); } else { this.LoadScene('altarRoom'); }
                         });
                     }
-
                 }, this);
                 this.sound.stopAll();
                 this.musicBGMainMenu = this.sound.play("music", { loop: true }, { volume: 2 });
             }
         }, this);
 
-
         this.credits.on('pointerdown', function (event) {
-
-
             this.scene.start('credits');
         }, this);
 
         this.leaderBoard.on('pointerdown', function (event) {
-
-
             this.scene.start('leaderBoard');
         }, this);
-
-
     }
 }
 

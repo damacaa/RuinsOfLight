@@ -33,6 +33,8 @@ let gamepad;
 
 let isOrange = true;
 
+let gameMode = 1; //0 single player //1 local multiplayer //2 online multiplayer
+
 //API REST
 let lastTimeChecked = new Date();
 

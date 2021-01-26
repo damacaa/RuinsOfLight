@@ -122,7 +122,7 @@ window.onload = function () {
 
             arcade: {
                 gravity: { y: 981 },
-                debug: true
+                //debug: true
             }
         },
         scene: [Preload, InputName, MainMenu, AltarRoom, BossRoom, Dungeons, GameOver, Credits, LeaderBoard, UI]

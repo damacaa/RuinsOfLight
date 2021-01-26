@@ -68,7 +68,7 @@ class Dungeons extends BaseScene {
 
         //https://medium.com/@alizah.lalani/collecting-objects-in-phaser-3-platformer-games-using-tiled-4e9298cbfc85
         for (let i = 0; i < this.map.width; i++) {
-            for (let j = 0; j < this.map.width; j++) {
+            for (let j = 0; j < this.map.height; j++) {
                 let tile = this.map.getTileAt(i, j);
 
                 if (tile) {
@@ -123,6 +123,9 @@ class Dungeons extends BaseScene {
 
         this.sound.stopAll();
         this.musicBGDungeon = this.sound.play("music", { loop: true }, { volume: 2 });
+
+        this.dog = new Dog(this, Math.round(this.previousDungeonDoor.x / 32)+5, this.previousDungeonDoor.y / 32);
+        this.dog.FindWay(this.map, Math.round(this.door2.x/32), Math.round(this.door2.y/32));
     }
 
     UpdateStage() {

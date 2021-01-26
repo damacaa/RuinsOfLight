@@ -82,14 +82,13 @@ class BaseScene extends Phaser.Scene {
         this.camera.setRenderToTexture(customPipeline);//Activa el shader
 
         if (isOnline) {
-            if(isOrange){this.player1 = new FakePlayer(this, 192, 192, 'p1noWeapon', 'p1sword', 'p1bow', p1Health);}else{
-                this.player1 = new FakePlayer(this, 192, 192, 'p0noWeapon', 'p0sword', 'p0bow', p1Health);
+            if (isOrange) { this.player1 = new FakePlayer(this, 240, 135, 'p1noWeapon', 'p1sword', 'p1bow', p1Health); } else {
+                this.player1 = new FakePlayer(this, 240, 135, 'p0noWeapon', 'p0sword', 'p0bow', p1Health);
             }
-            this.players.add(this.player1.body);
             this.player1.SetWeapon(p1Weapon);
         } else {
             //Pone a cada jugador el arma correspondiente
-            if(isOrange){this.player1 = new Player(this, 192, 192, 'p1noWeapon', 'p1sword', 'p1bow', p1Health);}else{
+            if (isOrange) { this.player1 = new Player(this, 192, 192, 'p1noWeapon', 'p1sword', 'p1bow', p1Health); } else {
                 this.player1 = new Player(this, 192, 192, 'p0noWeapon', 'p0sword', 'p0bow', p1Health);
             }
             this.player1.SetWeapon(p1Weapon);
@@ -244,10 +243,10 @@ class BaseScene extends Phaser.Scene {
                 }, this);
             }
         } else {
-            if (friend) {
-                //console.log(friend.x);
-                //this.player1.UpdatePosition(friend.x, friend.y);
-                this.player1.FakeUpdate(friend.x, friend.y, friend.anim, friend.prog, friend.flipX);
+            if (friend && friend.scene == this.sceneIdx + levelX.toString() + levelY.toString()) {
+                this.player1.FakeUpdate(friend.x, friend.y, friend.health, friend.anim, friend.prog, friend.flipX);
+            } else {
+                //this.player1.FakeUpdate(-32, -32, null, 0, false);
             }
         }
     }
@@ -273,12 +272,13 @@ class BaseScene extends Phaser.Scene {
 
     MeleeDamage(weapon, target) {
         target.Hurt(10);
-        console.log(this.entities.indexOf(target));
+        SendDamage(this.entities.indexOf(target), 10, this);
     }
 
     ProjectileDamage(target, projectile) {
         target.Hurt(100);
         projectile.destroy();
+        SendDamage(this.entities.indexOf(target), 100, this);
     }
 
     ProjectileHitsWall(projectile, wall) {
@@ -307,8 +307,8 @@ class BaseScene extends Phaser.Scene {
         if (!this.fading) {
             this.fading = true;
             this.camera.fadeOut(500);
-            if(!isOnline){this.camera1.fadeOut(500);}
-            
+            if (!isOnline) { this.camera1.fadeOut(500); }
+
             p0Health = this.player0.health;
             p1Health = this.player1.health;
             this.entities = [];
@@ -346,31 +346,21 @@ class BaseScene extends Phaser.Scene {
         }
     }
 
-    SendPlayer() {
-        var pl = {
-            name: player.nick,
-            x: this.player0.x,
-            y: this.player0.y
-        }
-        connection.send(JSON.stringify(pl));
+    DamageEntity(idx, amount) {
+        this.entities[idx].Hurt(amount);
     }
 }
 
 //Check players every x seconds
 function checkServer() {
-    if (new Date() - lastTimeChecked > 500) {
-        lastTimeChecked = new Date();
-
-        if (isOnline) {
+    if (isOnline) {
+        if (new Date() - lastTimeChecked > 1000) {
+            lastTimeChecked = new Date();
             checkPlayer();
             loadPayers();
             checkChat();
-
-        } else {
-            console.log("Reconectando...");
-            joinGame();
         }
-    }
 
-    if (inGame) { SendPlayerInfo(currentScene.player0); }
+        if (inGame) { SendPlayerInfo(currentScene.player0); }
+    }
 }
