@@ -70,6 +70,11 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 			newNode.put("damage", node.get("damage").asInt());
 			newNode.put("scene", node.get("scene").asText());
 			break;
+		case "3":
+			// Reliquia creada
+			newNode.put("x", node.get("x").asInt());
+			newNode.put("y", node.get("y").asInt());
+			break;
 		default:
 			// code block
 		}

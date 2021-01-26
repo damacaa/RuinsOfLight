@@ -56,3 +56,5 @@ let friend = {
     x: 240,
     y: 135
 };
+//let friends = [];
+let friendIsOnline = false;

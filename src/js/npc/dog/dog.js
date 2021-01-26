@@ -1,7 +1,7 @@
 class Dog extends Phaser.GameObjects.Sprite {
   constructor(scene, x, y) {
     super(scene, x, y, 'dog');
-    this.speed = 200;
+    this.speed = 190;
 
     this.scene = scene;
     this.scene.add.existing(this);
