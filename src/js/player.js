@@ -10,7 +10,7 @@ class Player extends Phaser.GameObjects.Sprite {
         this.scene.physics.add.existing(this);
         this.scene.entities.push(this);
 
-        scene.anims.create({
+        {scene.anims.create({
             key: 'right' + noWeaponKey,
             frames: scene.anims.generateFrameNumbers(noWeaponKey, { start: 0, end: 7 }),
             frameRate: 10,
@@ -184,7 +184,7 @@ class Player extends Phaser.GameObjects.Sprite {
             frames: scene.anims.generateFrameNumbers(bowKey, { start: 38, end: 39 }),
             frameRate: 10,
             repeat: 0
-        });
+        });}
 
 
         this.body.setSize(16, 32);
@@ -242,6 +242,7 @@ class Player extends Phaser.GameObjects.Sprite {
     }
 
     Update(delta) {
+        
         this.onFloor = this.body.blocked.down;
         if (this.canMove && !this.attacking) { this.body.setVelocityX(this.speedX * this.speed); }
 

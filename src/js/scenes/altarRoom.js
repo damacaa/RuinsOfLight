@@ -53,8 +53,6 @@ class AltarRoom extends BaseScene {
         this.sound.stopAll();
         this.musicBGAltar = this.sound.play("music", { loop: true }, { volume: 2 });
 
-        this.dog = new Dog(this, 64, 32);
-        this.dog.FindWay(this.map, 11, 5);
         startTime = new Date();
     }
 

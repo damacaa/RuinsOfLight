@@ -125,7 +125,7 @@ class Dungeons extends BaseScene {
         this.musicBGDungeon = this.sound.play("music", { loop: true }, { volume: 2 });
 
         this.dog = new Dog(this, Math.round(this.previousDungeonDoor.x / 32)+5, this.previousDungeonDoor.y / 32);
-        this.dog.FindWay(this.map, Math.round(this.door1.x/32), Math.round(this.door1.y/32));
+        this.dog.FindWay(this.map, Math.round(this.door2.x/32), Math.round(this.door2.y/32));
     }
 
     UpdateStage() {

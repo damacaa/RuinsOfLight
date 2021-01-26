@@ -244,7 +244,7 @@ class BaseScene extends Phaser.Scene {
             }
         } else {
             if (friend && friend.scene == this.sceneIdx + levelX.toString() + levelY.toString()) {
-                this.player1.FakeUpdate(friend.x, friend.y, friend.anim, friend.prog, friend.flipX);
+                this.player1.FakeUpdate(friend.x, friend.y, friend.health, friend.anim, friend.prog, friend.flipX);
             } else {
                 //this.player1.FakeUpdate(-32, -32, null, 0, false);
             }
@@ -272,12 +272,13 @@ class BaseScene extends Phaser.Scene {
 
     MeleeDamage(weapon, target) {
         target.Hurt(10);
-        console.log(this.entities.indexOf(target));
+        SendDamage(this.entities.indexOf(target), 10, this);
     }
 
     ProjectileDamage(target, projectile) {
         target.Hurt(100);
         projectile.destroy();
+        SendDamage(this.entities.indexOf(target), 100, this);
     }
 
     ProjectileHitsWall(projectile, wall) {
@@ -352,6 +353,10 @@ class BaseScene extends Phaser.Scene {
             y: this.player0.y
         }
         connection.send(JSON.stringify(pl));
+    }
+
+    DamageEntity(idx, amount) {
+        this.entities[idx].Hurt(amount);
     }
 }
 

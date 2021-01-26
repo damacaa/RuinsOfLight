@@ -122,7 +122,7 @@ class InputName extends BaseMenuScene {
                         if (name.length > 0) {
                             if (!this.ok) {
                                 player.nick = name;
-                                /*joinGame(null, function () {
+                                joinGame(null, function () {
                                     //if default path doesn't work, try local host or the other way around
                                     if (origin == window.location.origin) {
                                         origin = 'http://localhost:8080';
@@ -136,8 +136,8 @@ class InputName extends BaseMenuScene {
                                         //Client gives up and joins offline
                                         joined = true;
                                     });
-                                });*/
-                                joined = true;
+                                });
+                                //joined = true;
                                 c.alpha = 0.5;
                                 this.ok = true;
                             }

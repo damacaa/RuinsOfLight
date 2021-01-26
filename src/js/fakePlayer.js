@@ -7,20 +7,21 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
         this.swordKey = swordKey;
         this.bowKey = bowKey;
         this.scene.add.existing(this);
+        this.scene.entities.push(this);
 
         {
             scene.anims.create({
                 key: 'right' + noWeaponKey,
                 frames: scene.anims.generateFrameNumbers(noWeaponKey, { start: 0, end: 7 }),
                 frameRate: 10,
-                repeat: -1
+                repeat: 0
             });
 
             scene.anims.create({
                 key: 'idleRight' + noWeaponKey,
                 frames: scene.anims.generateFrameNumbers(noWeaponKey, { start: 8, end: 11 }),
                 frameRate: 10,
-                repeat: -1,
+                repeat: 0,
                 showOnStart: true
             });
 
@@ -28,14 +29,14 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
                 key: 'jumpRight' + noWeaponKey,
                 frames: scene.anims.generateFrameNumbers(noWeaponKey, { start: 24, end: 25 }),
                 frameRate: 10,
-                repeat: -1
+                repeat: 0
             });
 
             scene.anims.create({
                 key: 'fallRight' + noWeaponKey,
                 frames: scene.anims.generateFrameNumbers(noWeaponKey, { start: 26, end: 27 }),
                 frameRate: 10,
-                repeat: -1
+                repeat: 0
             });
 
             scene.anims.create({
@@ -51,14 +52,14 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
                 key: 'right' + swordKey,
                 frames: scene.anims.generateFrameNumbers(swordKey, { start: 0, end: 5 }),
                 frameRate: 10,
-                repeat: -1
+                repeat: 0
             });
 
             scene.anims.create({
                 key: 'idleRight' + swordKey,
                 frames: scene.anims.generateFrameNumbers(swordKey, { start: 6, end: 9 }),
                 frameRate: 10,
-                repeat: -1,
+                repeat: 0,
             });
 
             scene.anims.create({
@@ -126,14 +127,14 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
                 key: 'right' + bowKey,
                 frames: scene.anims.generateFrameNumbers(bowKey, { start: 0, end: 5 }),
                 frameRate: 10,
-                repeat: -1
+                repeat: 0
             });
 
             scene.anims.create({
                 key: 'idleRight' + bowKey,
                 frames: scene.anims.generateFrameNumbers(bowKey, { start: 6, end: 9 }),
                 frameRate: 10,
-                repeat: -1,
+                repeat: 0,
             });
 
             scene.anims.create({
@@ -193,15 +194,13 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
         this.setDepth(3);
     }
 
-    FakeUpdate(x, y, anim, prog, flipX) {
+    FakeUpdate(x, y, h, anim, prog, flipX) {
         this.x = x;
         this.y = y;
+        this.health = h;
+        ui.healthBar.Update();
         if (anim) { this.anims.play(anim, true); }
-        //this.anims.setProgress(prog);
-        //console.log(anim);
-        //console.log(prog);
-        //console.log(flipX);
-        this.flipX = (flipX == 'true');
+        this.flipX = flipX;
     }
 
     SetWeapon(id) {
@@ -225,26 +224,18 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
 
     Hurt() {
         if (!this.isHurt) {
-            this.anims.play('getHurt' + this.name, true);
-            this.isHurt = true;
-            this.canAttack = false;
-            this.canMove = false;
-            this.attacking = false;
-            this.fallingAttack = false;
-
             if (this.health > 0) {
                 if (!godMode) { this.health--; }
-
                 this.scene.sound.play("effectHurt");
                 ui.healthBar.Update();
             } else {
-                this.body.setVelocityX(0);
                 this.scene.LoadScene('gameOver');
             }
         }
     }
 
+    Update() { }
 
-
+    Run(){}
 
 }

@@ -9,7 +9,19 @@ $(document).ready(function () {
     }
 
     pConnection.onmessage = function (msg) {
-        friend = JSON.parse(msg.data);
+        switch (JSON.parse(msg.data).id) {
+            case 1:
+                friend = JSON.parse(msg.data);
+                break;
+
+            case 2:
+                let data = JSON.parse(msg.data);
+                currentScene.DamageEntity(data.idx, data.damage);
+                break;
+
+            default:
+                break;
+        }
     }
 
     pConnection.onclose = function () {
@@ -18,27 +30,29 @@ $(document).ready(function () {
 })
 
 function SendPlayerInfo(plyr) {
-
-    //console.log(plyr);
-
     let msg = {
+        id: 1,
         name: player.nick,
         x: plyr.x,
         y: plyr.y,
+        health: plyr.health,
         anim: plyr.anims.currentAnim.key,
         prog: plyr.anims.getProgress(),//getTotalProgress 
         flipX: plyr.flipX,
         scene: plyr.scene.sceneIdx + levelX.toString() + levelY.toString()
     }
 
-    //console.log("Mensaje enviado: " + message);
     pConnection.send(JSON.stringify(msg));
-    //console.log(msg);
 }
 
-function SendDamage(idx, damage) {
-    var msg = {
-        idx: idx,
-        damage: damage
+function SendDamage(idx, damage, scene) {
+    if(idx>1){
+        var msg = {
+            id: 2,
+            idx: idx,
+            damage: damage,
+            scene: scene.sceneIdx + levelX.toString() + levelY.toString()
+        }
+        pConnection.send(JSON.stringify(msg));
     }
 }

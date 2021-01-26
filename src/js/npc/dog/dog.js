@@ -20,23 +20,23 @@ class Dog extends Phaser.GameObjects.Sprite {
 
     this.scene.anims.create({
       key: 'dogIdle',
-      frames: this.scene.anims.generateFrameNumbers('dog', { start: 0, end: 0 }),
-      frameRate: 1,
+      frames: this.scene.anims.generateFrameNumbers('dog', { start: 8, end: 9 }),
+      frameRate: 4,
       repeat: -1
     });
 
     this.scene.anims.create({
       key: 'dogJump',
       frames: this.scene.anims.generateFrameNumbers('dog', { start: 4, end: 5 }),
-      frameRate: 1,
-      repeat: -1
+      frameRate: 4,
+      repeat: 0
     });
 
     this.scene.anims.create({
       key: 'dogFall',
       frames: this.scene.anims.generateFrameNumbers('dog', { start: 6, end: 7 }),
-      frameRate: 1,
-      repeat: -1
+      frameRate: 4,
+      repeat: 0
     });
 
     this.anims.play('dogWalk', true);
@@ -116,7 +116,7 @@ class Dog extends Phaser.GameObjects.Sprite {
         console.log("Found the way");
         while (current.parent) {
           let w = { x: current.x * 32 + 16, y: current.y * 32 + 16 };
-          this.scene.add.rectangle(w.x, w.y, 3, 3, 0xD79968).setDepth(10).setOrigin(0.5, 0.5);
+          //this.scene.add.rectangle(w.x, w.y, 3, 3, 0xD79968).setDepth(10).setOrigin(0.5, 0.5);
 
           this.way.push(w);
           current = current.parent;
@@ -194,7 +194,6 @@ class Dog extends Phaser.GameObjects.Sprite {
           let speedY = this.way[idx].y - this.y + 32;
           speedY = speedY / Math.abs(speedY);
           if (speedY < 0) {
-            this.anims.play('dogJump', true);
             this.body.setVelocityY(speedY * this.speed);
           }
           if (this.body.blocked.up) { this.body.setVelocityX(-100); }
@@ -204,7 +203,15 @@ class Dog extends Phaser.GameObjects.Sprite {
       }
 
       //Animations
-      if (this.body.blocked.down) { this.anims.play('dogWalk', true); } else { if (this.body.velocityY > 0) { this.anims.play('dogFall', true); } }
+      if (this.body.blocked.down) {
+        this.anims.play('dogWalk', true);
+      } else {
+        if (this.body.velocity.y> 0) {
+          this.anims.play('dogFall', true);
+        } else {
+          this.anims.play('dogJump', true);
+        }
+      }
     } else {
       this.anims.play('dogIdle', true);
       this.body.setVelocityX(0);
