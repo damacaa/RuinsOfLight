@@ -8,8 +8,9 @@ class Player extends Phaser.GameObjects.Sprite {
         this.bowKey = bowKey;
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
+        this.scene.entities.push(this);
 
-        scene.anims.create({
+        {scene.anims.create({
             key: 'right' + noWeaponKey,
             frames: scene.anims.generateFrameNumbers(noWeaponKey, { start: 0, end: 7 }),
             frameRate: 10,
@@ -183,7 +184,7 @@ class Player extends Phaser.GameObjects.Sprite {
             frames: scene.anims.generateFrameNumbers(bowKey, { start: 38, end: 39 }),
             frameRate: 10,
             repeat: 0
-        });
+        });}
 
 
         this.body.setSize(16, 32);
@@ -195,6 +196,9 @@ class Player extends Phaser.GameObjects.Sprite {
 
         this.goingRight = true;
         this.attacking = false;
+        this.speedX = 0;
+        this.onFloor = false;
+
         this.speed = 200;//200
         this.weapon = 0;
         this.attackNumber = 1;
@@ -233,13 +237,18 @@ class Player extends Phaser.GameObjects.Sprite {
         return this.fallingAttack || this.attacking;
     }
 
-    Run(dir, delta) {
+    Run(dir) {
+        this.speedX = dir;
+    }
 
-        if (this.canMove && !this.attacking) { this.body.setVelocityX(dir * this.speed); }
+    Update(delta) {
+        
+        this.onFloor = this.body.blocked.down;
+        if (this.canMove && !this.attacking) { this.body.setVelocityX(this.speedX * this.speed); }
 
         if (!this.attacking && !this.isHurt) {
-            if (dir == 0) {
-                if (this.body.onFloor()) {
+            if (this.speedX == 0) {
+                if (this.onFloor) {
                     this.anims.play('idleRight' + this.name, true);
                     this.falling = false;
                 } else {
@@ -259,14 +268,14 @@ class Player extends Phaser.GameObjects.Sprite {
                 }
             } else {
 
-                if (dir == -1) {
+                if (this.speedX == -1) {
                     this.flipX = true;
                 }
-                else if (dir == 1) {
+                else if (this.speedX == 1) {
                     this.flipX = false;
                 }
 
-                if (this.body.onFloor()) {
+                if (this.onFloor) {
                     this.anims.play('right' + this.name, true);
                     this.falling = false;
                 } else {
@@ -287,7 +296,7 @@ class Player extends Phaser.GameObjects.Sprite {
         } else if (this.fallingAttack && this.weapon == 1) {
             this.hitBox.y = this.y + 16;
 
-            if (this.body.onFloor()) {
+            if (this.onFloor) {
 
                 this.jumping = false;
                 this.falling = false;
@@ -302,12 +311,11 @@ class Player extends Phaser.GameObjects.Sprite {
                 });
             }
         }
-
-        if(this.y > 2000){this.Hurt();}
+        if (this.y > 2000) { this.Hurt(); }
     }
 
     Jump() {
-        if (!this.attacking && this.body.blocked.down && this.canMove) {
+        if (!this.attacking && this.onFloor && this.canMove) {
             this.body.setVelocityY(-450);
             this.scene.sound.play("effectJump");
         }
@@ -323,9 +331,9 @@ class Player extends Phaser.GameObjects.Sprite {
             this.fallingAttack = false;
 
             if (this.health > 0) {
-                
-                if(!godMode){this.health--;}
-                
+
+                if (!godMode) { this.health--; }
+
                 this.body.setVelocityY(-300);
                 this.body.setVelocityX(0);
 
@@ -343,6 +351,13 @@ class Player extends Phaser.GameObjects.Sprite {
                 this.scene.LoadScene('gameOver');
             }
         }
+    }
+
+    UpdatePosition(x, y) {
+        this.x = x;
+        this.y = y;
+        //this.body.x = x;
+        //this.body.y = y;
     }
 
     SetWeapon(id) {
@@ -382,7 +397,7 @@ class Player extends Phaser.GameObjects.Sprite {
                     this.AttackHitbox();
                     this.body.setVelocityX(0);
 
-                    if (this.body.blocked.down) {
+                    if (this.onFloor) {
                         //Ataque en el suelo
                         if (!this.attacking) {
                             this.anims.play('attack' + this.attackNumber + this.swordKey, true);
@@ -442,7 +457,7 @@ class Player extends Phaser.GameObjects.Sprite {
                     if (!this.attacking) {
                         this.body.setVelocityX(0);
 
-                        if (this.body.blocked.down) {
+                        if (this.onFloor) {
 
                             this.attacking = true;
                             this.anims.play('attack1' + this.name, true);
@@ -453,18 +468,6 @@ class Player extends Phaser.GameObjects.Sprite {
                                 (!this.flipX) ? new Arrow(this.scene, this.x + 16, this.y + 16, 1, 0) : new Arrow(this.scene, this.x - 16, this.y + 16, -1, 0);
                             });
                             this.scene.sound.play("effectBow");
-
-                            /*
-                            if (!x || !y) {
-    
-                            }
-                            else {
-                                let dirX = x - this.x;
-                                let dirY = y - 16 - this.y;
-                                let sum = Math.abs(-dirX + dirY);
-                                dirX /= sum;
-                                dirY /= sum;
-                            }*/
 
                         } else if (!this.fallingAttack) {
                             this.attacking = true;

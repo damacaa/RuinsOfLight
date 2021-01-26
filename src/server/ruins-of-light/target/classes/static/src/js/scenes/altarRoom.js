@@ -10,19 +10,16 @@ class AltarRoom extends BaseScene {
 
     CreateStage() {
         this.player0.x = 80;
-        this.player1.x = 100;
+        //this.player1.x = 100;
 
         this.bg = this.add.sprite(0, -32, 'bossBackground').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
 
         //Crea escenario
         this.LoadTileMap('altarRoom');
 
-        this.center = this.add.image(256, 64);
-        this.center.visible = false;
+        this.bowAltar = new Altar(this, 200, 191, this.player0, this.player1, 'bowAltar', 'bow');
 
-        this.bowAltar = new Altar(this, 200, 191, 'bowAltar', 'bow');
-
-        this.swordAltar = new Altar(this, 288, 191, 'swordAltar', 'sword');
+        this.swordAltar = new Altar(this, 288, 191, this.player0, this.player1, 'swordAltar', 'sword');
 
         this.bowAltar.otherAltar = this.swordAltar;
         this.swordAltar.otherAltar = this.bowAltar;

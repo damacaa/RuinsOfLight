@@ -1,21 +1,39 @@
 package com.group8.ruins_of_light;
 
-import org.springframework.boot.SpringApplication;    
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.CrossOrigin;   
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.awt.*; 
 import javax.swing.*;
 
-@SpringBootApplication   
+@SpringBootApplication
+@EnableWebSocket
 @CrossOrigin
-public class App 
+public class App implements WebSocketConfigurer
 {
     public static void main( String[] args )
     {
     	//createWindow();//Crear una ventana permite cerrar el servidor al cerrar dicha ventana
         SpringApplication.run(App.class, args);    
     }
+    
+	@Override
+	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+		registry.addHandler(createPlayerHandler(), "/player")
+			.setAllowedOrigins("*");
+	}
+	
+	@Bean
+	public WebSocketPlayerHandler createPlayerHandler() {
+		return new WebSocketPlayerHandler();
+	}
     
     //https://www.thoughtco.com/create-a-simple-window-using-jframe-2034069
     @SuppressWarnings("unused")

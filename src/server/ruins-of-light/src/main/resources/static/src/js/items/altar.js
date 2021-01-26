@@ -1,24 +1,22 @@
 class Altar extends Phaser.GameObjects.Sprite {
 
-    constructor(scene, x, y, key, weaponKey) {
+    constructor(scene, x, y, p0, p1, key, weaponKey) {
         super(scene, x, y, key);
-
-        scene.add.existing(this);
-        this.scene.physics.add.existing(this);
-        this.body.setAllowGravity(false);
         this.key = key;
-        this.player;
-        this.otherAltar;
-
-        this.weapon = scene.add.image(x, y-16,weaponKey);
-
-        this.setOrigin(.5, 0);
-
-        this.activated = false;
-
+        scene.add.existing(this);
         this.scene.entities.push(this);
 
+        this.player;
+        this.otherAltar;
         this.done = false;
+        this.weapon = scene.add.image(x, y - 16, weaponKey);
+
+        this.p0 = p0;
+        this.p1 = p1;
+
+        this.setOrigin(.5, 0);
+        this.activated = false;
+        this.setDepth(0);
 
         scene.anims.create({
             key: 'activation' + key,
@@ -33,21 +31,9 @@ class Altar extends Phaser.GameObjects.Sprite {
             frameRate: 10,
             repeat: 0
         });
-
-        this.setDepth(0);
-        this.scene.physics.add.overlap(this, scene.players, this.Activate, null, scene);
-    }
-
-    Activate(altar, player) {
-        if (!altar.activated && !altar.done) {
-            altar.anims.play("activation" + altar.key, true);
-            altar.activated = true;
-            altar.player = player;
-        }
     }
 
     Deactivate() {
-
         if (this.activated) {
             this.player = null;
             this.activated = false;
@@ -56,6 +42,20 @@ class Altar extends Phaser.GameObjects.Sprite {
     }
 
     Update() {
-        if (this.player && Math.abs(this.x - this.player.x) > 32) { this.Deactivate(); }
+        if (this.player && Math.abs(this.x - this.player.x) > 32) {
+            this.Deactivate();
+        } else if (Math.abs(this.x - this.p0.x) < 32) {
+            if (!this.activated && !this.done) {
+                this.anims.play("activation" + this.key, true);
+                this.activated = true;
+                this.player = this.p0;
+            }
+        } else if (Math.abs(this.x - this.p1.x) < 32) {
+            if (!this.activated && !this.done) {
+                this.anims.play("activation" + this.key, true);
+                this.activated = true;
+                this.player = this.p1;
+            }
+        }
     }
 }

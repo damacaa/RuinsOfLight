@@ -61,7 +61,7 @@ class UI extends BaseMenuScene {
             for (let i = 0; i < 9; i++) {
                 let b = this.add.sprite(x, y, 'emoji').setFrame(i).setOrigin(0).setDepth(9).setInteractive();
                 b.on('pointerdown', function (event) {
-                    createChat(i, currentScene.sceneIdx.toString() + levelX.toString() + levelY.toString(), currentScene.player0.x, currentScene.player0.y);                
+                    createChat(i, currentScene.sceneIdx.toString() + levelX.toString() + levelY.toString(), currentScene.player0.x, currentScene.player0.y);
                 }, this);
 
                 x += 18;

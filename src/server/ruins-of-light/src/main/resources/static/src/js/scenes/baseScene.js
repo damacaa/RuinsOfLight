@@ -1,38 +1,4 @@
 //https://www.youtube.com/watch?v=1P8jvnj85e4
-
-let p0Health;
-let p1Health;
-
-let p0Weapon;
-let p1Weapon;
-
-let levelX;
-let levelY;
-let whereAreTheyComingFrom;
-
-let hasRelic;
-let firstTimeBoss;
-var defeatedBosses;
-
-//Nivel en el que se encuntra la reliquia
-let relicX;
-let relicY;
-
-let numberOfLevels = 2;
-
-let startTime;
-
-let godMode = false; //Vida infinita para los jugadores
-
-let skip = false;
-
-let inGame = false;
-
-let sceneCount = 0;
-let currentScene;
-
-let gamepad;
-
 function SkipRelic() {
     skip = true;
     hasRelic = true;
@@ -91,11 +57,9 @@ class BaseScene extends Phaser.Scene {
 
     create() {
         ui.EnableGameUI();
-
         currentScene = this;
 
-        inGame = true;
-
+        isOrange = player.nick < friend.name;
 
         //Crea listas
         this.playerProjectiles = this.physics.add.group();
@@ -104,36 +68,42 @@ class BaseScene extends Phaser.Scene {
         this.enemies = this.physics.add.group();
 
         //Crea jugadores
-        this.player0 = new Player(this, 128, 192, 'p0noWeapon', 'p0sword', 'p0bow', p0Health);
-        this.player1 = new Player(this, 192, 192, 'p1noWeapon', 'p1sword', 'p1bow', p1Health);
+        if (isOrange) { this.player0 = new Player(this, 128, 192, 'p0noWeapon', 'p0sword', 'p0bow', p0Health); } else {
+            this.player0 = new Player(this, 128, 192, 'p1noWeapon', 'p1sword', 'p1bow', p0Health);
+        }
 
-        this.players.add(this.player0);
-        this.players.add(this.player1);
-
-        //Pone a cada jugador el arma correspondiente
         this.player0.SetWeapon(p0Weapon);
-        this.player1.SetWeapon(p1Weapon);
+        this.players.add(this.player0);
 
-
-        //Configura las cámaras
         this.camera = this.cameras.main;
         this.EnableFullScreen();
         this.camera.setOrigin(0.5, 0.5);
         this.camera.setBackgroundColor('rgba(21, 7, 4, 1)');
+        this.camera.setRenderToTexture(customPipeline);//Activa el shader
 
-        this.camera1 = this.cameras.add(250, 10, 220, 115);
-        this.camera1.setOrigin(0.5, 0.5).setBackgroundColor('rgba(21, 7, 4, 1)');
+        if (isOnline) {
+            if (isOrange) { this.player1 = new FakePlayer(this, 240, 135, 'p1noWeapon', 'p1sword', 'p1bow', p1Health); } else {
+                this.player1 = new FakePlayer(this, 240, 135, 'p0noWeapon', 'p0sword', 'p0bow', p1Health);
+            }
+            this.player1.SetWeapon(p1Weapon);
+        } else {
+            //Pone a cada jugador el arma correspondiente
+            if (isOrange) { this.player1 = new Player(this, 192, 192, 'p1noWeapon', 'p1sword', 'p1bow', p1Health); } else {
+                this.player1 = new Player(this, 192, 192, 'p0noWeapon', 'p0sword', 'p0bow', p1Health);
+            }
+            this.player1.SetWeapon(p1Weapon);
+            //Configura las cámaras
+            this.camera1 = this.cameras.add(250, 10, 220, 115);
+            this.camera1.setOrigin(0.5, 0.5).setBackgroundColor('rgba(21, 7, 4, 1)');
 
-        if (this.swordPlayer) {
-            this.camera1.startFollow(this.swordPlayer);
+            this.players.add(this.player1);
+            if (this.swordPlayer) {
+                this.camera1.startFollow(this.swordPlayer);
+            }
+            this.camera1.visible = false;
+            this.camera1.setRenderToTexture(customPipeline);
+            this.camera1.fadeIn(500);
         }
-
-        this.camera.visible = true;
-        this.camera1.visible = false;
-
-        //Activa el shader que difumina las luces
-        this.camera.setRenderToTexture(customPipeline);
-        this.camera1.setRenderToTexture(customPipeline);
 
         //Crea el escenario
         this.CreateStage();
@@ -142,9 +112,7 @@ class BaseScene extends Phaser.Scene {
         this.physics.add.overlap(this.enemies, this.playerProjectiles, this.ProjectileDamage, null, this);
 
         this.fading = false;
-
         this.camera.fadeIn(500);
-        this.camera1.fadeIn(500);
         this.camera.once('camerafadeincomplete', () => {
             this.fading = false;
         });
@@ -173,6 +141,7 @@ class BaseScene extends Phaser.Scene {
         }
 
         this.messages = [];
+        inGame = true;
     }
 
     LoadTileMap(key) {
@@ -192,7 +161,8 @@ class BaseScene extends Phaser.Scene {
         this.physics.add.collider(this.enemies, this.groundLayer);
 
         this.camera.setBounds(0, 0, this.map.width * 32, this.map.height * 32);
-        this.camera1.setBounds(0, 0, this.map.width * 32, this.map.height * 32);
+
+        if (!isOnline) { this.camera1.setBounds(0, 0, this.map.width * 32, this.map.height * 32); }
 
         this.physics.add.collider(this.playerProjectiles, this.groundLayer);
         this.physics.add.overlap(this.enemyProjectiles, this.groundLayer, this.ProjectileHitsWall, null, this);
@@ -202,17 +172,12 @@ class BaseScene extends Phaser.Scene {
         //https://labs.phaser.io/edit.html?src=src\input\gamepad\gamepad%20debug.js
         this.gamepad = this.input.gamepad.gamepads[0];
 
-        if (this.gamepad && this.gamepad.connected) {
+        if (this.gamepad) {
             this.player0.Run(Math.round(this.gamepad.axes[0].value), delta);
-            this.player1.Run(Math.round(this.gamepad.axes[2].value), delta);
 
             if (this.gamepad.axes[1].value < -0.5) { this.player0.Jump(); }
-            if (this.gamepad.axes[3].value < -0.5) { this.player1.Jump(); }
-
             if (this.gamepad.buttons[6].value > 0.5) { this.player0.Attack(); }
             if (this.gamepad.buttons[6].value < 0.5) { this.player0.EnableAttack(); }
-            if (this.gamepad.buttons[7].value > 0.5) { this.player1.Attack(); }
-            if (this.gamepad.buttons[7].value < 0.5) { this.player1.EnableAttack(); }
         } else {
             //P0
             let cursors0 = this.input.keyboard.addKeys({
@@ -243,32 +208,47 @@ class BaseScene extends Phaser.Scene {
             } else {
                 this.player0.Run(0, delta);
             }
-
-            //P1
-            let cursors1 = this.input.keyboard.createCursorKeys();
-
-            if (cursors1.left.isDown) {
-                this.player1.Run(-1, delta);
-            } else if (cursors1.right.isDown) {
-                this.player1.Run(1, delta);
-            } else {
-                this.player1.Run(0, delta);
-            }
-
-            if (cursors1.up.isDown) {
-                this.player1.Jump();
-            }
         }
 
-        this.input.mouse.disableContextMenu();
+        //!isOnline
+        if (!isOnline) {
+            if (this.gamepad) {
+                this.player1.Run(Math.round(this.gamepad.axes[2].value), delta);
+                if (this.gamepad.axes[3].value < -0.5) { this.player1.Jump(); }
+                if (this.gamepad.buttons[7].value > 0.5) { this.player1.Attack(); }
+                if (this.gamepad.buttons[7].value < 0.5) { this.player1.EnableAttack(); }
 
-        this.input.on('pointerdown', function (pointer) {
-            this.player1.Attack(this.input.mousePointer.worldX, this.input.mousePointer.worldY);
-        }, this);
+            } else {
+                //P1
+                let cursors1 = this.input.keyboard.createCursorKeys();
 
-        this.input.on('pointerup', function (pointer) {
-            this.player1.EnableAttack();
-        }, this);
+                if (cursors1.left.isDown) {
+                    this.player1.Run(-1, delta);
+                } else if (cursors1.right.isDown) {
+                    this.player1.Run(1, delta);
+                } else {
+                    this.player1.Run(0, delta);
+                }
+
+                if (cursors1.up.isDown) {
+                    this.player1.Jump();
+                }
+
+                this.input.on('pointerdown', function (pointer) {
+                    this.player1.Attack(this.input.mousePointer.worldX, this.input.mousePointer.worldY);
+                }, this);
+
+                this.input.on('pointerup', function (pointer) {
+                    this.player1.EnableAttack();
+                }, this);
+            }
+        } else {
+            if (friend && friend.scene == this.sceneIdx + levelX.toString() + levelY.toString()) {
+                this.player1.FakeUpdate(friend.x, friend.y, friend.health, friend.anim, friend.prog, friend.flipX);
+            } else {
+                //this.player1.FakeUpdate(-32, -32, null, 0, false);
+            }
+        }
     }
 
     EnableFullScreen() {
@@ -292,11 +272,13 @@ class BaseScene extends Phaser.Scene {
 
     MeleeDamage(weapon, target) {
         target.Hurt(10);
+        SendDamage(this.entities.indexOf(target), 10, this);
     }
 
     ProjectileDamage(target, projectile) {
         target.Hurt(100);
         projectile.destroy();
+        SendDamage(this.entities.indexOf(target), 100, this);
     }
 
     ProjectileHitsWall(projectile, wall) {
@@ -313,10 +295,11 @@ class BaseScene extends Phaser.Scene {
 
         this.UpdateStage(time, delta);
 
-        if (!this.fading && this.swordPlayer && !this.camera.worldView.contains(this.swordPlayer.x, this.swordPlayer.y)) {
-            this.camera1.visible = true;
-        } else { this.camera1.visible = false; }
-
+        if (!isOnline) {
+            if (!this.fading && this.swordPlayer && !this.camera.worldView.contains(this.swordPlayer.x, this.swordPlayer.y)) {
+                this.camera1.visible = true;
+            } else { this.camera1.visible = false; }
+        }
         checkServer();
     }
 
@@ -324,7 +307,8 @@ class BaseScene extends Phaser.Scene {
         if (!this.fading) {
             this.fading = true;
             this.camera.fadeOut(500);
-            this.camera1.fadeOut(500);
+            if (!isOnline) { this.camera1.fadeOut(500); }
+
             p0Health = this.player0.health;
             p1Health = this.player1.health;
             this.entities = [];
@@ -360,5 +344,23 @@ class BaseScene extends Phaser.Scene {
                 }
             }
         }
+    }
+
+    DamageEntity(idx, amount) {
+        this.entities[idx].Hurt(amount);
+    }
+}
+
+//Check players every x seconds
+function checkServer() {
+    if (isOnline) {
+        if (new Date() - lastTimeChecked > 1000) {
+            lastTimeChecked = new Date();
+            checkPlayer();
+            loadPayers();
+            checkChat();
+        }
+
+        if (inGame) { SendPlayerInfo(currentScene.player0); }
     }
 }

@@ -78,8 +78,21 @@ var CustomPipeline = new Phaser.Class({
 
                     float fade = (1.0 / (0.7 + (5.0*fDistToCenter*fDistToCenter)));
 
-                    gl_FragColor = vec4(col.rgb * fade, 1.0);
+                    col = col * fade;
+
                     
+                    /*//1 bit
+                    float threshold = 0.175;
+                    if((col.r+col.g+col.b)/3.0>threshold){
+                        gl_FragColor = vec4(1.0);
+                    }else{
+                        gl_FragColor = vec4(0.0, 0.0 ,0.0, 1.0);
+                    }*/
+
+                    //b&w
+                    //gl_FragColor = vec4(vec3((0.5*col.r+col.g+1.5*col.b)/3.0), 1.0);
+
+                    gl_FragColor = vec4(col.rgb, 1.0);
             }
             `
             });

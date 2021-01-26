@@ -6,15 +6,16 @@ class BaseMenuScene extends Phaser.Scene {
         this.sceneIdx = -1;
     }
 
-    create(){
-        currentScene=this;
+    create() {
+        inGame = false;
+        currentScene = this;
         this.scene.launch('ui');
         this.EnableFullScreen();
 
         this.SetUp();
     }
 
-    SetUp(){}
+    SetUp() { }
 
     update() {
         checkServer();
@@ -128,7 +129,7 @@ class InputName extends BaseMenuScene {
                                     } else {
                                         origin = window.location.origin;
                                     }
-                                    
+
                                     joining = false;
 
                                     joinGame(null, function () {
@@ -136,6 +137,7 @@ class InputName extends BaseMenuScene {
                                         joined = true;
                                     });
                                 });
+                                //joined = true;
                                 c.alpha = 0.5;
                                 this.ok = true;
                             }
@@ -244,7 +246,7 @@ class MainMenu extends BaseMenuScene {
 
     SetUp() {
         if (!this.scale.isFullscreen) {
-            this.scale.startFullscreen();
+            //this.scale.startFullscreen();
         }
 
         ResetGame();

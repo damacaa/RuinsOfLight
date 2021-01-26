@@ -1,16 +1,3 @@
-let lastTimeChecked = new Date();
-
-let records = [];
-let players = [];
-let chats = [];
-let player = { nick: null };
-
-let isOnline = false;
-let joined = false;
-let joining = false;
-
-let origin = window.location.origin; //url in browser
-
 //Load records from server
 function loadRecords() {
     $.ajax({
@@ -93,22 +80,6 @@ function joinGame(doneFunc, failFunc) {
     }
 }
 
-//Check players every x seconds
-function checkServer() {
-    if (new Date() - lastTimeChecked > 500) {
-        lastTimeChecked = new Date();
-
-        if (isOnline) {
-            checkPlayer();
-            loadPayers();
-            checkChat();
-        } else {
-            console.log("Reconectando...");
-            joinGame();
-        }
-    }
-}
-
 //Check player connection
 function checkPlayer() {
     $.ajax({
@@ -150,6 +121,6 @@ function createChat(value, scene, x, y) {
             "Content-Type": "application/json"
         }
     }).done(function () {
-        
+
     })
 }
