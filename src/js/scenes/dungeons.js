@@ -123,10 +123,28 @@ class Dungeons extends BaseScene {
         }
 
         if (relicX == levelX && relicY == levelY) {
-            this.dog.FindWay(this.map, Math.round(this.relic.x / 32), Math.round(this.relic.y / 32));
+            this.dog.FindWay(this.map, this.relic.x, this.relic.y);
         } else {
             //Must choose door1 or door2
-            this.dog.FindWay(this.map, Math.round(this.door1.x / 32), Math.round(this.door1.y / 32));
+            let tempX = relicX;
+            let tempY = relicY;
+
+            let lastX = tempX;
+            let lastY = tempY;
+
+            let count = 0;
+            while (tempX != levelX && tempY != levelY && count < numberOfLevels) {
+                lastX = tempX;
+                lastY = tempY;
+
+                tempX = tempX - 1;
+                tempY = Math.ceil(tempY / 2);
+                count++;
+            }
+
+            if (lastY % 2 == 0) { this.dog.FindWay(this.map, Math.round(this.door2.x / 32), Math.round(this.door2.y / 32)); } else {
+                this.dog.FindWay(this.map, this.door1.x, this.door1.y);
+            }
         }
 
         this.sound.stopAll();

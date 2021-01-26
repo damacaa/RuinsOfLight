@@ -59,6 +59,9 @@ class Dog extends Phaser.GameObjects.Sprite {
     let startX = Math.round(this.x / 32);
     let startY = Math.round(this.y / 32);
 
+    endX =  Math.round(endX / 32);
+    endY =  Math.round(endY / 32);
+
     console.log(startX, startY, " => ", endX, endY)
 
     let columns = world.width;
@@ -119,7 +122,7 @@ class Dog extends Phaser.GameObjects.Sprite {
         console.log("Found the way");
         while (current.parent) {
           let w = { x: current.x * 32 + 16, y: current.y * 32 + 16 };
-          this.scene.add.rectangle(w.x, w.y, 3, 3, 0xD79968).setDepth(10).setOrigin(0.5, 0.5);
+          //this.scene.add.rectangle(w.x, w.y, 3, 3, 0xD79968).setDepth(10).setOrigin(0.5, 0.5);
           this.way.push(w);
           current = current.parent;
         }

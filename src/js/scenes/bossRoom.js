@@ -35,7 +35,8 @@ class BossRoom extends BaseScene {
         } else {
             relicX = Math.floor(Math.random() * (numberOfLevels - 1)) + 2;
             relicY = Math.floor(Math.random() * Math.pow(2, relicX - 1)) + 1;
-            console.log(relicX + "_" + relicY);
+            relicX = 2;
+            relicY = 1;
 
             this.controls0 = this.add.sprite(this.player0.x, this.player0.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
             this.controls1 = this.add.sprite(this.player1.x, this.player1.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
