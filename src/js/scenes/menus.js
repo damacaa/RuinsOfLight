@@ -319,7 +319,12 @@ class MainMenu extends BaseMenuScene {
                     this.cameras.main.fadeOut(500);
 
                     this.cameras.main.once('camerafadeoutcomplete', () => {
-                        this.scene.start('altarRoom');
+                        if (gameMode == 2) {
+                            this.scene.start('lobby');
+                        } else {
+                            this.scene.start('altarRoom');
+                        }
+
                     });
                 }, this);
 
@@ -378,7 +383,7 @@ class MainMenu extends BaseMenuScene {
                         this.cameras.main.fadeOut(500);
 
                         this.cameras.main.once('camerafadeoutcomplete', () => {
-                            if (gameMode == 2) { this.LoadScene('altarRoom'); } else { this.LoadScene('altarRoom'); }
+                            if (gameMode == 2) { this.LoadScene('lobby'); } else { this.LoadScene('altarRoom'); }
                         });
                     }
                 }, this);
@@ -534,4 +539,60 @@ class LeaderBoard extends BaseMenuScene {
             }).setOrigin(0).setDepth(10);
         }
     }
+}
+
+class Lobby extends BaseMenuScene {
+
+    constructor() {
+        super('lobby');
+    }
+
+    SetUp() {
+
+        this.camera = this.cameras.main;
+        this.LB = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
+        this.titleL = this.add.text(45, 70, "Looking for another player...", {
+            fontFamily: '"PressStart2P-Regular"',
+            fontSize: '14px',
+            color: '#eeeeba'
+
+        }).setOrigin(0).setDepth(10);
+
+        this.fractionPlayers = this.add.text(162, 150, "1/2 PLAYERS", {
+            fontFamily: '"PressStart2P-Regular"',
+            fontSize: '14px',
+            color: '#eeeeba'
+
+        }).setOrigin(0).setDepth(10);
+
+    }
+
+    update() {
+        checkServer();
+        inGame = false;
+
+        let msg = {
+            id: 1,
+            name: player.nick,
+            x: 240,
+            y: 135,
+            health: 6,
+            anim: null,
+            prog: null,
+            flipX: false,
+            scene: null
+        }
+
+        pConnection.send(JSON.stringify(msg));
+
+        if (friend.name != "test") {
+            this.fractionPlayers.text = "2/2 PLAYERS";
+
+            this.time.delayedCall(1500, function () {
+                this.LoadScene('altarRoom');
+            }, [], this);
+
+        }
+    }
+
 }
