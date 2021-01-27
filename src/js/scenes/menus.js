@@ -17,7 +17,10 @@ class BaseMenuScene extends Phaser.Scene {
 
     SetUp() { }
 
-
+    update() {
+        checkServer();
+        inGame = false;
+    }
 
     LoadScene(key) {
         if (!this.loading) {
@@ -317,7 +320,7 @@ class MainMenu extends BaseMenuScene {
 
                     this.cameras.main.once('camerafadeoutcomplete', () => {
                         if (gameMode == 2) {
-                            this.scene.start('waitingRoom');
+                            this.scene.start('lobby');
                         } else {
                             this.scene.start('altarRoom');
                         }
@@ -380,7 +383,7 @@ class MainMenu extends BaseMenuScene {
                         this.cameras.main.fadeOut(500);
 
                         this.cameras.main.once('camerafadeoutcomplete', () => {
-                            if (gameMode == 2) { this.LoadScene('waitingRoom'); } else { this.LoadScene('altarRoom'); }
+                            if (gameMode == 2) { this.LoadScene('lobby'); } else { this.LoadScene('altarRoom'); }
                         });
                     }
                 }, this);
@@ -538,17 +541,22 @@ class LeaderBoard extends BaseMenuScene {
     }
 }
 
-class WaitingRoom extends BaseMenuScene {
+class Lobby extends BaseMenuScene {
 
     constructor() {
-        super('waitingRoom');
+        super('lobby');
     }
 
     SetUp() {
 
         this.camera = this.cameras.main;
-        this.WRB = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
-        this.titleWR = this.add.image(245, 60, 'waitingR').setOrigin(0.5, 0.5).setDepth(10);
+        this.LB = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
+        this.titleL = this.add.text(45, 70, "Looking for another player...", {
+            fontFamily: '"PressStart2P-Regular"',
+            fontSize: '14px',
+            color: '#eeeeba'
+
+        }).setOrigin(0).setDepth(10);
 
         this.fractionPlayers = this.add.text(162, 150, "1/2 PLAYERS", {
             fontFamily: '"PressStart2P-Regular"',
@@ -556,21 +564,6 @@ class WaitingRoom extends BaseMenuScene {
             color: '#eeeeba'
 
         }).setOrigin(0).setDepth(10);
-       
-        
-        if (friend.name != "test") {
-            this.fractionPlayers = this.add.text(162, 150, "2/2 PLAYERS", {
-                fontFamily: '"PressStart2P-Regular"',
-                fontSize: '14px',
-                color: '#eeeeba'
-
-            }).setOrigin(0).setDepth(10);
-
-            this.time.delayedCall(2000, function () {
-                    this.LoadScene('altarRoom');
- 
-            }, [], this);
-        }
 
     }
 
@@ -580,17 +573,26 @@ class WaitingRoom extends BaseMenuScene {
 
         let msg = {
             id: 1,
-            name: null,
+            name: player.nick,
             x: 240,
             y: 135,
             health: 6,
-            anim:null,
+            anim: null,
             prog: null,
             flipX: false,
             scene: null
         }
-    
+
         pConnection.send(JSON.stringify(msg));
+
+        if (friend.name != "test") {
+            this.fractionPlayers.text = "2/2 PLAYERS";
+
+            this.time.delayedCall(1500, function () {
+                this.LoadScene('altarRoom');
+            }, [], this);
+
+        }
     }
 
 }
