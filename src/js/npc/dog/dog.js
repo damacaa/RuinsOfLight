@@ -40,7 +40,7 @@ class Dog extends Phaser.GameObjects.Sprite {
       repeat: 0
     });
 
-    this.anims.play('dogWalk', true);
+    this.anims.play('dogIdle', true);
 
     this.setOrigin(0.5, 0.5);
     this.setDepth(9);
@@ -53,17 +53,14 @@ class Dog extends Phaser.GameObjects.Sprite {
     this.scene.physics.add.collider(this, this.scene.groundLayer);
   }
 
-  FindWay(world, endX, endY) {
+  FindWay(world, eX, eY) {
     this.way = [];
 
-    console.log(this.x, this.y);
     let startX = Math.round(this.x / 32);
     let startY = Math.round(this.y / 32);
 
-    endX = Math.round(endX / 32);
-    endY = Math.round(endY / 32);
-
-    console.log(startX, startY, " => ", endX, endY)
+    let endX = Math.round(eX / 32);
+    let endY = Math.round(eY / 32);
 
     let columns = world.width;
     let rows = world.height;
@@ -120,13 +117,15 @@ class Dog extends Phaser.GameObjects.Sprite {
       }
 
       if (current.x == endX && current.y == endY) {
-        console.log("Found the way");
         while (current.parent) {
           let w = { x: current.x * 32 + 16, y: current.y * 32 + 16 };
           //this.scene.add.rectangle(w.x, w.y, 3, 3, 0xD79968).setDepth(10).setOrigin(0.5, 0.5);
           this.way.push(w);
           current = current.parent;
         }
+
+        console.log(this.x);
+        console.log(this.way);
         break;
       } else {
         for (let i = -1; i < 2; i++) {
@@ -144,18 +143,16 @@ class Dog extends Phaser.GameObjects.Sprite {
 
                   let newNode = new Node(neighbour, current);
                   let cost = neighbour.cost;
-                  if (i == j) { cost *= 1.41; }
-
                   if (j < 0) { cost *= 5; }
 
                   if (j > 0) {
-                    cost *= 0.5;
+                    cost *= 0.01;
                     if (i == 0) { cost = 0; }
                   }
 
                   let tile = world.getTileAt(currentX, currentY + 1);
                   if (!tile) {
-                    cost *= 100;
+                    cost *= 500;
                   }
 
                   newNode.ComputeFScore(endX, endY, cost);
@@ -171,7 +168,7 @@ class Dog extends Phaser.GameObjects.Sprite {
   }
 
   Update(time, delta) {
-    if (this.way.length > 1 && this.scene.camera.worldView.contains(this.x + (32 * this.dir), this.y) || !this.body.blocked.down) {
+    if (this.way.length > 1 && (this.scene.camera.worldView.contains(this.x + (32 * this.dir), this.y) || !this.body.blocked.down)) {
       let idx = this.way.length - 1;
       let x = Math.abs(this.way[idx].x - this.x) > 16;
       let y = Math.abs(this.way[idx].y - this.y) > 32;
@@ -212,9 +209,7 @@ class Dog extends Phaser.GameObjects.Sprite {
           this.anims.play('dogJump', true);
         }
       }
-
     } else {
-      //console.log(this.scene.player0.x, this.x);
       this.flipX = !(this.scene.player0.x > this.x);
       this.body.setVelocityX(0);
       this.anims.play('dogIdle', true);

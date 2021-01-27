@@ -66,7 +66,7 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 			break;
 		case "2":
 			// Daño recibido
-			newNode.put("idx", node.get("idx").asInt());
+			newNode.put("eId", node.get("eId").asInt());
 			newNode.put("damage", node.get("damage").asInt());
 			newNode.put("scene", node.get("scene").asText());
 			break;
@@ -75,6 +75,15 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 			newNode.put("x", node.get("x").asInt());
 			newNode.put("y", node.get("y").asInt());
 			break;
+		case "4":
+			// Entidad creada
+			newNode.put("eId", node.get("eId").asInt());
+			newNode.put("type", node.get("type").asInt());
+			newNode.put("x", node.get("x").asInt());
+			newNode.put("y", node.get("y").asInt());
+			newNode.put("scene", node.get("scene").asText());
+			break;
+
 		default:
 			// code block
 		}

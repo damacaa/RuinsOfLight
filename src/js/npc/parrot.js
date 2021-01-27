@@ -58,6 +58,7 @@ class Parrot extends Enemy {
     }
 
     WakeUp() {
+        this.id = 3;
         this.awake = true;
         this.body.enable = true;
         this.body.allowGravity = false;

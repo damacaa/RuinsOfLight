@@ -18,12 +18,16 @@ $(document).ready(function () {
 
             case 2:
                 data = JSON.parse(msg.data);
-                currentScene.DamageEntity(data.idx, data.damage);
+                //currentScene.DamageEntity(data.idx, data.damage);
                 break;
             case 3:
                 data = JSON.parse(msg.data);
                 relicX = data.x;
                 relicY = data.y;
+                break;
+            case 4:
+                data = JSON.parse(msg.data);
+                if (data.scene == currentScene.sceneIdx + levelX.toString() + levelY.toString()) { SpawnReceivedEnemy(data); }
                 break;
             default:
                 break;
@@ -54,11 +58,11 @@ function SendPlayerInfo(plyr) {
     pConnection.send(JSON.stringify(msg));
 }
 
-function SendDamage(idx, damage, scene) {
-    if (idx > 1) {
+function SendDamage(eId, damage, scene) {
+    if (eId > 1) {
         let msg = {
             id: 2,
-            idx: idx,
+            eId: eId,
             damage: damage,
             scene: scene.sceneIdx + levelX.toString() + levelY.toString()
         }
@@ -73,4 +77,48 @@ function SendRelicPos(rX, rY) {
         y: rY
     }
     pConnection.send(JSON.stringify(msg));
+}
+
+function SendNewEntity(scene, type, entityId, x, y) {
+    //Type: //1 arrow //
+    let msg = {
+        id: 4,
+        type: type,
+        eId: entityId,
+        x: x,
+        y: y,
+        scene: scene.sceneIdx + levelX.toString() + levelY.toString()
+    }
+    pConnection.send(JSON.stringify(msg));
+}
+
+function SpawnReceivedEnemy(data) {
+    let newEnemy;
+    switch (data.type) {
+        case 1:
+            //arrow
+            currentScene.player1.Attack(data.x, data.y);
+            break;
+        case 2:
+            //guardian
+            newEnemy = new Guardian(currentScene, data.x, data.y);
+            newEnemy.id = data.eId;
+            newEnemy.WakeUp();
+
+            break;
+        case 3:
+            //ball
+            newEnemy = new Ball(currentScene, data.x, data.y);
+            newEnemy.id = data.eId;
+            newEnemy.WakeUp();
+            break;
+        case 4:
+            //drone
+            newEnemy = new Drone(currentScene, data.x, data.y);
+            newEnemy.id = data.eId;
+            newEnemy.WakeUp();
+            break;
+        default:
+            break;
+    }
 }
