@@ -4,7 +4,7 @@ class BossRoom extends BaseScene {
     }
 
     CreateStage() {
-        if (isOnline) { this.camera.startFollow(this.player0, true); } else { this.camera.startFollow(this.bowPlayer, true); }
+        if (gameMode == 1) { this.camera.startFollow(this.bowPlayer, true); } else { this.camera.startFollow(this.player0, true); }
 
         this.bg = this.add.sprite(0, -32, 'bossBackground').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
         //this.bg = this.add.sprite(240 + 480, 135, 'intro').setOrigin(0.5, 0.5).setScrollFactor(.25).setDepth(-1).flipX = true;

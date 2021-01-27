@@ -310,10 +310,6 @@ class BaseScene extends Phaser.Scene {
 
         this.UpdateStage(time, delta);
 
-        if (!isOnline) {
-
-        }
-
         switch (gameMode) {
             case 0:
                 break;

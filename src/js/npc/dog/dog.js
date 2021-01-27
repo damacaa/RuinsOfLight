@@ -2,6 +2,7 @@ class Dog extends Phaser.GameObjects.Sprite {
   constructor(scene, x, y) {
     super(scene, x, y, 'dog');
     this.speed = 190;
+    this.dir = 0;
 
     this.scene = scene;
     this.scene.add.existing(this);
@@ -59,8 +60,8 @@ class Dog extends Phaser.GameObjects.Sprite {
     let startX = Math.round(this.x / 32);
     let startY = Math.round(this.y / 32);
 
-    endX =  Math.round(endX / 32);
-    endY =  Math.round(endY / 32);
+    endX = Math.round(endX / 32);
+    endY = Math.round(endY / 32);
 
     console.log(startX, startY, " => ", endX, endY)
 
@@ -170,56 +171,51 @@ class Dog extends Phaser.GameObjects.Sprite {
   }
 
   Update(time, delta) {
-    //console.log(this.x, this.y);
+    if (this.way.length > 1 && this.scene.camera.worldView.contains(this.x + (32 * this.dir), this.y) || !this.body.blocked.down) {
+      let idx = this.way.length - 1;
+      let x = Math.abs(this.way[idx].x - this.x) > 16;
+      let y = Math.abs(this.way[idx].y - this.y) > 32;
 
-    if (this.way.length > 0) {
-      if (this.scene.camera.worldView.contains(this.x, this.y) || !this.body.blocked.down) {
-        let idx = this.way.length - 1;
-        let x = Math.abs(this.way[idx].x - this.x) > 16;
-        let y = Math.abs(this.way[idx].y - this.y) > 32;
+      if (x || y) {
+        if (x) {
+          let dif = this.way[idx].x - this.x;
 
-        if (x || y) {
-          if (x) {
-            let dir;
-            let dif = this.way[idx].x - this.x;
-
-            if (dif > 0) {
-              dir = 1;
-              this.flipX = false;
-            } else {
-              dir = -1;
-              this.flipX = true;
-            }
-            this.body.setVelocityX(dir * this.speed);
-            if (this.body.blocked.left || this.body.blocked.right) { this.body.setVelocityY(-100); }
-          }
-          if (y) {
-            let speedY = this.way[idx].y - this.y + 32;
-            speedY = speedY / Math.abs(speedY);
-            if (speedY < 0) {
-              this.body.setVelocityY(speedY * this.speed);
-            }
-            if (this.body.blocked.up) { this.body.setVelocityX(-100); }
-          }
-        } else {
-          this.way.pop()
-        }
-
-        //Animations
-        if (this.body.blocked.down) {
-          this.anims.play('dogWalk', true);
-        } else {
-          if (this.body.velocity.y > 0) {
-            this.anims.play('dogFall', true);
+          if (dif > 0) {
+            this.dir = 1;
+            this.flipX = false;
           } else {
-            this.anims.play('dogJump', true);
+            this.dir = -1;
+            this.flipX = true;
           }
+          this.body.setVelocityX(this.dir * this.speed);
+          if (this.body.blocked.left || this.body.blocked.right) { this.body.setVelocityY(-100); }
+        }
+        if (y) {
+          let speedY = this.way[idx].y - this.y + 32;
+          speedY = speedY / Math.abs(speedY);
+          if (speedY < 0) {
+            this.body.setVelocityY(speedY * this.speed);
+          }
+          if (this.body.blocked.up) { this.body.setVelocityX(-100); }
         }
       } else {
-        this.body.setVelocityX(0);
-        this.anims.play('dogIdle', true);
+        this.way.pop()
       }
+
+      //Animations
+      if (this.body.blocked.down) {
+        this.anims.play('dogWalk', true);
+      } else {
+        if (this.body.velocity.y > 0) {
+          this.anims.play('dogFall', true);
+        } else {
+          this.anims.play('dogJump', true);
+        }
+      }
+
     } else {
+      //console.log(this.scene.player0.x, this.x);
+      this.flipX = !(this.scene.player0.x > this.x);
       this.body.setVelocityX(0);
       this.anims.play('dogIdle', true);
     }

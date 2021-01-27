@@ -199,7 +199,10 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
         this.y = y;
         this.health = h;
         ui.healthBar.Update();
-        if (anim) { this.anims.play(anim, true); }
+        if (anim) {
+            this.anims.play(anim, true);
+            this.anims.setProgress(prog);
+        }
         this.flipX = flipX;
     }
 
@@ -236,6 +239,6 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
 
     Update() { }
 
-    Run(){}
+    Run() { }
 
 }

@@ -16,7 +16,7 @@ class Dungeons extends BaseScene {
 
     CreateStage() {
         ////https://www.html5gamedevs.com/topic/41691-cant-get-group-to-work/
-        if (isOnline) { this.camera.startFollow(this.player0, true); } else { this.camera.startFollow(this.bowPlayer, true); }
+        if (gameMode == 1) { this.camera.startFollow(this.bowPlayer, true); } else { this.camera.startFollow(this.player0, true); }
 
         this.levelId = levelX + "_" + levelY;
 
