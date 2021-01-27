@@ -429,9 +429,7 @@ class Credits extends BaseMenuScene {
 
         this.sound.stopAll();
         this.musicBGCredits = this.sound.play("winMusic", { loop: true }, { volume: 2 });
-
     }
-
 }
 
 class GameOver extends BaseMenuScene {

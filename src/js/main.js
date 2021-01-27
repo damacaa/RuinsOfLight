@@ -131,6 +131,7 @@ window.onload = function () {
     loadFont("Early GameBoy", "resources/fonts/Early GameBoy.ttf");
     loadFont("PressStart2P-Regular", "resources/fonts/PressStart2P-Regular.ttf");
 
+    
     game = new Phaser.Game(config);
 
     customPipeline = game.renderer.addPipeline('Custom', new CustomPipeline(game));

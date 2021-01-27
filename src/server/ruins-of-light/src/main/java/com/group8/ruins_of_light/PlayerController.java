@@ -26,6 +26,7 @@ import java.util.List;
 
 public class PlayerController {
 	private List<Player> players = new ArrayList<Player>();
+	private int maxPlayers = 3;
 
 	@GetMapping("players/")
 	public List<Player> players() {
@@ -36,19 +37,24 @@ public class PlayerController {
 	@PostMapping("join/")
 	@ResponseStatus(HttpStatus.CREATED)
 	public boolean unirsePartida(@RequestBody Player p) {
-		for (Player pl : players) {
-			if (pl.getNick().equals(p.getNick())) {
-				System.out.println(p.getNick() + " no se ha podido unir");
-				return false;
+		if (players.size() < maxPlayers) {
+			for (Player pl : players) {
+				if (pl.getNick().equals(p.getNick())) {
+					System.out.println(p.getNick() + " no se ha podido unir");
+					return false;
+				}
 			}
+			System.out.println(p.getNick() + " se ha unido correctamente");
+
+			p.setDate(new java.util.Date());// https://stackabuse.com/how-to-get-current-date-and-time-in-java/
+			p.setOnline(true);
+			players.add(p);
+
+			return true;
+		} else {
+			System.out.println("El servidor está lleno");
+			return false;
 		}
-		System.out.println(p.getNick() + " se ha unido correctamente");
-
-		p.setDate(new java.util.Date());// https://stackabuse.com/how-to-get-current-date-and-time-in-java/
-		p.setOnline(true);
-		players.add(p);
-
-		return true;
 	}
 
 	@PostMapping("check/")
@@ -63,7 +69,7 @@ public class PlayerController {
 		return false;
 	}
 
-	//@Scheduled(fixedDelay = 500)
+	// @Scheduled(fixedDelay = 500)
 	public void CheckPlayers() {
 		int count = 0;
 		int indexToDelete = -1;

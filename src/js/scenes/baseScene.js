@@ -108,6 +108,7 @@ class BaseScene extends Phaser.Scene {
                 if (isOrange) { this.player1 = new FakePlayer(this, 240, 135, 'p1noWeapon', 'p1sword', 'p1bow', p1Health); } else {
                     this.player1 = new FakePlayer(this, 240, 135, 'p0noWeapon', 'p0sword', 'p0bow', p1Health);
                 }
+                this.player1.visible = false;
                 this.player1.SetWeapon(p1Weapon);
                 break;
             default:
@@ -256,8 +257,9 @@ class BaseScene extends Phaser.Scene {
             case 2:
                 if (friend && friend.scene == this.sceneIdx + levelX.toString() + levelY.toString()) {
                     this.player1.FakeUpdate(friend.x, friend.y, friend.health, friend.anim, friend.prog, friend.flipX);
+                    this.player1.visible = true;
                 } else {
-                    //this.player1.FakeUpdate(-32, -32, null, 0, false);
+                    this.player1.visible = false;
                 }
                 break;
 
@@ -287,13 +289,13 @@ class BaseScene extends Phaser.Scene {
 
     MeleeDamage(weapon, target) {
         target.Hurt(10);
-        SendDamage(this.entities.indexOf(target), 10, this);
+        SendDamage(target.id, 10, this);
     }
 
     ProjectileDamage(target, projectile) {
         target.Hurt(100);
         projectile.destroy();
-        SendDamage(this.entities.indexOf(target), 100, this);
+        SendDamage(target.id, 100, this);
     }
 
     ProjectileHitsWall(projectile, wall) {
@@ -309,10 +311,6 @@ class BaseScene extends Phaser.Scene {
         this.CheckInputs(delta);
 
         this.UpdateStage(time, delta);
-
-        if (!isOnline) {
-
-        }
 
         switch (gameMode) {
             case 0:
@@ -385,8 +383,15 @@ class BaseScene extends Phaser.Scene {
         }
     }
 
-    DamageEntity(idx, amount) {
-        this.entities[idx].Hurt(amount);
+    DamageEntity(id, amount) {
+        for (let e of this.entities) {
+            if (e.id == id) {
+                e.Hurt(amount);
+                break;
+            } else {
+                console.log(e.id, "!=", id);
+            }
+        }
     }
 }
 
