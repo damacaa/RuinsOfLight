@@ -38,7 +38,6 @@ $(document).ready(function () {
     }
 
     pConnection.onopen = function () {
-        gameMode = 2;
     }
 
     pConnection.onclose = function () {

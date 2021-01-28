@@ -14,14 +14,14 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
                 key: 'right' + noWeaponKey,
                 frames: scene.anims.generateFrameNumbers(noWeaponKey, { start: 0, end: 7 }),
                 frameRate: 10,
-                repeat: 0
+                repeat: -1
             });
 
             scene.anims.create({
                 key: 'idleRight' + noWeaponKey,
                 frames: scene.anims.generateFrameNumbers(noWeaponKey, { start: 8, end: 11 }),
                 frameRate: 10,
-                repeat: 0,
+                repeat: -1,
                 showOnStart: true
             });
 
@@ -52,14 +52,14 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
                 key: 'right' + swordKey,
                 frames: scene.anims.generateFrameNumbers(swordKey, { start: 0, end: 5 }),
                 frameRate: 10,
-                repeat: 0
+                repeat: -1
             });
 
             scene.anims.create({
                 key: 'idleRight' + swordKey,
                 frames: scene.anims.generateFrameNumbers(swordKey, { start: 6, end: 9 }),
                 frameRate: 10,
-                repeat: 0,
+                repeat: -1,
             });
 
             scene.anims.create({
@@ -127,14 +127,14 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
                 key: 'right' + bowKey,
                 frames: scene.anims.generateFrameNumbers(bowKey, { start: 0, end: 5 }),
                 frameRate: 10,
-                repeat: 0
+                repeat: -1
             });
 
             scene.anims.create({
                 key: 'idleRight' + bowKey,
                 frames: scene.anims.generateFrameNumbers(bowKey, { start: 6, end: 9 }),
                 frameRate: 10,
-                repeat: 0,
+                repeat: -1,
             });
 
             scene.anims.create({
@@ -188,24 +188,38 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
         }
 
         this.name = noWeaponKey;
-        this.speedX = 0;
         this.onFloor = false;
         this.weapon = 0;
         this.setDepth(3);
+        this.speed = 30;
+
+        this.nextX = x;
+        this.nextY = y;
+        this.lastUpdate = new Date();
+        this.delay = 10;
+
+        this.anims.play('right' + this.name)
 
         if (isOrange) { this.id = 1 } else { this.id = 0 };
     }
 
     FakeUpdate(x, y, h, anim, prog, flipX) {
-        this.x = x;
-        this.y = y;
+        this.nextX = x;
+        this.nextY = y;
         this.health = h;
         ui.healthBar.Update();
-        if (anim) {
+        
+        if (anim && this.anims.currentAnim.key && anim != this.anims.currentAnim.key) {
             this.anims.play(anim, true);
             this.anims.setProgress(prog);
         }
         this.flipX = flipX;
+
+        let currentDante = new Date();
+        this.delay = Math.max(1, currentDante - this.lastUpdate);
+        this.lastUpdate = currentDante;
+
+        this.speed = Math.min(30 / this.delay, 1);
     }
 
     SetWeapon(id) {
@@ -247,6 +261,14 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
     Update() {
         if (this.scene == 0) {
             this.scene.LoadScene('gameOver');
+        }
+
+        this.x += this.speed * (this.nextX - this.x);
+        this.y += this.speed * (this.nextY - this.y);
+
+        if(Number.isNaN(this.x)){
+            this.x = this.nextX;
+            this.y = this.nextY;
         }
     }
 

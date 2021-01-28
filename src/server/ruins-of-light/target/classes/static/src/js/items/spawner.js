@@ -21,8 +21,7 @@ class Spawner extends Phaser.GameObjects.Sprite {
     }
 
     Update(time, delta) {
-        if (this.canSpawnEnemies && this.scene.camera.worldView.contains(this.x, this.y)) {//|| this.scene.camera1.worldView.contains(this.x, this.y))
-
+        if (this.canSpawnEnemies && (Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.x, this.x, this.y) < 500 || Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.x, this.x, this.y) < 500)) {
             this.Spawn();
 
             this.nextSpawnTime = time + this.spawnWait;

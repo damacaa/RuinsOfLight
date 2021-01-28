@@ -1,8 +1,8 @@
 
 
 $(document).ready(function () {
-    //let o = origin.split("/")[2];//ngrok
-    let o = "localhost:8080";
+    let o = origin.split("/")[2];//ngrok
+    //let o = "localhost:8080";
     pConnection = new WebSocket('ws://' + o + '/player');//https://stackoverflow.com/questions/59359280/react-app-error-failed-to-construct-websocket-an-insecure-websocket-connecti
 
     pConnection.onerror = function (e) {
@@ -14,8 +14,11 @@ $(document).ready(function () {
         switch (JSON.parse(msg.data).id) {
             case 1:
                 friend = JSON.parse(msg.data);
+                if (inGame && friend.scene == currentScene.sceneIdx + levelX.toString() + levelY.toString()) {
+                    currentScene.player1.FakeUpdate(friend.x, friend.y, friend.health, friend.anim, friend.prog, friend.flipX);
+                    currentScene.player1.visible = true;
+                }
                 break;
-
             case 2:
                 data = JSON.parse(msg.data);
                 //currentScene.DamageEntity(data.idx, data.damage);
