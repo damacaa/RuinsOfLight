@@ -51,10 +51,6 @@ let origin = window.location.origin; //url in browser
 
 //WEBSOCKET
 let pConnection;
-let friend = {
-    name: "test",
-    x: 240,
-    y: 135
-};
+let friend = null;
 //let friends = [];
 let friendIsOnline = false;

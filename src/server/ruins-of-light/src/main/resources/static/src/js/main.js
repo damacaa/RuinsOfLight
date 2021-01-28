@@ -125,12 +125,13 @@ window.onload = function () {
                 //debug: true
             }
         },
-        scene: [Preload, InputName, MainMenu, AltarRoom, BossRoom, Dungeons, GameOver, Credits, LeaderBoard, UI]
+        scene: [Preload, InputName, MainMenu, Lobby, AltarRoom, BossRoom, Dungeons, GameOver, Credits, LeaderBoard, UI]
     }
 
     loadFont("Early GameBoy", "resources/fonts/Early GameBoy.ttf");
     loadFont("PressStart2P-Regular", "resources/fonts/PressStart2P-Regular.ttf");
 
+    
     game = new Phaser.Game(config);
 
     customPipeline = game.renderer.addPipeline('Custom', new CustomPipeline(game));

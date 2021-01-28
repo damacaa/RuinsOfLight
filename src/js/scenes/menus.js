@@ -249,6 +249,8 @@ class MainMenu extends BaseMenuScene {
             //this.scale.startFullscreen();
         }
 
+        friend = null;
+
         ResetGame();
 
         this.camera = this.cameras.main;
@@ -578,12 +580,12 @@ class Lobby extends BaseMenuScene {
             anim: null,
             prog: null,
             flipX: false,
-            scene: null
+            scene: currentScene.sceneIdx + levelX.toString() + levelY.toString()
         }
 
         pConnection.send(JSON.stringify(msg));
 
-        if (friend.name != "test") {
+        if (friend != null) {
             this.fractionPlayers.text = "2/2 PLAYERS";
 
             this.time.delayedCall(1500, function () {

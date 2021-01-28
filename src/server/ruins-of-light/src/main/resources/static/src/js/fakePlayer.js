@@ -192,6 +192,8 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
         this.onFloor = false;
         this.weapon = 0;
         this.setDepth(3);
+
+        if (isOrange) { this.id = 1 } else { this.id = 0 };
     }
 
     FakeUpdate(x, y, h, anim, prog, flipX) {
@@ -199,7 +201,10 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
         this.y = y;
         this.health = h;
         ui.healthBar.Update();
-        if (anim) { this.anims.play(anim, true); }
+        if (anim) {
+            this.anims.play(anim, true);
+            this.anims.setProgress(prog);
+        }
         this.flipX = flipX;
     }
 
@@ -234,8 +239,38 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
         }
     }
 
-    Update() { }
+    Attack(x, y) {
+        console.log("FakeArrow");
+        (this.x < x) ? new FakeArrow(this.scene, x, y, 1, 0) : new FakeArrow(this.scene, x, y, -1, 0);
+    }
 
-    Run(){}
+    Update() {
+        if (this.scene == 0) {
+            this.scene.LoadScene('gameOver');
+        }
+    }
 
+    Run() { }
+}
+
+class FakeArrow extends Phaser.GameObjects.Sprite {
+    constructor(scene, x, y, dirX, dirY) {
+        super(scene, x, y, "arrow");
+        this.speed = 1000;
+        scene.add.existing(this);
+        scene.physics.add.existing(this);
+        this.body.setAllowGravity(false);
+
+        this.body.setSize(4, 4);
+        this.body.velocity.x = dirX * this.speed;
+        this.body.velocity.y = dirY * this.speed;
+
+        this.setOrigin(0.5, 0.7);
+
+        this.scene.time.delayedCall(1000, function () {
+            this.destroy();
+        }, [], this);
+
+        this.setDepth(3);
+    }
 }

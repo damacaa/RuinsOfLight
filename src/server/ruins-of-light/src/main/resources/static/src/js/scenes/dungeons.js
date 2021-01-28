@@ -16,7 +16,7 @@ class Dungeons extends BaseScene {
 
     CreateStage() {
         ////https://www.html5gamedevs.com/topic/41691-cant-get-group-to-work/
-        if (isOnline) { this.camera.startFollow(this.player0, true); } else { this.camera.startFollow(this.bowPlayer, true); }
+        if (gameMode == 1) { this.camera.startFollow(this.bowPlayer, true); } else { this.camera.startFollow(this.player0, true); }
 
         this.levelId = levelX + "_" + levelY;
 
@@ -27,6 +27,7 @@ class Dungeons extends BaseScene {
         for (let index = 0; index < this.map.width * 32; index += 159) {
             this.add.sprite(index, 0, 'background').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
         }
+
 
         //Añade a cada nivel las puertas
         switch (levelX) {
@@ -61,34 +62,8 @@ class Dungeons extends BaseScene {
                         break;
                 }
                 break;
-
             default:
                 break;
-        }
-
-        //https://medium.com/@alizah.lalani/collecting-objects-in-phaser-3-platformer-games-using-tiled-4e9298cbfc85
-        for (let i = 0; i < this.map.width; i++) {
-            for (let j = 0; j < this.map.height; j++) {
-                let tile = this.map.getTileAt(i, j);
-
-                if (tile) {
-
-                    //Pociones
-                    let rand = Math.random();
-                    if (rand > 0.95 && (tile.index == 2 || tile.index == 26)) {
-                        this.potion = new HealthPotion(this, i * 32, (j - 1) * 32);
-                    }
-
-                    //Enemigos
-                    if (tile.index == 33) {
-                        //new Spawner(this, i * 32 + 16, j * 32 + 16);
-                    }
-
-                    if (tile.index == 34 && !hasRelic && relicX == levelX && relicY == levelY) {
-                        new Relic(this, i * 32, j * 32 - 48);
-                    }
-                }
-            }
         }
 
         //Dependiendo de de qué nivel vengan, los jugadores aparecen en un sitio u otro
@@ -121,11 +96,59 @@ class Dungeons extends BaseScene {
                 break;
         }
 
+        this.dog = new Dog(this, this.player0.x, this.player0.y);
+
+
+        //https://medium.com/@alizah.lalani/collecting-objects-in-phaser-3-platformer-games-using-tiled-4e9298cbfc85
+        for (let i = 0; i < this.map.width; i++) {
+            for (let j = 0; j < this.map.height; j++) {
+                let tile = this.map.getTileAt(i, j);
+                if (tile) {
+                    //Pociones
+                    let rand = Math.random();
+                    if (rand > 0.95 && (tile.index == 2 || tile.index == 26)) {
+                        this.potion = new HealthPotion(this, i * 32, (j - 1) * 32);
+                    }
+
+                    //Enemigos
+                    if (tile.index == 33 && isOrange) {
+                        new Spawner(this, i * 32 + 16, j * 32 + 16);
+                    }
+
+                    if (tile.index == 34 && !hasRelic && relicX == levelX && relicY == levelY) {
+                        this.relic = new Relic(this, i * 32, j * 32 - 48);
+                    }
+                }
+            }
+        }
+
+        if (relicX == levelX && relicY == levelY) {
+            this.dog.FindWay(this.map, this.relic.x, this.relic.y);
+        } else {
+            //Must choose door1 or door2
+            let tempX = relicX;
+            let tempY = relicY;
+
+            let lastX = tempX;
+            let lastY = tempY;
+
+            let count = 0;
+            while (tempX != levelX && tempY != levelY && count < numberOfLevels) {
+                lastX = tempX;
+                lastY = tempY;
+
+                tempX = tempX - 1;
+                tempY = Math.ceil(tempY / 2);
+                count++;
+            }
+
+            if (lastY % 2 == 0) { this.dog.FindWay(this.map, Math.round(this.door2.x / 32), Math.round(this.door2.y / 32)); } else {
+                this.dog.FindWay(this.map, this.door1.x, this.door1.y);
+            }
+        }
+
         this.sound.stopAll();
         this.musicBGDungeon = this.sound.play("music", { loop: true }, { volume: 2 });
-
-        this.dog = new Dog(this, Math.round(this.previousDungeonDoor.x / 32)+5, this.previousDungeonDoor.y / 32);
-        this.dog.FindWay(this.map, Math.round(this.door2.x/32), Math.round(this.door2.y/32));
     }
 
     UpdateStage() {

@@ -81,28 +81,38 @@ class BaseScene extends Phaser.Scene {
         this.camera.setBackgroundColor('rgba(21, 7, 4, 1)');
         this.camera.setRenderToTexture(customPipeline);//Activa el shader
 
-        if (isOnline) {
-            if (isOrange) { this.player1 = new FakePlayer(this, 240, 135, 'p1noWeapon', 'p1sword', 'p1bow', p1Health); } else {
-                this.player1 = new FakePlayer(this, 240, 135, 'p0noWeapon', 'p0sword', 'p0bow', p1Health);
-            }
-            this.player1.SetWeapon(p1Weapon);
-        } else {
-            //Pone a cada jugador el arma correspondiente
-            if (isOrange) { this.player1 = new Player(this, 192, 192, 'p1noWeapon', 'p1sword', 'p1bow', p1Health); } else {
-                this.player1 = new Player(this, 192, 192, 'p0noWeapon', 'p0sword', 'p0bow', p1Health);
-            }
-            this.player1.SetWeapon(p1Weapon);
-            //Configura las cámaras
-            this.camera1 = this.cameras.add(250, 10, 220, 115);
-            this.camera1.setOrigin(0.5, 0.5).setBackgroundColor('rgba(21, 7, 4, 1)');
+        switch (gameMode) {
+            case 0:
+                //0 single player 
+                break;
+            case 1:
+                //1 local multiplayer 
+                if (isOrange) { this.player1 = new Player(this, 192, 192, 'p1noWeapon', 'p1sword', 'p1bow', p1Health); } else {
+                    this.player1 = new Player(this, 192, 192, 'p0noWeapon', 'p0sword', 'p0bow', p1Health);
+                }
+                this.player1.SetWeapon(p1Weapon);
+                //Configura las cámaras
+                this.camera1 = this.cameras.add(250, 10, 220, 115);
+                this.camera1.setOrigin(0.5, 0.5).setBackgroundColor('rgba(21, 7, 4, 1)');
 
-            this.players.add(this.player1);
-            if (this.swordPlayer) {
-                this.camera1.startFollow(this.swordPlayer);
-            }
-            this.camera1.visible = false;
-            this.camera1.setRenderToTexture(customPipeline);
-            this.camera1.fadeIn(500);
+                this.players.add(this.player1);
+                if (this.swordPlayer) {
+                    this.camera1.startFollow(this.swordPlayer);
+                }
+                this.camera1.visible = false;
+                this.camera1.setRenderToTexture(customPipeline);
+                this.camera1.fadeIn(500);
+                break;
+            case 2:
+                //2 online multiplayer
+                if (isOrange) { this.player1 = new FakePlayer(this, 240, 135, 'p1noWeapon', 'p1sword', 'p1bow', p1Health); } else {
+                    this.player1 = new FakePlayer(this, 240, 135, 'p0noWeapon', 'p0sword', 'p0bow', p1Health);
+                }
+                this.player1.visible = false;
+                this.player1.SetWeapon(p1Weapon);
+                break;
+            default:
+                break;
         }
 
         //Crea el escenario
@@ -162,7 +172,7 @@ class BaseScene extends Phaser.Scene {
 
         this.camera.setBounds(0, 0, this.map.width * 32, this.map.height * 32);
 
-        if (!isOnline) { this.camera1.setBounds(0, 0, this.map.width * 32, this.map.height * 32); }
+        if (gameMode != 2) { this.camera1.setBounds(0, 0, this.map.width * 32, this.map.height * 32); }
 
         this.physics.add.collider(this.playerProjectiles, this.groundLayer);
         this.physics.add.overlap(this.enemyProjectiles, this.groundLayer, this.ProjectileHitsWall, null, this);
@@ -210,44 +220,51 @@ class BaseScene extends Phaser.Scene {
             }
         }
 
-        //!isOnline
-        if (!isOnline) {
-            if (this.gamepad) {
-                this.player1.Run(Math.round(this.gamepad.axes[2].value), delta);
-                if (this.gamepad.axes[3].value < -0.5) { this.player1.Jump(); }
-                if (this.gamepad.buttons[7].value > 0.5) { this.player1.Attack(); }
-                if (this.gamepad.buttons[7].value < 0.5) { this.player1.EnableAttack(); }
+        switch (gameMode) {
+            case 1:
+                if (this.gamepad) {
+                    this.player1.Run(Math.round(this.gamepad.axes[2].value), delta);
+                    if (this.gamepad.axes[3].value < -0.5) { this.player1.Jump(); }
+                    if (this.gamepad.buttons[7].value > 0.5) { this.player1.Attack(); }
+                    if (this.gamepad.buttons[7].value < 0.5) { this.player1.EnableAttack(); }
 
-            } else {
-                //P1
-                let cursors1 = this.input.keyboard.createCursorKeys();
-
-                if (cursors1.left.isDown) {
-                    this.player1.Run(-1, delta);
-                } else if (cursors1.right.isDown) {
-                    this.player1.Run(1, delta);
                 } else {
-                    this.player1.Run(0, delta);
+                    //P1
+                    let cursors1 = this.input.keyboard.createCursorKeys();
+
+                    if (cursors1.left.isDown) {
+                        this.player1.Run(-1, delta);
+                    } else if (cursors1.right.isDown) {
+                        this.player1.Run(1, delta);
+                    } else {
+                        this.player1.Run(0, delta);
+                    }
+
+                    if (cursors1.up.isDown) {
+                        this.player1.Jump();
+                    }
+
+                    this.input.on('pointerdown', function (pointer) {
+                        this.player1.Attack(this.input.mousePointer.worldX, this.input.mousePointer.worldY);
+                    }, this);
+
+                    this.input.on('pointerup', function (pointer) {
+                        this.player1.EnableAttack();
+                    }, this);
                 }
+                break;
 
-                if (cursors1.up.isDown) {
-                    this.player1.Jump();
+            case 2:
+                if (friend && friend.scene == this.sceneIdx + levelX.toString() + levelY.toString()) {
+                    this.player1.FakeUpdate(friend.x, friend.y, friend.health, friend.anim, friend.prog, friend.flipX);
+                    this.player1.visible = true;
+                } else {
+                    this.player1.visible = false;
                 }
+                break;
 
-                this.input.on('pointerdown', function (pointer) {
-                    this.player1.Attack(this.input.mousePointer.worldX, this.input.mousePointer.worldY);
-                }, this);
-
-                this.input.on('pointerup', function (pointer) {
-                    this.player1.EnableAttack();
-                }, this);
-            }
-        } else {
-            if (friend && friend.scene == this.sceneIdx + levelX.toString() + levelY.toString()) {
-                this.player1.FakeUpdate(friend.x, friend.y, friend.health, friend.anim, friend.prog, friend.flipX);
-            } else {
-                //this.player1.FakeUpdate(-32, -32, null, 0, false);
-            }
+            default:
+                break;
         }
     }
 
@@ -272,13 +289,13 @@ class BaseScene extends Phaser.Scene {
 
     MeleeDamage(weapon, target) {
         target.Hurt(10);
-        SendDamage(this.entities.indexOf(target), 10, this);
+        SendDamage(target.id, 10, this);
     }
 
     ProjectileDamage(target, projectile) {
         target.Hurt(100);
         projectile.destroy();
-        SendDamage(this.entities.indexOf(target), 100, this);
+        SendDamage(target.id, 100, this);
     }
 
     ProjectileHitsWall(projectile, wall) {
@@ -295,11 +312,20 @@ class BaseScene extends Phaser.Scene {
 
         this.UpdateStage(time, delta);
 
-        if (!isOnline) {
-            if (!this.fading && this.swordPlayer && !this.camera.worldView.contains(this.swordPlayer.x, this.swordPlayer.y)) {
-                this.camera1.visible = true;
-            } else { this.camera1.visible = false; }
+        switch (gameMode) {
+            case 0:
+                break;
+            case 1:
+                if (!this.fading && this.swordPlayer && !this.camera.worldView.contains(this.swordPlayer.x, this.swordPlayer.y)) {
+                    this.camera1.visible = true;
+                } else { this.camera1.visible = false; }
+                break;
+            case 2:
+                break;
+            default:
+                break;
         }
+
         checkServer();
     }
 
@@ -307,8 +333,19 @@ class BaseScene extends Phaser.Scene {
         if (!this.fading) {
             this.fading = true;
             this.camera.fadeOut(500);
-            if (!isOnline) { this.camera1.fadeOut(500); }
+            switch (gameMode) {
+                case 0:
 
+                    break;
+                case 1:
+                    this.camera1.fadeOut(500);
+                    break;
+                case 2:
+
+                    break;
+                default:
+                    break;
+            }
             p0Health = this.player0.health;
             p1Health = this.player1.health;
             this.entities = [];
@@ -346,8 +383,15 @@ class BaseScene extends Phaser.Scene {
         }
     }
 
-    DamageEntity(idx, amount) {
-        this.entities[idx].Hurt(amount);
+    DamageEntity(id, amount) {
+        for (let e of this.entities) {
+            if (e.id == id) {
+                e.Hurt(amount);
+                break;
+            } else {
+                console.log(e.id, "!=", id);
+            }
+        }
     }
 }
 
@@ -361,6 +405,6 @@ function checkServer() {
             checkChat();
         }
 
-        if (inGame) { SendPlayerInfo(currentScene.player0); }
+        if (inGame && gameMode == 2) { SendPlayerInfo(currentScene.player0); }
     }
 }

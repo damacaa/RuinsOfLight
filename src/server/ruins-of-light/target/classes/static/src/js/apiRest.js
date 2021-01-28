@@ -19,6 +19,9 @@ function loadPayers() {
         players = result;
         //https://stackoverflow.com/questions/23921683/javascript-move-an-item-of-an-array-to-the-front
         players.sort(function (x, y) { return x.nick == player.nick ? -1 : y.nick == player.nick ? 1 : 0; });
+        for (const p of players) {
+            if (friend.name == p.name) { friendIsOnline = true; }
+        }
     }).fail(function (jqXHR, textStatus, errorThrown) {
         console.log("Error")
     })

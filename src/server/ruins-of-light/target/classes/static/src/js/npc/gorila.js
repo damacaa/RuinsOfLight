@@ -67,6 +67,7 @@ class GreatGorila extends Enemy {
     }
 
     WakeUp() {
+        this.id = 3;
         this.awake = true;
         this.anims.play('gorilaWakeUp', true);
 
@@ -168,7 +169,7 @@ class GreatGorila extends Enemy {
             //this.attacking = true;
             this.anims.play('explosionG', true);
             this.scene.camera.shake(750, .01);
-            if(!isOnline){this.scene.camera1.shake(750, .01);}
+            if(gameMode == 1){this.scene.camera1.shake(750, .01);}
             this.once('animationcomplete', () => {
 
                 this.attacking = false;

@@ -9,9 +9,6 @@ class Dog extends Phaser.GameObjects.Sprite {
     this.scene.entities.push(this);
     this.scene.physics.add.existing(this);
 
-    //this.body.setAllowGravity(false);
-    //this.body.setSize(6, 6, true);
-
     this.scene.anims.create({
       key: 'dogWalk',
       frames: this.scene.anims.generateFrameNumbers('dog', { start: 0, end: 3 }),
@@ -61,6 +58,8 @@ class Dog extends Phaser.GameObjects.Sprite {
 
     let endX = Math.round(eX / 32);
     let endY = Math.round(eY / 32);
+
+    console.log(startX, startY, eX, eY);
 
     let columns = world.width;
     let rows = world.height;

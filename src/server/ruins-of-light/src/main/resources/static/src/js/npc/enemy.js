@@ -2,7 +2,7 @@ class Enemy extends Phaser.GameObjects.Sprite {
   constructor(scene, x, y, key) {
     super(scene, x, y, key);
 
-    this.setOrigin(0.5,0.5);
+    this.setOrigin(0.5, 0.5);
 
     this.scene = scene;
     this.scene.add.existing(this);
@@ -28,6 +28,8 @@ class Enemy extends Phaser.GameObjects.Sprite {
     this.secondaryTarget;
 
     this.setDepth(1);
+    this.id;//Identificador único
+    if (isOrange) { this.id = Math.floor(Math.random() * 1000) + 3;}
   }
 
   WakeUp() {
@@ -94,7 +96,7 @@ class Enemy extends Phaser.GameObjects.Sprite {
 
   Flinch() { }
 
-  Jump(){
+  Jump() {
     this.body.setVelocityY(-100);
   }
 }

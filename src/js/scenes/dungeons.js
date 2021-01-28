@@ -142,7 +142,7 @@ class Dungeons extends BaseScene {
                 count++;
             }
 
-            if (lastY % 2 == 0) { this.dog.FindWay(this.map, Math.round(this.door2.x / 32), Math.round(this.door2.y / 32)); } else {
+            if (lastY % 2 == 0) { this.dog.FindWay(this.map, this.door2.x, this.door2.y); } else {
                 this.dog.FindWay(this.map, this.door1.x, this.door1.y);
             }
         }
