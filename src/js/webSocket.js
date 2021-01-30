@@ -14,8 +14,11 @@ $(document).ready(function () {
         switch (JSON.parse(msg.data).id) {
             case 1:
                 friend = JSON.parse(msg.data);
+                if (inGame && friend.scene == currentScene.sceneIdx + levelX.toString() + levelY.toString()) {
+                    currentScene.player1.FakeUpdate(friend.x, friend.y, friend.health, friend.anim, friend.prog, friend.flipX);
+                    currentScene.player1.visible = true;
+                }
                 break;
-
             case 2:
                 data = JSON.parse(msg.data);
                 //currentScene.DamageEntity(data.idx, data.damage);
@@ -35,7 +38,6 @@ $(document).ready(function () {
     }
 
     pConnection.onopen = function () {
-        gameMode = 2;
     }
 
     pConnection.onclose = function () {

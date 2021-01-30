@@ -33,6 +33,8 @@ let gamepad;
 
 let isOrange = true;
 
+let gameMode = 1; //0 single player //1 local multiplayer //2 online multiplayer
+
 //API REST
 let lastTimeChecked = new Date();
 
@@ -49,8 +51,6 @@ let origin = window.location.origin; //url in browser
 
 //WEBSOCKET
 let pConnection;
-let friend = {
-    name: "test",
-    x: 240,
-    y: 135
-};
+let friend = null;
+//let friends = [];
+let friendIsOnline = false;

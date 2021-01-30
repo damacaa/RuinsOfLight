@@ -58,6 +58,7 @@ class Parrot extends Enemy {
     }
 
     WakeUp() {
+        this.id = 3;
         this.awake = true;
         this.body.enable = true;
         this.body.allowGravity = false;
@@ -71,7 +72,7 @@ class Parrot extends Enemy {
 
             if(this.awake){
             this.scene.camera.shake(750, .01);
-            if(!isOnline){this.scene.camera1.shake(750, .01)};
+            if(gameMode == 1){this.scene.camera1.shake(750, .01)};
             this.anims.play('parrotIdle', true);
             this.canMove = true;
             this.canAttack = false;
@@ -153,7 +154,7 @@ class Parrot extends Enemy {
                     this.attacking = false;
                     this.body.setAccelerationY(-500);
                     this.scene.camera.shake(750, .01);
-                    if(!isOnline){this.scene.camera1.shake(750, .01)};
+                    if(gameMode == 1){this.scene.camera1.shake(750, .01)};
                 }
             }
         }

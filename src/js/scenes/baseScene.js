@@ -255,12 +255,7 @@ class BaseScene extends Phaser.Scene {
                 break;
 
             case 2:
-                if (friend && friend.scene == this.sceneIdx + levelX.toString() + levelY.toString()) {
-                    this.player1.FakeUpdate(friend.x, friend.y, friend.health, friend.anim, friend.prog, friend.flipX);
-                    this.player1.visible = true;
-                } else {
-                    this.player1.visible = false;
-                }
+
                 break;
 
             default:
@@ -392,19 +387,5 @@ class BaseScene extends Phaser.Scene {
                 console.log(e.id, "!=", id);
             }
         }
-    }
-}
-
-//Check players every x seconds
-function checkServer() {
-    if (isOnline) {
-        if (new Date() - lastTimeChecked > 1000) {
-            lastTimeChecked = new Date();
-            checkPlayer();
-            loadPayers();
-            checkChat();
-        }
-
-        if (inGame && gameMode == 2) { SendPlayerInfo(currentScene.player0); }
     }
 }

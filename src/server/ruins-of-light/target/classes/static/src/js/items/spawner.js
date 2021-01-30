@@ -4,6 +4,7 @@ class Spawner extends Phaser.GameObjects.Sprite {
         super(scene, x, y, null);
 
         this.visible = false;
+        this.scene = scene;
 
         scene.add.existing(this);
 
@@ -14,14 +15,13 @@ class Spawner extends Phaser.GameObjects.Sprite {
         this.spawnWait = 3000;
         this.maxEnemies = 50;
 
-        this.setOrigin(0,0);
+        this.setOrigin(0, 0);
 
         this.setDepth(10);
     }
 
     Update(time, delta) {
-        if (this.canSpawnEnemies && (this.scene.camera.worldView.contains(this.x, this.y) || this.scene.camera1.worldView.contains(this.x, this.y))) {
-
+        if (this.canSpawnEnemies && (Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.x, this.x, this.y) < 500 || Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.x, this.x, this.y) < 500)) {
             this.Spawn();
 
             this.nextSpawnTime = time + this.spawnWait;
@@ -34,18 +34,21 @@ class Spawner extends Phaser.GameObjects.Sprite {
         }
     }
 
-    Spawn(){
+    Spawn() {
         let rand = Math.random();
 
         if (rand < 0.4) {
-            let randomEnemy = new Ball(this.scene, this.x+16, this.y+16);
+            let randomEnemy = new Ball(this.scene, this.x + 16, this.y + 16);
             randomEnemy.WakeUp();
+            SendNewEntity(this.scene, 3, randomEnemy.id, randomEnemy.x, randomEnemy.y);
         } else if (rand < 0.7) {
-            let randomEnemy = new Drone(this.scene, this.x+16, this.y+40);
+            let randomEnemy = new Drone(this.scene, this.x + 16, this.y + 40);
+            SendNewEntity(this.scene, 4, randomEnemy.id, randomEnemy.x, randomEnemy.y);
             randomEnemy.WakeUp();
         } else if (rand < 1) {
-            let randomEnemy = new Guardian(this.scene, this.x+16, this.y+16);
+            let randomEnemy = new Guardian(this.scene, this.x + 16, this.y + 16);
             randomEnemy.WakeUp();
+            SendNewEntity(this.scene, 2, randomEnemy.id, randomEnemy.x, randomEnemy.y);
         }
     }
 }
