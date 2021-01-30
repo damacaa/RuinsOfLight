@@ -20,7 +20,8 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 
 	private Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
 	private Map<String, Integer> lastTimes = new ConcurrentHashMap<>();
-	private int lastTime = 0;
+	private Map<String, Vector2> lastPositions = new ConcurrentHashMap<>();
+
 	private ObjectMapper mapper = new ObjectMapper();
 
 	@Override
@@ -28,6 +29,7 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 		System.out.println("New user: " + session.getId());
 		sessions.put(session.getId(), session);
 		lastTimes.put(session.getId(), 0);
+		lastPositions.put(session.getId(), new Vector2());
 	}
 
 	@Override
@@ -35,6 +37,7 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 		System.out.println("Session closed: " + session.getId());
 		sessions.remove(session.getId());
 		lastTimes.remove(session.getId());
+		lastPositions.remove(session.getId());
 	}
 
 	@Override
@@ -56,23 +59,33 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 		switch (node.get("id").asInt()) {
 		case 1:
 			// Posicion jugador
-			/*
-			 * if (node.get("date").asInt() - lastTimes.get(session.getId()) > -500) {
-			 * lastTimes.put(session.getId(), node.get("date").asInt());
-			 * 
-			 * } else { envia = false; //System.out.println(node.get("date").asInt()-
-			 * lastTimes.get(session.getId())); }
-			 */
+			String sId = session.getId();
+			int time = node.get("date").asInt() - lastTimes.get(sId);
+			if (time > 0) {
 
-			newNode.put("name", node.get("name").asText());
-			newNode.put("x", node.get("x").asText());
-			newNode.put("y", node.get("y").asText());
-			newNode.put("health", node.get("health").asInt());
-			newNode.put("anim", node.get("anim").asText());
-			newNode.put("prog", node.get("prog").asText());
-			newNode.put("flipX", node.get("flipX").asBoolean());
-			newNode.put("scene", node.get("scene").asText());
-			newNode.put("date", node.get("date").asInt());
+				float x = Float.parseFloat(node.get("x").asText());
+				float y = Float.parseFloat(node.get("y").asText());
+
+				if (lastPositions.get(sId).distance(x, y) < 200 * time) {
+					lastTimes.put(sId, node.get("date").asInt());
+					newNode.put("name", node.get("name").asText());
+					newNode.put("x", x);
+					newNode.put("y", y);
+					newNode.put("health", node.get("health").asInt());
+					newNode.put("anim", node.get("anim").asText());
+					newNode.put("prog", node.get("prog").asText());
+					newNode.put("flipX", node.get("flipX").asBoolean());
+					newNode.put("scene", node.get("scene").asText());
+					newNode.put("date", node.get("date").asInt());
+				} else {
+					// Trampas?
+					System.out.println(node.get("name").asInt()+" está haciendo trampas.");
+				}
+
+			} else {
+				envia = false;
+				System.out.println(node.get("date").asInt() - lastTimes.get(session.getId()));
+			}
 			break;
 		case 2:
 			// Daño recibido

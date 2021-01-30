@@ -228,8 +228,15 @@ class Preload extends Phaser.Scene {
         {
             this.load.spritesheet('block',
                 'resources/img/Input/block.png', {
-                frameWidth: 64,
+                frameWidth: 144,
                 frameHeight: 32
+            }
+            );
+
+            this.load.spritesheet('p0',
+                'resources/animations/players/p0noWeapon.png', {
+                frameWidth: 80,
+                frameHeight: 64
             }
             );
 

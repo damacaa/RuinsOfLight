@@ -191,7 +191,7 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
         this.onFloor = false;
         this.weapon = 0;
         this.setDepth(3);
-        this.speed = 30;
+        this.speed = 200;
 
         this.nextX = x;
         this.nextY = y;
@@ -218,8 +218,14 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
         this.flipX = flipX;
 
         let currentDate = new Date();
-        currentDate = (currentDate.getHours() * 1000000) + (currentDate.getMinutes() * 10000) + (currentDate.getSeconds()*100) + currentDate.getMilliseconds();
-        
+        currentDate = (currentDate.getHours() * 1000000) + (currentDate.getMinutes() * 10000) + (currentDate.getSeconds() * 100) + currentDate.getMilliseconds();
+
+        this.delay = Math.max(1, currentDate - this.lastUpdate);
+        this.speed = Math.min(30 / this.delay, 1);
+
+        this.lastUpdate = date;
+        /*
+
         this.delay = Math.max(1, currentDate - date);
         this.lastUpdate = date;
 
@@ -227,7 +233,8 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
 
         if (this.shining) { this.setTintFill(0xeeeeba); } else { this.clearTint(); }
 
-        this.shining = !this.shining;
+        this.shining = !this.shining;*/
+
     }
 
     SetWeapon(id) {
@@ -266,7 +273,7 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
         (this.x < x) ? new FakeArrow(this.scene, x, y, 1, 0) : new FakeArrow(this.scene, x, y, -1, 0);
     }
 
-    Update() {
+    Update(time, delta) {
         if (this.scene == 0) {
             this.scene.LoadScene('gameOver');
         }
@@ -274,7 +281,10 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
         this.x += this.speed * (this.nextX - this.x);
         this.y += this.speed * (this.nextY - this.y);
 
-        if (Number.isNaN(this.x)) {
+        /*this.x += 200 * delta / 1000 * Math.round(Math.min(Math.max((this.nextX - this.x),-1),1));
+        this.y += 200 * delta / 1000 * Math.round(Math.min(Math.max((this.nextY - this.y),-1),1));*/
+
+        if (Number.isNaN(this.x) || Number.isNaN(this.y)) {
             this.x = this.nextX;
             this.y = this.nextY;
         }

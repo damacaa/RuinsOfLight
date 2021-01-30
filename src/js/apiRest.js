@@ -70,7 +70,6 @@ function joinGame(doneFunc, failFunc) {
             } else {
                 console.log("Ya existe un usuario con ese nombre en: " + origin);
             }
-
             joined = hasJoined;
             isOnline = hasJoined;
             if (doneFunc) { doneFunc(); }
@@ -128,7 +127,7 @@ function createChat(value, scene, x, y) {
     })
 }
 
-let checkServerWait = 10000;
+let checkServerWait = 1000;
 //Check players every x seconds
 function checkServer() {
     if (isOnline) {
@@ -139,7 +138,12 @@ function checkServer() {
             checkChat();
         }
         if (inGame && gameMode == 2) { SendPlayerInfo(currentScene.player0); }
+        
     }else{
-        //joinGame();
+        
+        if (new Date() - lastTimeChecked > checkServerWait) {
+            lastTimeChecked = new Date();
+            joinGame();
+        }
     }
 }

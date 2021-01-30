@@ -15,14 +15,14 @@ function ConnectWebSocket() {
             case 1:
                 friend = JSON.parse(msg.data);
                 lastDate = friend.date;
-                    if (inGame && friend.scene == currentScene.sceneIdx + levelX.toString() + levelY.toString()) {
-                        currentScene.player1.FakeUpdate(friend.x, friend.y, friend.health, friend.anim, friend.prog, friend.flipX, friend.date);
-                        currentScene.player1.visible = true;
-                    }
+                if (inGame && friend.scene == currentScene.sceneIdx + levelX.toString() + levelY.toString()) {
+                    currentScene.player1.FakeUpdate(friend.x, friend.y, friend.health, friend.anim, friend.prog, friend.flipX, friend.date);
+                    currentScene.player1.visible = true;
+                }
                 break;
             case 2:
                 data = JSON.parse(msg.data);
-                //currentScene.DamageEntity(data.idx, data.damage);
+                currentScene.DamageEntity(data.idx, data.damage);
                 break;
             case 3:
                 data = JSON.parse(msg.data);
@@ -47,6 +47,7 @@ function ConnectWebSocket() {
     }
 }
 
+let lDate = 0;
 function SendPlayerInfo(plyr) {
     let currentDate = new Date();
     let msg = {
@@ -59,9 +60,9 @@ function SendPlayerInfo(plyr) {
         prog: plyr.anims.getProgress(),//getTotalProgress 
         flipX: plyr.flipX,
         scene: plyr.scene.sceneIdx + levelX.toString() + levelY.toString(),
-        date: (currentDate.getHours() * 1000000) + (currentDate.getMinutes() * 10000) + (currentDate.getSeconds()*100) + currentDate.getMilliseconds()
+        date: (currentDate.getHours() * 10000000) + (currentDate.getMinutes() * 100000) + (currentDate.getSeconds() * 1000) + currentDate.getMilliseconds()
     }
-
+    
     pConnection.send(JSON.stringify(msg));
 }
 

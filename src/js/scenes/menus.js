@@ -124,7 +124,6 @@ class InputName extends BaseMenuScene {
                                 player.nick = name;
                                 joinGame(function () {
                                     if (joined) {
-                                        gameMode = 2;
                                         currentScene.LoadScene('mainMenu');
                                     } else {
                                         currentScene.LoadScene('errorJ');
@@ -137,10 +136,8 @@ class InputName extends BaseMenuScene {
                                         origin = window.location.origin;
                                     }
 
-                                    joining = false;
 
                                     joinGame(function () {
-                                        gameMode = 2;
                                         currentScene.LoadScene('mainMenu');
                                     }, function () {
                                         //Client gives up and joins offline
@@ -615,7 +612,7 @@ class ErrorJoining extends BaseMenuScene {
 
     SetUp() {
       
-        this.EJB = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
+        this.background = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
         this.titleEJ = this.add.text(55, 70, "Can't connect to server", {
             fontFamily: '"PressStart2P-Regular"',
             fontSize: '16px',
@@ -647,13 +644,7 @@ class ErrorJoining extends BaseMenuScene {
             switch (opt) {
                 case 'Try again':
                     o.Press = function () {
-                        //////////////////////no sé si es necesario igualar a 2 el gamemode; el isOnline aqui no lo pilla
-                        if(isOnline){
-                            gameMode = 2;
-                            currentScene.LoadScene('mainMenu');
-                        }else{
-                            currentScene.LoadScene('errorJ');
-                        }
+                            currentScene.LoadScene('nameInput');
                     }
 
                     o.AdjustBlock = function () {
@@ -665,7 +656,6 @@ class ErrorJoining extends BaseMenuScene {
                 case 'Play offline':
                     o.Press = function () {
                         gameMode = 1;
-                        //////////////////////////despues de la intro=negro
                         currentScene.LoadScene('mainMenu');
                     }
 

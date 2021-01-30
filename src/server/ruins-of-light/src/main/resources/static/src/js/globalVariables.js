@@ -48,6 +48,7 @@ let joined = false;
 let joining = false;
 
 let origin = window.location.origin; //url in browser
+//let origin = "http://localhost:8080"; //local
 
 //WEBSOCKET
 let pConnection;
