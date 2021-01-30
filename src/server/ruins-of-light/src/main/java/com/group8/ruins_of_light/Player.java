@@ -4,7 +4,7 @@ public class Player {
 
 	private String nick;
 	private boolean online;
-	private java.util.Date date = new java.util.Date();
+	private java.util.Date chekedDate = new java.util.Date();
 
 	public Player() {
 
@@ -23,12 +23,12 @@ public class Player {
 		this.nick = nick;
 	}
 
-	public java.util.Date getDate() {
-		return date;
+	public java.util.Date getChekedDate() {
+		return chekedDate;
 	}
 
-	public void setDate(java.util.Date date) {
-		this.date = date;
+	public void setChekedDate(java.util.Date date) {
+		this.chekedDate = date;
 	}
 	
 	public boolean getOnline() {

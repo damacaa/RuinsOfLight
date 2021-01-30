@@ -195,31 +195,39 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
 
         this.nextX = x;
         this.nextY = y;
-        this.lastUpdate = new Date();
+        this.lastUpdate = 0;
         this.delay = 10;
 
         this.anims.play('right' + this.name)
 
         if (isOrange) { this.id = 1 } else { this.id = 0 };
+
+        this.shining = false;
     }
 
-    FakeUpdate(x, y, h, anim, prog, flipX) {
+    FakeUpdate(x, y, h, anim, prog, flipX, date) {
         this.nextX = x;
         this.nextY = y;
         this.health = h;
         ui.healthBar.Update();
-        
+
         if (anim && this.anims.currentAnim.key && anim != this.anims.currentAnim.key) {
             this.anims.play(anim, true);
             this.anims.setProgress(prog);
         }
         this.flipX = flipX;
 
-        let currentDante = new Date();
-        this.delay = Math.max(1, currentDante - this.lastUpdate);
-        this.lastUpdate = currentDante;
+        let currentDate = new Date();
+        currentDate = (currentDate.getHours() * 1000000) + (currentDate.getMinutes() * 10000) + (currentDate.getSeconds()*100) + currentDate.getMilliseconds();
+        
+        this.delay = Math.max(1, currentDate - date);
+        this.lastUpdate = date;
 
         this.speed = Math.min(30 / this.delay, 1);
+
+        if (this.shining) { this.setTintFill(0xeeeeba); } else { this.clearTint(); }
+
+        this.shining = !this.shining;
     }
 
     SetWeapon(id) {
@@ -266,7 +274,7 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
         this.x += this.speed * (this.nextX - this.x);
         this.y += this.speed * (this.nextY - this.y);
 
-        if(Number.isNaN(this.x)){
+        if (Number.isNaN(this.x)) {
             this.x = this.nextX;
             this.y = this.nextY;
         }

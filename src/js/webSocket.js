@@ -1,6 +1,7 @@
 
+let lastDate = 0;
 
-$(document).ready(function () {
+function ConnectWebSocket() {
     //let o = origin.split("/")[2];//ngrok
     let o = "localhost:8080";
     pConnection = new WebSocket('ws://' + o + '/player');//https://stackoverflow.com/questions/59359280/react-app-error-failed-to-construct-websocket-an-insecure-websocket-connecti
@@ -10,14 +11,14 @@ $(document).ready(function () {
     }
 
     pConnection.onmessage = function (msg) {
-        let data;
         switch (JSON.parse(msg.data).id) {
             case 1:
                 friend = JSON.parse(msg.data);
-                if (inGame && friend.scene == currentScene.sceneIdx + levelX.toString() + levelY.toString()) {
-                    currentScene.player1.FakeUpdate(friend.x, friend.y, friend.health, friend.anim, friend.prog, friend.flipX);
-                    currentScene.player1.visible = true;
-                }
+                lastDate = friend.date;
+                    if (inGame && friend.scene == currentScene.sceneIdx + levelX.toString() + levelY.toString()) {
+                        currentScene.player1.FakeUpdate(friend.x, friend.y, friend.health, friend.anim, friend.prog, friend.flipX, friend.date);
+                        currentScene.player1.visible = true;
+                    }
                 break;
             case 2:
                 data = JSON.parse(msg.data);
@@ -38,14 +39,16 @@ $(document).ready(function () {
     }
 
     pConnection.onopen = function () {
+        gameMode = 2;
     }
 
     pConnection.onclose = function () {
         console.log("Closing socket");
     }
-})
+}
 
 function SendPlayerInfo(plyr) {
+    let currentDate = new Date();
     let msg = {
         id: 1,
         name: player.nick,
@@ -55,8 +58,10 @@ function SendPlayerInfo(plyr) {
         anim: plyr.anims.currentAnim.key,
         prog: plyr.anims.getProgress(),//getTotalProgress 
         flipX: plyr.flipX,
-        scene: plyr.scene.sceneIdx + levelX.toString() + levelY.toString()
+        scene: plyr.scene.sceneIdx + levelX.toString() + levelY.toString(),
+        date: (currentDate.getHours() * 1000000) + (currentDate.getMinutes() * 10000) + (currentDate.getSeconds()*100) + currentDate.getMilliseconds()
     }
+
     pConnection.send(JSON.stringify(msg));
 }
 

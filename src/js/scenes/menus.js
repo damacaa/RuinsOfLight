@@ -571,25 +571,25 @@ class Lobby extends BaseMenuScene {
 
         }).setOrigin(0).setDepth(10);
 
+        this.player = this.add.sprite(240, 190, 'p0').setOrigin(0.5).setDepth(1);
+        this.player.scene = this;
+        this.player.health = 6;
+        
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('p0', { start: 0, end: 7 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.player.anims.play('right', true);
     }
 
     update() {
         checkServer();
         inGame = false;
 
-        let msg = {
-            id: 1,
-            name: player.nick,
-            x: 240,
-            y: 135,
-            health: 6,
-            anim: null,
-            prog: null,
-            flipX: false,
-            scene: currentScene.sceneIdx + levelX.toString() + levelY.toString()
-        }
-
-        pConnection.send(JSON.stringify(msg));
+        SendPlayerInfo(this.player);
 
         if (friend != null) {
             this.fractionPlayers.text = "2/2 PLAYERS";

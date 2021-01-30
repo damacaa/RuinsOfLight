@@ -5,9 +5,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -22,18 +19,22 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class WebSocketPlayerHandler extends TextWebSocketHandler {
 
 	private Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
+	private Map<String, Integer> lastTimes = new ConcurrentHashMap<>();
+	private int lastTime = 0;
 	private ObjectMapper mapper = new ObjectMapper();
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		System.out.println("New user: " + session.getId());
 		sessions.put(session.getId(), session);
+		lastTimes.put(session.getId(), 0);
 	}
 
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		System.out.println("Session closed: " + session.getId());
 		sessions.remove(session.getId());
+		lastTimes.remove(session.getId());
 	}
 
 	@Override
@@ -47,14 +48,22 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 
 	private void sendOtherParticipants(WebSocketSession session, JsonNode node) throws IOException {
 
-		// System.out.println("Message sent: " + node.toString());
+		boolean envia = true;
 
 		ObjectNode newNode = mapper.createObjectNode();
 		newNode.put("id", node.get("id").asInt());
 
-		switch (node.get("id").asText()) {
-		case "1":
+		switch (node.get("id").asInt()) {
+		case 1:
 			// Posicion jugador
+			/*
+			 * if (node.get("date").asInt() - lastTimes.get(session.getId()) > -500) {
+			 * lastTimes.put(session.getId(), node.get("date").asInt());
+			 * 
+			 * } else { envia = false; //System.out.println(node.get("date").asInt()-
+			 * lastTimes.get(session.getId())); }
+			 */
+
 			newNode.put("name", node.get("name").asText());
 			newNode.put("x", node.get("x").asText());
 			newNode.put("y", node.get("y").asText());
@@ -63,19 +72,20 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 			newNode.put("prog", node.get("prog").asText());
 			newNode.put("flipX", node.get("flipX").asBoolean());
 			newNode.put("scene", node.get("scene").asText());
+			newNode.put("date", node.get("date").asInt());
 			break;
-		case "2":
+		case 2:
 			// Daño recibido
 			newNode.put("eId", node.get("eId").asInt());
 			newNode.put("damage", node.get("damage").asInt());
 			newNode.put("scene", node.get("scene").asText());
 			break;
-		case "3":
+		case 3:
 			// Reliquia creada
 			newNode.put("x", node.get("x").asInt());
 			newNode.put("y", node.get("y").asInt());
 			break;
-		case "4":
+		case 4:
 			// Entidad creada
 			newNode.put("eId", node.get("eId").asInt());
 			newNode.put("type", node.get("type").asInt());
@@ -88,9 +98,11 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 			// code block
 		}
 
-		for (WebSocketSession participant : sessions.values()) {
-			if (!participant.getId().equals(session.getId())) {
-				participant.sendMessage(new TextMessage(newNode.toString()));
+		if (envia) {
+			for (WebSocketSession participant : sessions.values()) {
+				if (!participant.getId().equals(session.getId())) {
+					participant.sendMessage(new TextMessage(newNode.toString()));
+				}
 			}
 		}
 	}
