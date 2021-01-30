@@ -123,8 +123,12 @@ class InputName extends BaseMenuScene {
                             if (!this.ok) {
                                 player.nick = name;
                                 joinGame(function () {
-                                    gameMode = 2;
-                                    currentScene.LoadScene('mainMenu');
+                                    if (joined) {
+                                        gameMode = 2;
+                                        currentScene.LoadScene('mainMenu');
+                                    } else {
+                                        currentScene.LoadScene('errorJ');
+                                    }
                                 }, function () {
                                     //if default path doesn't work, try local host or the other way around
                                     if (origin == window.location.origin) {
@@ -140,7 +144,7 @@ class InputName extends BaseMenuScene {
                                         currentScene.LoadScene('mainMenu');
                                     }, function () {
                                         //Client gives up and joins offline
-                                        currentScene.LoadScene('credits');//poner gamemode1
+                                        currentScene.LoadScene('errorJ');
                                     });
                                 });
                                 //joined = true;
@@ -599,6 +603,108 @@ class Lobby extends BaseMenuScene {
             }, [], this);
 
         }
+    }
+
+}
+
+class ErrorJoining extends BaseMenuScene {
+
+    constructor() {
+        super('errorJ');
+    }
+
+    SetUp() {
+      
+        this.EJB = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
+        this.titleEJ = this.add.text(55, 70, "Can't connect to server", {
+            fontFamily: '"PressStart2P-Regular"',
+            fontSize: '16px',
+            color: '#eeeeba'
+
+        }).setOrigin(0).setDepth(10);
+
+        for (let idx = 0; idx < game.width * 32; idx += 159) {
+            this.add.sprite(idx, 0, 'background').setOrigin(0, 0);
+        }
+
+        let bttn = [];
+        let opts = [
+            'Try again', 'Play offline'
+        ];
+
+        let optX = 130;
+        let optY = 200;
+        for (let opt of opts) {
+            let o = this.add.text(optX, optY, opt, {
+                fontFamily: '"PressStart2P-Regular"',
+                fontSize: '12px',
+                color: '#eeeeba',
+                align: 'center'
+            });
+            o.setAlign('center');
+            o.setOrigin(0.5);
+
+            switch (opt) {
+                case 'Try again':
+                    o.Press = function () {
+                        //////////////////////no sé si es necesario igualar a 2 el gamemode; el isOnline aqui no lo pilla
+                        if(isOnline){
+                            gameMode = 2;
+                            currentScene.LoadScene('mainMenu');
+                        }else{
+                            currentScene.LoadScene('errorJ');
+                        }
+                    }
+
+                    o.AdjustBlock = function () {
+                        b.setFrame(2).setVisible(true);
+                    }
+                    optX += 200;
+                    break;
+
+                case 'Play offline':
+                    o.Press = function () {
+                        gameMode = 1;
+                        //////////////////////////despues de la intro=negro
+                        currentScene.LoadScene('mainMenu');
+                    }
+
+                    o.AdjustBlock = function () {
+                        b.setFrame(2).setVisible(true);
+                    }
+
+                    break;
+
+                default:
+
+                    break;
+            }
+
+            o.setInteractive();
+            o.on('pointerup', function (pointer, x, y) {
+
+                o.Press();
+                
+            }, this);
+
+            o.on('pointerover', function (pointer, x, y) {
+
+                b.x = o.x;
+                b.y = o.y;
+
+                o.AdjustBlock();
+            }, this);
+
+            o.on('pointerout', function (pointer, x, y) {
+
+                b.setFrame(2).setVisible(false);
+                
+            }, this);
+
+            bttn.push(o);
+        }
+        let idx = 0;
+        let b = this.add.sprite(bttn[idx].x, bttn[idx].y, 'block').setOrigin(0.5).setVisible(false);
     }
 
 }

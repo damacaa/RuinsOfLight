@@ -69,7 +69,6 @@ function joinGame(doneFunc, failFunc) {
                 ConnectWebSocket();
             } else {
                 console.log("Ya existe un usuario con ese nombre en: " + origin);
-                //location.reload();
             }
 
             joined = hasJoined;

@@ -128,7 +128,7 @@ window.onload = function () {
             target: 30,
             forceSetTimeOut: true
         },
-        scene: [Preload, InputName, MainMenu, Lobby, AltarRoom, BossRoom, Dungeons, GameOver, Credits, LeaderBoard, UI]
+        scene: [Preload, InputName, ErrorJoining, MainMenu, Lobby, AltarRoom, BossRoom, Dungeons, GameOver, Credits, LeaderBoard, UI]
     }
 
     loadFont("Early GameBoy", "resources/fonts/Early GameBoy.ttf");

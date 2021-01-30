@@ -68,7 +68,6 @@ function joinGame(doneFunc, failFunc) {
                 console.log("Conectado correctamente a: " + origin);
             } else {
                 console.log("Ya existe un usuario con ese nombre en: " + origin);
-                location.reload();
             }
 
             joined = hasJoined;
