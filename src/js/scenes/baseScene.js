@@ -378,7 +378,6 @@ class BaseScene extends Phaser.Scene {
     }
 
     DamageEntity(id, amount) {
-        console.log(id);
         if (id > 1) {
             for (let e of this.entities) {
                 if (e.id == id) {

@@ -102,7 +102,6 @@ function SendRelicPos(rX, rY) {
 }
 
 function SendNewEntity(scene, type, entityId, x, y) {
-    console.log("Sent:",entityId);
     if (gameMode == 2) {
         //Type: //1 arrow //
         let msg = {
@@ -120,7 +119,6 @@ function SendNewEntity(scene, type, entityId, x, y) {
 
 function SpawnReceivedEnemy(data) {
     if (gameMode == 2) {
-        console.log("Received:",data.eId);
         let newEnemy;
         switch (data.type) {
             case 1:

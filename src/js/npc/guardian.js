@@ -99,8 +99,6 @@ class Guardian extends Enemy {
 
     Update() {
         if (this.scene && this.canMove) {
-            this.text.x = this.x;
-            this.text.y = this.y - 32;
             if (this.body.blocked.left || this.body.blocked.right) { this.body.setVelocityY(0); }
 
             if (Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x)) {

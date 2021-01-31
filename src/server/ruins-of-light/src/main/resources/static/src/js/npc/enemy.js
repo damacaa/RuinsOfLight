@@ -8,12 +8,7 @@ class Enemy extends Phaser.GameObjects.Sprite {
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
     this.scene.enemies.add(this);
-
     this.scene.entities.push(this);
-
-    //this.body.setAllowDrag(true)
-    //this.body.setDrag(1000, 0)
-    //this.body.setFriction(  50, 0)
 
     this.health = 1000;
     this.canMove;
@@ -29,7 +24,7 @@ class Enemy extends Phaser.GameObjects.Sprite {
 
     this.setDepth(1);
     this.id = 1000;//Identificador único
-    if (isOrange) { this.id = Math.floor(Math.random() * 1000) + 3;}
+    if (isOrange) { this.id = Math.floor(Math.random() * 9999999) + 10; }
   }
 
   WakeUp() {

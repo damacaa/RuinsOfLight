@@ -130,20 +130,7 @@ class InputName extends BaseMenuScene {
                                         currentScene.LoadScene('errorJ');
                                     }
                                 }, function () {
-                                    //if default path doesn't work, try local host or the other way around
-                                    if (origin == window.location.origin) {
-                                        origin = 'http://localhost:8080';
-                                    } else {
-                                        origin = window.location.origin;
-                                    }
-
-
-                                    joinGame(function () {
-                                        currentScene.LoadScene('mainMenu');
-                                    }, function () {
-                                        //Client gives up and joins offline
-                                        currentScene.LoadScene('errorJ');
-                                    });
+                                    currentScene.LoadScene('errorJ');
                                 });
                                 //joined = true;
                                 c.alpha = 0.5;
@@ -252,6 +239,7 @@ class MainMenu extends BaseMenuScene {
     }
 
     SetUp() {
+        LeaveRoom();
         if(gameMode == 2){LeaveRoom()}
         
 
@@ -422,6 +410,7 @@ class Credits extends BaseMenuScene {
     }
 
     SetUp() {
+        LeaveRoom();
         this.anims.create({
             key: 'credits',
             frames: this.anims.generateFrameNumbers('endCredits', { start: 0, end: 70 }),
@@ -452,6 +441,7 @@ class GameOver extends BaseMenuScene {
     }
 
     SetUp() {
+        LeaveRoom();
         this.camera = this.cameras.main;
 
         this.gO = this.add.image(240, 135, 'gameOver').setOrigin(0.5, 0.5);

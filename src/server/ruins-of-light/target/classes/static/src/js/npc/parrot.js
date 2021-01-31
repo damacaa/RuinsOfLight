@@ -70,18 +70,18 @@ class Parrot extends Enemy {
 
         this.once('animationcomplete', () => {
 
-            if(this.awake){
-            this.scene.camera.shake(750, .01);
-            if(gameMode == 1){this.scene.camera1.shake(750, .01)};
-            this.anims.play('parrotIdle', true);
-            this.canMove = true;
-            this.canAttack = false;
-            this.body.setSize(200, 70);
-            this.body.offset.x = 28;
-            this.body.offset.y = 120;
+            if (this.awake) {
+                this.scene.camera.shake(750, .01);
+                if (gameMode == 1) { this.scene.camera1.shake(750, .01) };
+                this.anims.play('parrotIdle', true);
+                this.canMove = true;
+                this.canAttack = false;
+                this.body.setSize(200, 70);
+                this.body.offset.x = 28;
+                this.body.offset.y = 120;
 
-            //this.body.velocity.y = -200;
-            this.body.setAccelerationY(-500);
+                //this.body.velocity.y = -200;
+                this.body.setAccelerationY(-500);
             }
         });
     }
@@ -154,7 +154,7 @@ class Parrot extends Enemy {
                     this.attacking = false;
                     this.body.setAccelerationY(-500);
                     this.scene.camera.shake(750, .01);
-                    if(gameMode == 1){this.scene.camera1.shake(750, .01)};
+                    if (gameMode == 1) { this.scene.camera1.shake(750, .01) };
                 }
             }
         }

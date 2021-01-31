@@ -217,7 +217,7 @@ class Player extends Phaser.GameObjects.Sprite {
 
         this.setDepth(3);
 
-        if (isOrange) { this.id = 0 } else { this.id = 1 };
+        this.id = 0;
     }
 
     ResetHitbox() {
