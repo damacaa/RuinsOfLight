@@ -217,7 +217,7 @@ Se ha implementado la gestión de la concurrencia de una forma muy simple. Al es
 7.- MEJORAS FINALES:
 En esta última fase se detallan todos los cambios, modificaciones, mejoras y soluciones que se han implementado de forma paralela al desarrollo de las anteriores prácticas: 
 
-Shader GLSL: se implementa un shader personalizado con dos objetivos. En primer lugar, se oscurecen los bordes de las pantallas jugables para mejorar la atmósfera del juego. En segundo lugar, se difuminan aquellos píxeles con brillo superior a un umbral. De ese modo, da la sensación de que los colores más brillantes desprenden luz.
+Shader GLSL: Se implementa un shader personalizado con dos objetivos. En primer lugar, se oscurecen los bordes de las pantallas jugables para mejorar la atmósfera del juego. En segundo lugar, se difuminan aquellos píxeles con brillo superior a un umbral. De ese modo, da la sensación de que los colores más brillantes desprenden luz.
 
 Partículas: Utilizando la clase rectángulo de Phaser, se instancia un número de veces correspondiente al área total de la escena en la que se encuentran los jugadores. Estos rectángulos interpolan su posición entre la inicial y una nueva, así como un valor alpha de transparencia, repitiendo este proceso generando un sistema de partículas que se asemejan a las partículas de polvo en suspensión. 
 
@@ -225,20 +225,23 @@ Nuevos assets: Incorporación de nuevos assets, animaciones, tales como nuevos a
 
 Escena interfaz: Se ha creado una nueva escena que corre de forma simultánea a las escenas del juego y los menús. De este modo, se separan los elementos que aparecen en pantalla en una capa superior con toda la información del juego como puede ser la vida de los jugadores y otra capa en la parte inferior con los datos referidos a la parte de api rest, intercambio de información, lista de jugadores online...
 
-Spawner: Respecto de la anterior fase, no solo se ha añadido un asset que los identifica en forma de calavera, sino que ahora gestionan mucho mejor la generación de enemigos. Concretamente, ahora se contabiliza el tiempo que pasa entre un spawn y otro. Cuando se supera el determinado tiempo de espera, de manera aleatoria se elige el tipo de enemigo que va a ser generado. Además se tienen en cuenta para la gestión, el número de enemigos que ya están en juego, para no sobrecargar la escena de enemigos y hacer muy difícil el progreso. 
+Spawner: Respecto a la anterior fase, no solo se ha añadido un asset que los identifica en forma de calavera, sino que ahora gestionan mucho mejor la generación de enemigos. Concretamente, ahora se contabiliza el tiempo que pasa entre un spawn y otro. Cuando se supera el determinado tiempo de espera, de manera aleatoria se elige el tipo de enemigo que va a ser generado. Además se tienen en cuenta para la gestión, el número de enemigos que ya están en juego, para no sobrecargar la escena de enemigos y hacer muy difícil el progreso. 
 
 Perro con IA: Se ha implementado un perro que guía a los jugadores hasta las reliquias mediante un algoritmo de A*.
 
 Pociones: Si tienes toda la vida, no puedes coger más pociones curativas.
 
-Control con mando: Se puede controlar al personaje con mando de PlayStation 4.
+Control con mando: Se puede controlar al personaje con mando de PlayStation 4. https://labs.phaser.io/edit.html?src=src/input/gamepad/gamepad%20debug.js
 
-Límite de 64 jugadores: se ha establecido un límite artificial al número de jugadores que se pueden conectar para que no se sature el servidor.
+Controles para móvil: Se puede controlar al personaje en la pantalla del móvil con otros botones, al igual que para poner el juego en pantalla completa. https://stackoverflow.com/questions/11381673/detecting-a-mobile-browser
+![alt tag](/resources/img/ReadMe/MobileControls.png)
+
+Límite de 64 jugadores: Se ha establecido un límite artificial al número de jugadores que se pueden conectar para que no se sature el servidor.
 
 Ampliación del primer nivel: Se ha remodelado su diseño y se ha ampliado para que la duración media del juego sea un poco superior.
 
-Escena de error de conexión: en el caso de no conseguir entablar conexión, aparece una nueva pantalla después de introducir el nombre de usuario, en la que el jugador puede elegir jugar offline o volver a intentar establecer conexión.
+Escena de error de conexión: En el caso de no conseguir entablar conexión, aparece una nueva pantalla después de introducir el nombre de usuario, en la que el jugador puede elegir jugar offline o volver a intentar establecer conexión.
 
-Sala de espera: antes de empezar a jugar, tras la introducción, se entra a la sala de espera en la que permaneces hasta que se une otro jugador online. Una vez los dos dentro de la sala, comienza el juego.
+Sala de espera: Antes de empezar a jugar, tras la introducción, se entra a la sala de espera en la que permaneces hasta que se une otro jugador online. Una vez los dos dentro de la sala, comienza el juego.
 
-Organización de código: se ha organizado el código, carpetas y archivos, al igual que se han creado otros distintos.
+Organización de código: Se ha organizado el código, carpetas y archivos, al igual que se han creado otros distintos.
