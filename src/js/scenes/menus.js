@@ -239,7 +239,6 @@ class MainMenu extends BaseMenuScene {
     }
 
     SetUp() {
-        LeaveRoom();
         if(gameMode == 2){LeaveRoom()}
         
 
@@ -410,7 +409,7 @@ class Credits extends BaseMenuScene {
     }
 
     SetUp() {
-        LeaveRoom();
+        if(gameMode == 2){LeaveRoom()};
         this.anims.create({
             key: 'credits',
             frames: this.anims.generateFrameNumbers('endCredits', { start: 0, end: 70 }),
@@ -441,7 +440,7 @@ class GameOver extends BaseMenuScene {
     }
 
     SetUp() {
-        LeaveRoom();
+        if(gameMode == 2){LeaveRoom()};
         this.camera = this.cameras.main;
 
         this.gO = this.add.image(240, 135, 'gameOver').setOrigin(0.5, 0.5);
