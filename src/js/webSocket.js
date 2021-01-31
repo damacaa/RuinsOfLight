@@ -57,7 +57,7 @@ function ConnectWebSocket() {
 
 let lDate = 0;
 function SendPlayerInfo(plyr) {
-    if (pConnection.readyState == 1 && gameMode == 2) {
+    if (gameMode == 2 && pConnection.readyState == 1 ) {
         let currentDate = new Date();
         let msg = {
             id: 1,
@@ -77,7 +77,7 @@ function SendPlayerInfo(plyr) {
 }
 
 function SendDamage(eId, damage, scene) {
-    if (pConnection.readyState == 1 && gameMode == 2) {
+    if (gameMode == 2 && pConnection.readyState == 1 ) {
         if (eId > 1) {
             let msg = {
                 id: 2,
@@ -91,7 +91,7 @@ function SendDamage(eId, damage, scene) {
 }
 
 function SendRelicPos(rX, rY) {
-    if (pConnection.readyState == 1 && gameMode == 2) {
+    if (gameMode == 2 && pConnection.readyState == 1 ) {
         let msg = {
             id: 3,
             x: rX,
@@ -102,7 +102,7 @@ function SendRelicPos(rX, rY) {
 }
 
 function SendNewEntity(scene, type, entityId, x, y) {
-    if (pConnection.readyState == 1 && gameMode == 2) {
+    if (gameMode == 2 && pConnection.readyState == 1 ) {
         //Type: //1 arrow //
         let msg = {
             id: 4,
@@ -118,7 +118,7 @@ function SendNewEntity(scene, type, entityId, x, y) {
 }
 
 function SpawnReceivedEnemy(data) {
-    if (pConnection.readyState == 1 && gameMode == 2) {
+    if (gameMode == 2 && pConnection.readyState == 1 ) {
         let newEnemy;
         switch (data.type) {
             case 1:
@@ -151,7 +151,7 @@ function SpawnReceivedEnemy(data) {
 }
 
 function JoinRoom() {
-    if (pConnection.readyState == 1 && gameMode == 2) {
+    if (gameMode == 2 && pConnection.readyState == 1 ) {
         let msg = {
             id: 0,
             name: player.nick
@@ -161,7 +161,7 @@ function JoinRoom() {
 }
 
 function LeaveRoom() {
-    if (pConnection.readyState == 1 && gameMode == 2) {
+    if (gameMode == 2 && pConnection.readyState == 1 ) {
         let msg = {
             id: -1,
             name: player.nick
