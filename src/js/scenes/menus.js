@@ -11,6 +11,7 @@ class BaseMenuScene extends Phaser.Scene {
         currentScene = this;
         this.scene.launch('ui');
         this.EnableFullScreen();
+        this.loading = false;
 
         this.SetUp();
     }
@@ -124,28 +125,12 @@ class InputName extends BaseMenuScene {
                                 player.nick = name;
                                 joinGame(function () {
                                     if (joined) {
-                                        gameMode = 2;
                                         currentScene.LoadScene('mainMenu');
                                     } else {
                                         currentScene.LoadScene('errorJ');
                                     }
                                 }, function () {
-                                    //if default path doesn't work, try local host or the other way around
-                                    if (origin == window.location.origin) {
-                                        origin = 'http://localhost:8080';
-                                    } else {
-                                        origin = window.location.origin;
-                                    }
-
-                                    joining = false;
-
-                                    joinGame(function () {
-                                        gameMode = 2;
-                                        currentScene.LoadScene('mainMenu');
-                                    }, function () {
-                                        //Client gives up and joins offline
-                                        currentScene.LoadScene('errorJ');
-                                    });
+                                    currentScene.LoadScene('errorJ');
                                 });
                                 //joined = true;
                                 c.alpha = 0.5;
@@ -242,7 +227,6 @@ class InputName extends BaseMenuScene {
     }
 
     update(time, delta) {
-        if (joined) { }
     }
 }
 
@@ -255,11 +239,16 @@ class MainMenu extends BaseMenuScene {
     }
 
     SetUp() {
+        LeaveRoom();
+        if(gameMode == 2){LeaveRoom()}
+        
+
         if (!this.scale.isFullscreen) {
             //this.scale.startFullscreen();
         }
 
         friend = null;
+        joinedRoom = false;
 
         ResetGame();
 
@@ -421,6 +410,7 @@ class Credits extends BaseMenuScene {
     }
 
     SetUp() {
+        LeaveRoom();
         this.anims.create({
             key: 'credits',
             frames: this.anims.generateFrameNumbers('endCredits', { start: 0, end: 70 }),
@@ -451,6 +441,7 @@ class GameOver extends BaseMenuScene {
     }
 
     SetUp() {
+        LeaveRoom();
         this.camera = this.cameras.main;
 
         this.gO = this.add.image(240, 135, 'gameOver').setOrigin(0.5, 0.5);
@@ -575,33 +566,32 @@ class Lobby extends BaseMenuScene {
 
         }).setOrigin(0).setDepth(10);
 
+        this.player = this.add.sprite(240, 190, 'p0').setOrigin(0.5).setDepth(1);
+        this.player.scene = this;
+        this.player.health = 6;
+
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('p0', { start: 0, end: 7 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.player.anims.play('right', true);
+
+        JoinRoom();
     }
 
     update() {
         checkServer();
         inGame = false;
 
-        let msg = {
-            id: 1,
-            name: player.nick,
-            x: 240,
-            y: 135,
-            health: 6,
-            anim: null,
-            prog: null,
-            flipX: false,
-            scene: currentScene.sceneIdx + levelX.toString() + levelY.toString()
-        }
+        //SendPlayerInfo(this.player);
 
-        pConnection.send(JSON.stringify(msg));
-
-        if (friend != null) {
+        if (joinedRoom) {
+            console.log(joinedRoom);
             this.fractionPlayers.text = "2/2 PLAYERS";
-
-            this.time.delayedCall(1500, function () {
-                this.LoadScene('altarRoom');
-            }, [], this);
-
+            this.LoadScene('altarRoom');
         }
     }
 
@@ -614,8 +604,8 @@ class ErrorJoining extends BaseMenuScene {
     }
 
     SetUp() {
-      
-        this.EJB = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
+
+        this.background = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
         this.titleEJ = this.add.text(55, 70, "Can't connect to server", {
             fontFamily: '"PressStart2P-Regular"',
             fontSize: '16px',
@@ -647,13 +637,7 @@ class ErrorJoining extends BaseMenuScene {
             switch (opt) {
                 case 'Try again':
                     o.Press = function () {
-                        //////////////////////no sé si es necesario igualar a 2 el gamemode; el isOnline aqui no lo pilla
-                        if(isOnline){
-                            gameMode = 2;
-                            currentScene.LoadScene('mainMenu');
-                        }else{
-                            currentScene.LoadScene('errorJ');
-                        }
+                        currentScene.LoadScene('nameInput');
                     }
 
                     o.AdjustBlock = function () {
@@ -665,7 +649,6 @@ class ErrorJoining extends BaseMenuScene {
                 case 'Play offline':
                     o.Press = function () {
                         gameMode = 1;
-                        //////////////////////////despues de la intro=negro
                         currentScene.LoadScene('mainMenu');
                     }
 
@@ -684,7 +667,7 @@ class ErrorJoining extends BaseMenuScene {
             o.on('pointerup', function (pointer, x, y) {
 
                 o.Press();
-                
+
             }, this);
 
             o.on('pointerover', function (pointer, x, y) {
@@ -698,7 +681,7 @@ class ErrorJoining extends BaseMenuScene {
             o.on('pointerout', function (pointer, x, y) {
 
                 b.setFrame(2).setVisible(false);
-                
+
             }, this);
 
             bttn.push(o);

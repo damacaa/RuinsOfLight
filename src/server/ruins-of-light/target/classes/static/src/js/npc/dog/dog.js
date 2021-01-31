@@ -59,8 +59,6 @@ class Dog extends Phaser.GameObjects.Sprite {
     let endX = Math.round(eX / 32);
     let endY = Math.round(eY / 32);
 
-    console.log(startX, startY, eX, eY);
-
     let columns = world.width;
     let rows = world.height;
 
@@ -122,9 +120,6 @@ class Dog extends Phaser.GameObjects.Sprite {
           this.way.push(w);
           current = current.parent;
         }
-
-        console.log(this.x);
-        console.log(this.way);
         break;
       } else {
         for (let i = -1; i < 2; i++) {

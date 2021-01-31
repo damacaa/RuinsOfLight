@@ -28,7 +28,7 @@ class Enemy extends Phaser.GameObjects.Sprite {
     this.secondaryTarget;
 
     this.setDepth(1);
-    this.id;//Identificador único
+    this.id = 1000;//Identificador único
     if (isOrange) { this.id = Math.floor(Math.random() * 1000) + 3;}
   }
 

@@ -13,7 +13,7 @@ class Spawner extends Phaser.GameObjects.Sprite {
         this.canSpawnEnemies = false;
         this.nextSpawnTime = 0;
         this.spawnWait = 3000;
-        this.maxEnemies = 50;
+        this.maxEnemies = 20;
 
         this.setOrigin(0, 0);
 
@@ -21,7 +21,7 @@ class Spawner extends Phaser.GameObjects.Sprite {
     }
 
     Update(time, delta) {
-        if (this.canSpawnEnemies && (Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.x, this.x, this.y) < 500 || Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.x, this.x, this.y) < 500)) {
+        if (isOrange && this.canSpawnEnemies && (Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < 500 || Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.y, this.x, this.y) < 500)) {
             this.Spawn();
 
             this.nextSpawnTime = time + this.spawnWait;

@@ -113,7 +113,7 @@ window.onload = function () {
             autoCenter: Phaser.Scale.CENTER_BOTH,
             width: 480,
             height: 270,
-        }, 
+        },
         input: {
             gamepad: true
         },
@@ -124,14 +124,17 @@ window.onload = function () {
                 gravity: { y: 981 },
                 //debug: true
             }
+        }, fps: {
+            target: 30,
+            forceSetTimeOut: true
         },
-        scene: [Preload, InputName, MainMenu, Lobby, AltarRoom, BossRoom, Dungeons, GameOver, Credits, LeaderBoard, UI]
+        scene: [Preload, InputName, ErrorJoining, MainMenu, Lobby, AltarRoom, BossRoom, Dungeons, GameOver, Credits, LeaderBoard, UI]
     }
 
     loadFont("Early GameBoy", "resources/fonts/Early GameBoy.ttf");
     loadFont("PressStart2P-Regular", "resources/fonts/PressStart2P-Regular.ttf");
 
-    
+
     game = new Phaser.Game(config);
 
     customPipeline = game.renderer.addPipeline('Custom', new CustomPipeline(game));

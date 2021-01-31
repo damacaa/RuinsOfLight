@@ -26,7 +26,7 @@ import java.util.List;
 
 public class PlayerController {
 	private List<Player> players = new ArrayList<Player>();
-	private int maxPlayers = 3;
+	private int maxPlayers = 64;
 
 	@GetMapping("players/")
 	public List<Player> players() {
@@ -46,7 +46,7 @@ public class PlayerController {
 			}
 			System.out.println(p.getNick() + " se ha unido correctamente");
 
-			p.setDate(new java.util.Date());// https://stackabuse.com/how-to-get-current-date-and-time-in-java/
+			p.setChekedDate(new java.util.Date());// https://stackabuse.com/how-to-get-current-date-and-time-in-java/
 			p.setOnline(true);
 			players.add(p);
 
@@ -62,7 +62,7 @@ public class PlayerController {
 	public boolean comprobarJugador(@RequestBody Player p) {
 		for (Player pl : players) {
 			if (pl.getNick().equals(p.getNick())) {
-				pl.setDate(new java.util.Date());
+				pl.setChekedDate(new java.util.Date());
 				return pl.getOnline();
 			}
 		}
@@ -76,9 +76,9 @@ public class PlayerController {
 		for (Player pl : players) {
 			java.util.Date currentDate = new java.util.Date();
 
-			if ((currentDate.getTime() - pl.getDate().getTime()) > 3000) {// (d2.getTime()-d1.getTime())
+			if ((currentDate.getTime() - pl.getChekedDate().getTime()) > 3000) {// (d2.getTime()-d1.getTime())
 				pl.setOnline(false);
-				System.out.println(pl.getNick() + " ha abandonado la partida");
+				//System.out.println(pl.getNick() + " ha abandonado la partida");
 				indexToDelete = count;
 			}
 			count++;

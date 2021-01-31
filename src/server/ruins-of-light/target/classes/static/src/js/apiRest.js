@@ -66,10 +66,10 @@ function joinGame(doneFunc, failFunc) {
         }).done(function (hasJoined) {
             if (hasJoined) {
                 console.log("Conectado correctamente a: " + origin);
+                ConnectWebSocket();
             } else {
                 console.log("Ya existe un usuario con ese nombre en: " + origin);
             }
-
             joined = hasJoined;
             isOnline = hasJoined;
             if (doneFunc) { doneFunc(); }
@@ -138,5 +138,12 @@ function checkServer() {
             checkChat();
         }
         if (inGame && gameMode == 2) { SendPlayerInfo(currentScene.player0); }
+        
+    }else{
+        
+        if (new Date() - lastTimeChecked > checkServerWait) {
+            lastTimeChecked = new Date();
+            joinGame();
+        }
     }
 }

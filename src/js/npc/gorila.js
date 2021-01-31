@@ -106,7 +106,8 @@ class GreatGorila extends Enemy {
         }
 
         if (this.scene && this.canMove) {
-
+            this.text.x = this.x;
+            this.text.y = this.y - 32;
             if (Math.abs(this.secondaryTarget.x - this.x) > 100) {
 
                 if (Math.abs(this.primaryTarget.x - this.x) > 100) {

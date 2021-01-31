@@ -11,6 +11,7 @@ class BaseMenuScene extends Phaser.Scene {
         currentScene = this;
         this.scene.launch('ui');
         this.EnableFullScreen();
+        this.loading = false;
 
         this.SetUp();
     }
@@ -122,7 +123,13 @@ class InputName extends BaseMenuScene {
                         if (name.length > 0) {
                             if (!this.ok) {
                                 player.nick = name;
-                                joinGame(null, function () {
+                                joinGame(function () {
+                                    if (joined) {
+                                        currentScene.LoadScene('mainMenu');
+                                    } else {
+                                        currentScene.LoadScene('errorJ');
+                                    }
+                                }, function () {
                                     //if default path doesn't work, try local host or the other way around
                                     if (origin == window.location.origin) {
                                         origin = 'http://localhost:8080';
@@ -130,11 +137,12 @@ class InputName extends BaseMenuScene {
                                         origin = window.location.origin;
                                     }
 
-                                    joining = false;
 
-                                    joinGame(null, function () {
+                                    joinGame(function () {
+                                        currentScene.LoadScene('mainMenu');
+                                    }, function () {
                                         //Client gives up and joins offline
-                                        joined = true;
+                                        currentScene.LoadScene('errorJ');
                                     });
                                 });
                                 //joined = true;
@@ -232,7 +240,6 @@ class InputName extends BaseMenuScene {
     }
 
     update(time, delta) {
-        if (joined) { this.LoadScene('mainMenu'); }
     }
 }
 
@@ -245,11 +252,15 @@ class MainMenu extends BaseMenuScene {
     }
 
     SetUp() {
+        if(gameMode == 2){LeaveRoom()}
+        
+
         if (!this.scale.isFullscreen) {
             //this.scale.startFullscreen();
         }
 
         friend = null;
+        joinedRoom = false;
 
         ResetGame();
 
@@ -565,34 +576,128 @@ class Lobby extends BaseMenuScene {
 
         }).setOrigin(0).setDepth(10);
 
+        this.player = this.add.sprite(240, 190, 'p0').setOrigin(0.5).setDepth(1);
+        this.player.scene = this;
+        this.player.health = 6;
+
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('p0', { start: 0, end: 7 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.player.anims.play('right', true);
+
+        JoinRoom();
     }
 
     update() {
         checkServer();
         inGame = false;
 
-        let msg = {
-            id: 1,
-            name: player.nick,
-            x: 240,
-            y: 135,
-            health: 6,
-            anim: null,
-            prog: null,
-            flipX: false,
-            scene: currentScene.sceneIdx + levelX.toString() + levelY.toString()
-        }
+        //SendPlayerInfo(this.player);
 
-        pConnection.send(JSON.stringify(msg));
-
-        if (friend != null) {
+        if (joinedRoom) {
+            console.log(joinedRoom);
             this.fractionPlayers.text = "2/2 PLAYERS";
-
-            this.time.delayedCall(1500, function () {
-                this.LoadScene('altarRoom');
-            }, [], this);
-
+            this.LoadScene('altarRoom');
         }
+    }
+
+}
+
+class ErrorJoining extends BaseMenuScene {
+
+    constructor() {
+        super('errorJ');
+    }
+
+    SetUp() {
+
+        this.background = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
+        this.titleEJ = this.add.text(55, 70, "Can't connect to server", {
+            fontFamily: '"PressStart2P-Regular"',
+            fontSize: '16px',
+            color: '#eeeeba'
+
+        }).setOrigin(0).setDepth(10);
+
+        for (let idx = 0; idx < game.width * 32; idx += 159) {
+            this.add.sprite(idx, 0, 'background').setOrigin(0, 0);
+        }
+
+        let bttn = [];
+        let opts = [
+            'Try again', 'Play offline'
+        ];
+
+        let optX = 130;
+        let optY = 200;
+        for (let opt of opts) {
+            let o = this.add.text(optX, optY, opt, {
+                fontFamily: '"PressStart2P-Regular"',
+                fontSize: '12px',
+                color: '#eeeeba',
+                align: 'center'
+            });
+            o.setAlign('center');
+            o.setOrigin(0.5);
+
+            switch (opt) {
+                case 'Try again':
+                    o.Press = function () {
+                        currentScene.LoadScene('nameInput');
+                    }
+
+                    o.AdjustBlock = function () {
+                        b.setFrame(2).setVisible(true);
+                    }
+                    optX += 200;
+                    break;
+
+                case 'Play offline':
+                    o.Press = function () {
+                        gameMode = 1;
+                        currentScene.LoadScene('mainMenu');
+                    }
+
+                    o.AdjustBlock = function () {
+                        b.setFrame(2).setVisible(true);
+                    }
+
+                    break;
+
+                default:
+
+                    break;
+            }
+
+            o.setInteractive();
+            o.on('pointerup', function (pointer, x, y) {
+
+                o.Press();
+
+            }, this);
+
+            o.on('pointerover', function (pointer, x, y) {
+
+                b.x = o.x;
+                b.y = o.y;
+
+                o.AdjustBlock();
+            }, this);
+
+            o.on('pointerout', function (pointer, x, y) {
+
+                b.setFrame(2).setVisible(false);
+
+            }, this);
+
+            bttn.push(o);
+        }
+        let idx = 0;
+        let b = this.add.sprite(bttn[idx].x, bttn[idx].y, 'block').setOrigin(0.5).setVisible(false);
     }
 
 }

@@ -59,8 +59,6 @@ class BaseScene extends Phaser.Scene {
         ui.EnableGameUI();
         currentScene = this;
 
-        isOrange = player.nick < friend.name;
-
         //Crea listas
         this.playerProjectiles = this.physics.add.group();
         this.enemyProjectiles = this.physics.add.group();
@@ -146,10 +144,8 @@ class BaseScene extends Phaser.Scene {
                 repeat: -1
             });
 
-            //rect.setScrollFactor(0.9);
             this.points.push(rect);
         }
-
         this.messages = [];
         inGame = true;
     }

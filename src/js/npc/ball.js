@@ -93,6 +93,7 @@ class Ball extends Enemy {
                 this.scene.entities.splice(index, 1);
             }
 
+            this.text.destroy();
             this.destroy();
 
         } else {
@@ -114,7 +115,8 @@ class Ball extends Enemy {
 
     Update() {
         if (this.scene && this.canMove) {
-
+            this.text.x = this.x;
+            this.text.y = this.y - 32;
             if (this.body.blocked.left || this.body.blocked.right) { this.body.setVelocityY(-100); }
 
             if (Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x)) {
