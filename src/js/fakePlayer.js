@@ -270,6 +270,7 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
 
     Attack(x, y) {
         (this.x < x) ? new FakeArrow(this.scene, x, y, 1, 0) : new FakeArrow(this.scene, x, y, -1, 0);
+        this.scene.sound.play("effectBow");
     }
 
     Update(time, delta) {

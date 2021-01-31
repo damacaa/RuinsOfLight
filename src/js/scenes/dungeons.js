@@ -63,7 +63,6 @@ class Dungeons extends BaseScene {
                 }
                 break;
             default:
-                this.previousDungeonDoor = new DungeonStairs(this, player0.x, player0.y, "1_1");
                 break;
         }
 

@@ -33,9 +33,7 @@ class Relic extends Phaser.GameObjects.Sprite {
         } else if (defeatedBosses == 1) {
             this.scene.sound.play("effectParrotRelic");
         }
-        console.log("flasj")
         this.scene.camera.flash(1000);
-        //this.enabled = false;
         this.visible = false;
         this.on = false;
         hasRelic = true;

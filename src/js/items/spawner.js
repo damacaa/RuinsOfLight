@@ -12,8 +12,8 @@ class Spawner extends Phaser.GameObjects.Sprite {
 
         this.canSpawnEnemies = false;
         this.nextSpawnTime = 0;
-        this.spawnWait = 3000;
-        this.maxEnemies = 30;
+        this.spawnWait = 7500;
+        this.maxEnemies = 23;
 
         this.setOrigin(0, 0);
 

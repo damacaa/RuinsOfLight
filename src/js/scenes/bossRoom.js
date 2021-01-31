@@ -112,7 +112,11 @@ class BossRoom extends BaseScene {
             } else {
                 if (defeatedBosses == 2) {
                     if (!this.exitDoor.open) {
-                        if (isOrange) { createRecord(player.nick, friend.name, ((new Date() - startTime) / 1000)); }
+                        if (gameMode == 2) {
+                            if (isOrange) { createRecord(player.nick, friend.name, ((new Date() - startTime) / 1000)); }
+                        } else {
+                            createRecord(player.nick, player.nick + "1", ((new Date() - startTime) / 1000));
+                        }
                         this.exitDoor.Open();
                     }
                 } else {

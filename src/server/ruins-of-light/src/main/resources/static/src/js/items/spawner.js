@@ -12,8 +12,8 @@ class Spawner extends Phaser.GameObjects.Sprite {
 
         this.canSpawnEnemies = false;
         this.nextSpawnTime = 0;
-        this.spawnWait = 3000;
-        this.maxEnemies = 7;
+        this.spawnWait = 7500;
+        this.maxEnemies = 23;
 
         this.setOrigin(0, 0);
 
@@ -36,7 +36,6 @@ class Spawner extends Phaser.GameObjects.Sprite {
 
     Spawn() {
         let rand = Math.random();
-
         if (rand < 0.4) {
             let randomEnemy = new Ball(this.scene, this.x + 16, this.y + 16);
             randomEnemy.WakeUp();
