@@ -24,15 +24,10 @@ class BossRoom extends BaseScene {
         this.add.image(this.parrot.x + 48, this.parrot.y + 64 + 19, 'bossAltar').setDepth(0);
 
         if (!firstTimeBoss) {
-
-            if (gameMode == 2) {
-                if (isOrange) { this.player0.x = this.dungeonDoor.x-80; } else { this.player0.x = this.dungeonDoor.x-48; }
-            } else {
-                this.player0.x = this.dungeonDoor.x-80;
-                this.player1.x = this.dungeonDoor.x-48;
-                this.player0.y = this.dungeonDoor.y;
-                this.player1.y = this.dungeonDoor.y;
-            }
+            this.player0.x = this.dungeonDoor.x - 80;
+            this.player1.x = this.dungeonDoor.x - 48;
+            this.player0.y = this.dungeonDoor.y;
+            this.player1.y = this.dungeonDoor.y;
 
             this.player0.flipX = true;
             this.player1.flipX = true;
