@@ -24,6 +24,8 @@ class BossRoom extends BaseScene {
         this.add.image(this.gorila.x + 8, this.gorila.y + 64 + 64 + 32, 'bossAltar').setDepth(0);
         this.add.image(this.parrot.x + 48, this.parrot.y + 64 + 19, 'bossAltar').setDepth(0);
 
+        new Spawner(this, 300, 100);
+
         if (!firstTimeBoss) {
             this.player0.x = this.dungeonDoor.x - 80;
             this.player1.x = this.dungeonDoor.x - 48;

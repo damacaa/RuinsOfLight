@@ -117,8 +117,6 @@ class Parrot extends Enemy {
         }
 
         if (this.scene) {
-            this.text.x = this.x;
-            this.text.y = this.y - 32;
             if (this.awake) {
                 this.hitBox.x = this.x;
                 this.hitBox.y = this.y + 50;

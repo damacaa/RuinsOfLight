@@ -9,8 +9,13 @@ class AltarRoom extends BaseScene {
     }
 
     CreateStage() {
-        this.player0.x = 80;
-        //this.player1.x = 100;
+
+        if (gameMode == 2) {
+            if (isOrange) { this.player0.x = 80; } else { this.player0.x = 100; }
+        } else {
+            this.player0.x = 80;
+            this.player1.x = 100;
+        }
 
         this.bg = this.add.sprite(0, -32, 'bossBackground').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
 

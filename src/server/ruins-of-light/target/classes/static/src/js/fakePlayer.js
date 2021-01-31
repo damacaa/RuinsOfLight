@@ -273,7 +273,7 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
     }
 
     Update(time, delta) {
-        if (this.scene == 0) {
+        if (this.health <= 0) {
             this.scene.LoadScene('gameOver');
         }
 

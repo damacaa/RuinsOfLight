@@ -2,9 +2,7 @@
 let lastDate = 0;
 
 function ConnectWebSocket() {
-    let o = origin.split("/")[2];//ngrok
-    //let o = "localhost:8080";
-    pConnection = new WebSocket('ws://' + o + '/player');//https://stackoverflow.com/questions/59359280/react-app-error-failed-to-construct-websocket-an-insecure-websocket-connecti
+    pConnection = new WebSocket('ws://' + wsOrigin + '/player');//https://stackoverflow.com/questions/59359280/react-app-error-failed-to-construct-websocket-an-insecure-websocket-connecti
 
     pConnection.onerror = function (e) {
         console.log("WS error: " + e);
@@ -17,7 +15,7 @@ function ConnectWebSocket() {
                     data = JSON.parse(msg.data);
                     joinedRoom = true;
                     isOrange = data.isOrange;
-                    console.log(data.room);
+                    console.log("Sala: " + data.room);
                     break;
                 case 1:
                     friend = JSON.parse(msg.data);
@@ -28,7 +26,7 @@ function ConnectWebSocket() {
                     break;
                 case 2:
                     data = JSON.parse(msg.data);
-                    currentScene.DamageEntity(data.idx, data.damage);
+                    currentScene.DamageEntity(data.eId, data.damage);
                     break;
                 case 3:
                     data = JSON.parse(msg.data);
@@ -104,6 +102,7 @@ function SendRelicPos(rX, rY) {
 }
 
 function SendNewEntity(scene, type, entityId, x, y) {
+    console.log("Sent:",entityId);
     if (gameMode == 2) {
         //Type: //1 arrow //
         let msg = {
@@ -121,6 +120,7 @@ function SendNewEntity(scene, type, entityId, x, y) {
 
 function SpawnReceivedEnemy(data) {
     if (gameMode == 2) {
+        console.log("Received:",data.eId);
         let newEnemy;
         switch (data.type) {
             case 1:
@@ -153,7 +153,6 @@ function SpawnReceivedEnemy(data) {
 }
 
 function JoinRoom() {
-    console.log("Quiero jugaaar");
     if (gameMode == 2) {
         let msg = {
             id: 0,
