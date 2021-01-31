@@ -19,7 +19,7 @@ https://trello.com/b/W579zLya/ruins-of-light
 0.-DATOS DEL PROYECTO 
 Título: Ruins Of Light Game Design Document Enero 2021
 
-Fase 3: JER2021-MOS-08
+Fase 4/5: JER2021-MOS-08
 
 Equipo de Desarrollo: Sergio Montes Veredas. Sara Fuente Águila. Juan Jesús Rodríguez Sánchez. María Hidalga de la Fuente. Daniel Martí Casanova.
 
@@ -30,7 +30,7 @@ Plataformas 2D: los jugadores tienen que saltar sobre plataformas suspendidas o 
 
 Plataforma: El navegador de PC.
 
-Versión:2.0
+Versión:3.0
 
 Sinopsis del Juego: Dos hermanos tratan de encontrar las ruinas de una antigua civilización. Tras varios años de investigación encuentran un templo antiguo en el que quedan atrapados y las defensas de la antigua civilización tratarán de no dejarles escapar con vida.
 
@@ -61,10 +61,12 @@ Diagrama de Flujo:
 Escenas:
 
 ![alt tag](/resources/img/ReadMe/LogIn.png)
+![alt tag](/resources/img/ReadMe/ErrorConex.png)
 ![alt tag](/resources/img/ReadMe/Menu.png)
 ![alt tag](/resources/img/ReadMe/LeaderBoard.png)
 ![alt tag](/resources/img/ReadMe/Intro.png)
 ![alt tag](/resources/img/ReadMe/Cinematica.png)
+![alt tag](/resources/img/ReadMe/SalaEspera.png)
 ![alt tag](/resources/img/ReadMe/Altares.png)
 ![alt tag](/resources/img/ReadMe/GranSalon.png)
 ![alt tag](/resources/img/ReadMe/Templo.png)
@@ -195,3 +197,48 @@ public boolean nuevoChat(@RequestBody Chat chat): guarda en la lista de chats el
 public void CheckPayers(): compara la hora de creación de cada uno de los mensaje con la hora actual. Si la diferencia entre estas es mayor a x segundos, el mensaje en cuestión es borrado de la lista de mensajes.
 
 
+6.- WEBSOCKETS:
+6.1.-Documentación protocolo
+En la carpeta del proyecto se añade el archivo WebSocket.js, el cual se encargará de implementar las funcionalidades del cliente. En dicho archivo se encuentra la creación y administración de una conexión a un servidor a través de un WebSocket, el envío de mensajes y la gestión de los mensajes recibidos.
+
+En la parte del servidor, se implementa un manejador que gestiona los mensajes. Concretamente se ha implementado una clase WebSocketPlayerHandler que gestiona los mensajes recibidos y los envía a los clientes que corresponda. Cabe destacar que los mensajes enviados son strings en formato JSON. En ambos extremos de la comunicación este string se interpreta como un objeto para su posterior lectura.
+
+La clase WebSocketPlayerHandler contiene una lista de objetos de la clase WSPlayer, que almacenan la sesión correspondiente así como información extra como el nombre del jugador o la fecha y hora de la última actualización.
+
+Se gestiona la asincronía de los mensajes comparando en el servidor la fecha y hora de cada mensaje recibido con la fecha más reciente de la que se tenga constancia. Para ello, se envía la fecha desde el cliente como parte del mensaje.
+
+Se ha implementado la gestión de la concurrencia de una forma muy simple. Al establecer una nueva conexión se crea un nuevo jugador. Cuando este jugador empieza a buscar partida, se mira si hay algún otro jugador en la lista de espera. Si no hay nadie se añade el jugador a la lista de espera, pero si sí que hay alguien, se les asigna un identificador de la sala a la que pertenecen, se les envía un mensaje para confirmar que se han unido satisfactoriamente a una sala y empiezan a intercambiar mensajes. Cuando una de las dos sesiones se cierra, se envía un mensaje al otro jugador haciendo que este se salga de la partida.
+
+
+6.2.-Diagrama de clases WS
+![alt tag](/resources/img/ReadMe/MVC_ws.png)
+
+
+7.- MEJORAS FINALES:
+En esta última fase se detallan todos los cambios, modificaciones, mejoras y soluciones que se han implementado de forma paralela al desarrollo de las anteriores prácticas: 
+
+Shader GLSL: se implementa un shader personalizado con dos objetivos. En primer lugar, se oscurecen los bordes de las pantallas jugables para mejorar la atmósfera del juego. En segundo lugar, se difuminan aquellos píxeles con brillo superior a un umbral. De ese modo, da la sensación de que los colores más brillantes desprenden luz.
+
+Partículas: Utilizando la clase rectángulo de Phaser, se instancia un número de veces correspondiente al área total de la escena en la que se encuentran los jugadores. Estos rectángulos interpolan su posición entre la inicial y una nueva, así como un valor alpha de transparencia, repitiendo este proceso generando un sistema de partículas que se asemejan a las partículas de polvo en suspensión. 
+
+Nuevos assets: Incorporación de nuevos assets, animaciones, tales como nuevos altares, nuevos ataques de los enemigos, nuevos efectos de sonido, un perro guía…
+
+Escena interfaz: Se ha creado una nueva escena que corre de forma simultánea a las escenas del juego y los menús. De este modo, se separan los elementos que aparecen en pantalla en una capa superior con toda la información del juego como puede ser la vida de los jugadores y otra capa en la parte inferior con los datos referidos a la parte de api rest, intercambio de información, lista de jugadores online...
+
+Spawner: Respecto de la anterior fase, no solo se ha añadido un asset que los identifica en forma de calavera, sino que ahora gestionan mucho mejor la generación de enemigos. Concretamente, ahora se contabiliza el tiempo que pasa entre un spawn y otro. Cuando se supera el determinado tiempo de espera, de manera aleatoria se elige el tipo de enemigo que va a ser generado. Además se tienen en cuenta para la gestión, el número de enemigos que ya están en juego, para no sobrecargar la escena de enemigos y hacer muy difícil el progreso. 
+
+Perro con IA: Se ha implementado un perro que guía a los jugadores hasta las reliquias mediante un algoritmo de A*.
+
+Pociones: Si tienes toda la vida, no puedes coger más pociones curativas.
+
+Control con mando: Se puede controlar al personaje con mando de PlayStation 4.
+
+Límite de 64 jugadores: se ha establecido un límite artificial al número de jugadores que se pueden conectar para que no se sature el servidor.
+
+Ampliación del primer nivel: Se ha remodelado su diseño y se ha ampliado para que la duración media del juego sea un poco superior.
+
+Escena de error de conexión: en el caso de no conseguir entablar conexión, aparece una nueva pantalla después de introducir el nombre de usuario, en la que el jugador puede elegir jugar offline o volver a intentar establecer conexión.
+
+Sala de espera: antes de empezar a jugar, tras la introducción, se entra a la sala de espera en la que permaneces hasta que se une otro jugador online. Una vez los dos dentro de la sala, comienza el juego.
+
+Organización de código: se ha organizado el código, carpetas y archivos, al igual que se han creado otros distintos.
