@@ -11,6 +11,7 @@ class BaseMenuScene extends Phaser.Scene {
         currentScene = this;
         this.scene.launch('ui');
         this.EnableFullScreen();
+        this.loading = false;
 
         this.SetUp();
     }
@@ -239,7 +240,6 @@ class InputName extends BaseMenuScene {
     }
 
     update(time, delta) {
-        if (joined) { }
     }
 }
 
@@ -252,11 +252,15 @@ class MainMenu extends BaseMenuScene {
     }
 
     SetUp() {
+        if(gameMode == 2){LeaveRoom()}
+        
+
         if (!this.scale.isFullscreen) {
             //this.scale.startFullscreen();
         }
 
         friend = null;
+        joinedRoom = false;
 
         ResetGame();
 
@@ -575,7 +579,7 @@ class Lobby extends BaseMenuScene {
         this.player = this.add.sprite(240, 190, 'p0').setOrigin(0.5).setDepth(1);
         this.player.scene = this;
         this.player.health = 6;
-        
+
         this.anims.create({
             key: 'right',
             frames: this.anims.generateFrameNumbers('p0', { start: 0, end: 7 }),
@@ -584,21 +588,20 @@ class Lobby extends BaseMenuScene {
         });
 
         this.player.anims.play('right', true);
+
+        JoinRoom();
     }
 
     update() {
         checkServer();
         inGame = false;
 
-        SendPlayerInfo(this.player);
+        //SendPlayerInfo(this.player);
 
-        if (friend != null) {
+        if (joinedRoom) {
+            console.log(joinedRoom);
             this.fractionPlayers.text = "2/2 PLAYERS";
-
-            this.time.delayedCall(1500, function () {
-                this.LoadScene('altarRoom');
-            }, [], this);
-
+            this.LoadScene('altarRoom');
         }
     }
 
@@ -611,8 +614,8 @@ class ErrorJoining extends BaseMenuScene {
     }
 
     SetUp() {
-      
-        this.EJB = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
+
+        this.background = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
         this.titleEJ = this.add.text(55, 70, "Can't connect to server", {
             fontFamily: '"PressStart2P-Regular"',
             fontSize: '16px',
@@ -644,7 +647,7 @@ class ErrorJoining extends BaseMenuScene {
             switch (opt) {
                 case 'Try again':
                     o.Press = function () {
-                            currentScene.LoadScene('nameInput');
+                        currentScene.LoadScene('nameInput');
                     }
 
                     o.AdjustBlock = function () {
@@ -656,7 +659,6 @@ class ErrorJoining extends BaseMenuScene {
                 case 'Play offline':
                     o.Press = function () {
                         gameMode = 1;
-                        //////////////////////////despues de la intro=negro
                         currentScene.LoadScene('mainMenu');
                     }
 
@@ -675,7 +677,7 @@ class ErrorJoining extends BaseMenuScene {
             o.on('pointerup', function (pointer, x, y) {
 
                 o.Press();
-                
+
             }, this);
 
             o.on('pointerover', function (pointer, x, y) {
@@ -689,7 +691,7 @@ class ErrorJoining extends BaseMenuScene {
             o.on('pointerout', function (pointer, x, y) {
 
                 b.setFrame(2).setVisible(false);
-                
+
             }, this);
 
             bttn.push(o);

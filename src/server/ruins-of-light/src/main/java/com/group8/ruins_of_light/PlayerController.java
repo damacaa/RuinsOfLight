@@ -26,7 +26,7 @@ import java.util.List;
 
 public class PlayerController {
 	private List<Player> players = new ArrayList<Player>();
-	private int maxPlayers = 3;
+	private int maxPlayers = 64;
 
 	@GetMapping("players/")
 	public List<Player> players() {
@@ -78,7 +78,7 @@ public class PlayerController {
 
 			if ((currentDate.getTime() - pl.getChekedDate().getTime()) > 3000) {// (d2.getTime()-d1.getTime())
 				pl.setOnline(false);
-				System.out.println(pl.getNick() + " ha abandonado la partida");
+				//System.out.println(pl.getNick() + " ha abandonado la partida");
 				indexToDelete = count;
 			}
 			count++;

@@ -19,7 +19,7 @@ function ResetGame() {
     firstTimeBoss = true;
     defeatedBosses = 0;
 
-    godMode = false;
+    godMode = true;
     skip = false;
 
     loadRecords();
@@ -58,8 +58,6 @@ class BaseScene extends Phaser.Scene {
     create() {
         ui.EnableGameUI();
         currentScene = this;
-
-        isOrange = player.nick < friend.name;
 
         //Crea listas
         this.playerProjectiles = this.physics.add.group();
@@ -115,6 +113,9 @@ class BaseScene extends Phaser.Scene {
                 break;
         }
 
+        this.player0.id = 0;
+        this.player1.id = 1;
+
         //Crea el escenario
         this.CreateStage();
 
@@ -146,10 +147,8 @@ class BaseScene extends Phaser.Scene {
                 repeat: -1
             });
 
-            //rect.setScrollFactor(0.9);
             this.points.push(rect);
         }
-
         this.messages = [];
         inGame = true;
     }
@@ -379,12 +378,13 @@ class BaseScene extends Phaser.Scene {
     }
 
     DamageEntity(id, amount) {
-        for (let e of this.entities) {
-            if (e.id == id) {
-                e.Hurt(amount);
-                break;
-            } else {
-                console.log(e.id, "!=", id);
+        console.log(id);
+        if (id > 1) {
+            for (let e of this.entities) {
+                if (e.id == id) {
+                    e.Hurt(amount);
+                    break;
+                }
             }
         }
     }

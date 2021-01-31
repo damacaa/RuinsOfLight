@@ -80,7 +80,8 @@ class Drone extends Enemy {
 
     Update() {
         if (this.scene && this.canMove) {
-
+            this.text.x = this.x;
+            this.text.y = this.y - 32;
             if (Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x)) {
                 this.primaryTarget = this.scene.bowPlayer;
                 this.secondaryTarget = this.scene.swordPlayer;

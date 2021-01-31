@@ -1,6 +1,8 @@
 package com.group8.ruins_of_light;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,73 +20,137 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @CrossOrigin
 public class WebSocketPlayerHandler extends TextWebSocketHandler {
 
-	private Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
-	private Map<String, Integer> lastTimes = new ConcurrentHashMap<>();
-	private Map<String, Vector2> lastPositions = new ConcurrentHashMap<>();
+	// private Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
+	private Map<String, WSPlayer> players = new ConcurrentHashMap<>();
+	private List<WSPlayer> waitList = new ArrayList<WSPlayer>();
+
+	private List<WSRoom> rooms = new ArrayList<WSRoom>();
+	private int nextRoomId = 0;
 
 	private ObjectMapper mapper = new ObjectMapper();
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		System.out.println("New user: " + session.getId());
-		sessions.put(session.getId(), session);
-		lastTimes.put(session.getId(), 0);
-		lastPositions.put(session.getId(), new Vector2());
+		WSPlayer p = new WSPlayer(session);
+		players.put(session.getId(), p);
+		for (WSPlayer wp : waitList) {
+			System.out.println(wp.name);
+		}
 	}
 
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-		System.out.println("Session closed: " + session.getId());
-		sessions.remove(session.getId());
-		lastTimes.remove(session.getId());
-		lastPositions.remove(session.getId());
+		WSPlayer p = players.get(session.getId());
+		System.out.println("Session closed: " + p.name);
+
+		// Saca al jugador de la partida
+		ObjectNode newNode = mapper.createObjectNode();
+		newNode.put("id", -1);
+		for (WSPlayer p1 : players.values()) {
+			if (p.roomId == p1.roomId && p != p1) {
+				p1.roomId = -1;
+				p1.session.sendMessage(new TextMessage(newNode.toString()));
+			}
+		}
+		if (waitList.contains(p)) {
+			waitList.remove(p);
+		}
+		players.remove(session.getId());
 	}
 
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-
-		// System.out.println("Message received: " + message.getPayload());
 		JsonNode node = mapper.readTree(message.getPayload());
 
-		sendOtherParticipants(session, node);
+		if (node.get("id").asInt() == 0) {
+			// Ready to join room
+			WSPlayer p1 = players.get(session.getId());
+			p1.name = node.get("name").asText();
+
+			System.out.println(p1.name + " intenta unirse a una sala");
+
+			if (waitList.size() > 0) {
+				System.out.println("Hay suficiente gente: " + waitList.toString());
+				// Find friend
+				p1.roomId = nextRoomId;
+				WSPlayer p0;
+
+				ObjectNode newNode = mapper.createObjectNode();
+				newNode.put("id", 0);
+				newNode.put("room", nextRoomId);
+				newNode.put("isOrange", true);
+
+				for (WSPlayer p : waitList) {
+					if (p != p1) {
+						p0 = p;
+						p0.roomId = nextRoomId;
+						waitList.remove(p0);
+						p0.session.sendMessage(new TextMessage(newNode.toString()));
+						System.out.println(
+								p1.name + " y " + p0.name + " se han unido correctamente a la sala " + nextRoomId);
+						break;
+					}
+				}
+
+				newNode.put("isOrange", false);
+				p1.session.sendMessage(new TextMessage(newNode.toString()));
+
+				nextRoomId++;
+			} else {
+				// Add to waitlist
+				if (!waitList.contains(p1)) {
+					waitList.add(p1);
+				}
+			}
+		} else if (node.get("id").asInt() == -1) {
+			WSPlayer p = players.get(session.getId());
+			p.roomId = -1;
+		} else {
+			sendOtherParticipants(session, node);
+		}
 	}
 
 	private void sendOtherParticipants(WebSocketSession session, JsonNode node) throws IOException {
-
+		String sId = session.getId();
+		WSPlayer player = players.get(sId);
 		boolean envia = true;
 
 		ObjectNode newNode = mapper.createObjectNode();
-		newNode.put("id", node.get("id").asInt());
 
+		newNode.put("id", node.get("id").asInt());
 		switch (node.get("id").asInt()) {
 		case 1:
 			// Posicion jugador
-			String sId = session.getId();
-			int time = node.get("date").asInt() - lastTimes.get(sId);
+			int time = node.get("date").asInt() - players.get(sId).lastTime;
 			if (time > 0) {
-
 				float x = Float.parseFloat(node.get("x").asText());
 				float y = Float.parseFloat(node.get("y").asText());
 
-				if (lastPositions.get(sId).distance(x, y) < 200 * time) {
-					lastTimes.put(sId, node.get("date").asInt());
-					newNode.put("name", node.get("name").asText());
-					newNode.put("x", x);
-					newNode.put("y", y);
-					newNode.put("health", node.get("health").asInt());
-					newNode.put("anim", node.get("anim").asText());
-					newNode.put("prog", node.get("prog").asText());
-					newNode.put("flipX", node.get("flipX").asBoolean());
-					newNode.put("scene", node.get("scene").asText());
-					newNode.put("date", node.get("date").asInt());
-				} else {
-					// Trampas?
-					System.out.println(node.get("name").asInt()+" está haciendo trampas.");
+				if (players.get(sId).lastPosition.distance(x, y) < 200 * time) {
+
+				} else { // Trampas?
+					// System.out.println(node.get("name").asInt() + " está haciendo trampas.");
 				}
 
+				players.get(sId).lastTime = node.get("date").asInt();
+				newNode.put("name", node.get("name").asText());
+				newNode.put("x", x);
+				newNode.put("y", y);
+				newNode.put("health", node.get("health").asInt());
+				newNode.put("anim", node.get("anim").asText());
+				newNode.put("prog", node.get("prog").asText());
+				newNode.put("flipX", node.get("flipX").asBoolean());
+				newNode.put("scene", node.get("scene").asText());
+				newNode.put("date", node.get("date").asInt());
+				/*
+				 * if (players.get(sId).lastPosition.distance(x, y) < 200 * time) {
+				 * 
+				 * } else { // Trampas?
+				 * System.out.println(node.get("name").asInt()+" está haciendo trampas."); }
+				 */
 			} else {
 				envia = false;
-				System.out.println(node.get("date").asInt() - lastTimes.get(session.getId()));
+				System.out.println(node.get("date").asInt() - players.get(sId).lastTime);
 			}
 			break;
 		case 2:
@@ -106,15 +172,14 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 			newNode.put("y", node.get("y").asInt());
 			newNode.put("scene", node.get("scene").asText());
 			break;
-
 		default:
 			// code block
 		}
 
 		if (envia) {
-			for (WebSocketSession participant : sessions.values()) {
-				if (!participant.getId().equals(session.getId())) {
-					participant.sendMessage(new TextMessage(newNode.toString()));
+			for (WSPlayer p : players.values()) {
+				if (player.roomId == p.roomId && player != p) {
+					p.session.sendMessage(new TextMessage(newNode.toString()));
 				}
 			}
 		}

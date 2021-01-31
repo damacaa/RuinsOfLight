@@ -269,12 +269,11 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
     }
 
     Attack(x, y) {
-        console.log("FakeArrow");
         (this.x < x) ? new FakeArrow(this.scene, x, y, 1, 0) : new FakeArrow(this.scene, x, y, -1, 0);
     }
 
     Update(time, delta) {
-        if (this.scene == 0) {
+        if (this.health <= 0) {
             this.scene.LoadScene('gameOver');
         }
 

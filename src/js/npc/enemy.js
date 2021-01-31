@@ -28,8 +28,15 @@ class Enemy extends Phaser.GameObjects.Sprite {
     this.secondaryTarget;
 
     this.setDepth(1);
-    this.id;//Identificador único
-    if (isOrange) { this.id = Math.floor(Math.random() * 1000) + 3;}
+    this.id = 1000;//Identificador único
+    if (isOrange) { this.id = Math.floor(Math.random() * 100000) + 10; }
+
+    this.text = this.scene.add.text(this.x, this.y - 32, this.id, {
+      fontFamily: '"PressStart2P-Regular"',
+      fontSize: '7px',
+      color: '#eeeeba',
+      align: 'left'
+    }).setDepth(10).setOrigin(0.5);
   }
 
   WakeUp() {
@@ -62,6 +69,7 @@ class Enemy extends Phaser.GameObjects.Sprite {
         this.scene.time.delayedCall(25, function () { this.clearTint(); }, [], this);
         this.Flinch();
       } else {
+        this.text.destroy();
         this.Die();
       }
     }

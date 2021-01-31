@@ -45,10 +45,13 @@ let player = { nick: null };
 
 let isOnline = false;
 let joined = false;
+let joinedRoom = false;
 let joining = false;
 
 //let origin = window.location.origin; //url in browser
 let origin = "http://localhost:8080"; //local
+let wsOrigin = origin.split("/")[2];//ngrok
+//let wsOrigin = "localhost:8080";
 
 //WEBSOCKET
 let pConnection;
