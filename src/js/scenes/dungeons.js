@@ -70,26 +70,40 @@ class Dungeons extends BaseScene {
         switch (whereAreTheyComingFrom) {
             case 0:
                 //Aparecer en la entrada
-                this.player0.x = this.previousDungeonDoor.x + 64;
-                this.player1.x = this.previousDungeonDoor.x + 128;
+                if (gameMode == 2) {
+                    if (isOrange) { this.player0.x =  this.previousDungeonDoor.x + 64; } else { this.player0.x = this.previousDungeonDoor.x + 128; }
+                } else {
+                    this.player0.x = this.previousDungeonDoor.x + 64;
+                    this.player1.x = this.previousDungeonDoor.x + 128;
+                }
+        
                 break;
 
             case 1:
                 //Aparecer en puerta 1
-                this.player0.x = this.door1.x - 48;
-                this.player1.x = this.door1.x + 48;
-
-                this.player0.y = this.door1.y;
-                this.player1.y = this.door1.y;
+                if (gameMode == 2) {
+                    if (isOrange) { this.player0.x = this.door1.x - 48; } else { this.player0.x = this.door1.x + 48; }
+                } else {
+                    this.player0.x = this.door1.x - 48;
+                    this.player1.x = this.door1.x + 48;
+                    this.player0.y = this.door1.y;
+                    this.player1.y = this.door1.y;
+                }
+               
                 break;
 
             case 2:
                 //Aparecer en puerta 2
-                this.player0.x = this.door2.x - 48;
-                this.player1.x = this.door2.x + 48;
 
-                this.player0.y = this.door2.y;
-                this.player1.y = this.door2.y;
+                if (gameMode == 2) {
+                    if (isOrange) { this.player0.x = this.door2.x - 48; } else { this.player0.x = this.door2.x + 48; }
+                } else {
+                    this.player0.x = -80;
+                    this.player1.x = -48;
+                    this.player0.y = this.door2.y;
+                    this.player1.y = this.door2.y;
+                }
+             
                 break;
 
             default:
