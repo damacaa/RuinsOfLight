@@ -91,14 +91,13 @@ class Dungeons extends BaseScene {
                 this.player0.y = this.door1.y;
                 this.player1.y = this.door1.y;
                 break;
-
             case 2:
                 //Aparecer en puerta 2
                 if (gameMode == 2) {
                     if (isOrange) { this.player0.x = this.door2.x - 48; } else { this.player0.x = this.door2.x + 48; }
                 } else {
-                    this.player0.x = -80;
-                    this.player1.x = -48;
+                    this.player0.x = this.door2.x - 80;
+                    this.player1.x = this.door2.x - 48;
                 }
                 this.player0.y = this.door2.y;
                 this.player1.y = this.door2.y;
@@ -136,7 +135,7 @@ class Dungeons extends BaseScene {
 
         if (relicX == levelX && relicY == levelY) {
             this.dog.FindWay(this.map, this.relic.x, this.relic.y);
-        } else {
+        } else if (!hasRelic) {
             //Must choose door1 or door2
             let tempX = relicX;
             let tempY = relicY;

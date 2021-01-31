@@ -30,7 +30,6 @@ class UI extends BaseMenuScene {
             align: 'left'
         }).setDepth(10).setOrigin(1, 1).setScrollFactor(0).setLineSpacing(4);
 
-        console.log(this.mobile);
         if (this.mobile) { }
     }
 
