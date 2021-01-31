@@ -325,6 +325,8 @@ class BaseScene extends Phaser.Scene {
 
     LoadScene(key) {
         if (!this.fading) {
+            this.player0.body.setVelocityX(0);
+            if (gameMode != 2) { this.player1.body.setVelocityX(0); }
             this.fading = true;
             this.camera.fadeOut(500);
             switch (gameMode) {
@@ -378,7 +380,6 @@ class BaseScene extends Phaser.Scene {
     }
 
     DamageEntity(id, amount) {
-        console.log(id);
         if (id > 1) {
             for (let e of this.entities) {
                 if (e.id == id) {

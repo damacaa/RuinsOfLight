@@ -22,7 +22,7 @@ class Dungeons extends BaseScene {
 
         this.LoadTileMap('map' + this.levelId);
 
-        this.previousDungeonDoor = null;
+        this.previousDungeonDoor;
 
         for (let index = 0; index < this.map.width * 32; index += 159) {
             this.add.sprite(index, 0, 'background').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
@@ -33,7 +33,7 @@ class Dungeons extends BaseScene {
         switch (levelX) {
             case 1:
                 //1.1
-                this.previousDungeonDoor = new SceneDoor(this, 32, 5 * 32, 'bossRoom', true);
+                this.previousDungeonDoor = new SceneDoor(this, 32, 6 * 32, 'bossRoom', true);
 
                 if (hasRelic) {
                     this.previousDungeonDoor.Open();
@@ -50,12 +50,12 @@ class Dungeons extends BaseScene {
                 switch (levelY) {
                     case 1:
                         //2.1
-                        this.previousDungeonDoor = new DungeonStairs(this, 32, 5 * 32, "2_1");
+                        this.previousDungeonDoor = new DungeonStairs(this, 32, 6 * 32, "2_1");
                         break;
 
                     case 2:
                         //2.2
-                        this.previousDungeonDoor = new DungeonStairs(this, 32, 7 * 32, "2_2");
+                        this.previousDungeonDoor = new DungeonStairs(this, 32, 8 * 32, "2_2");
                         break;
 
                     default:
@@ -63,6 +63,7 @@ class Dungeons extends BaseScene {
                 }
                 break;
             default:
+                this.previousDungeonDoor = new DungeonStairs(this, player0.x, player0.y, "1_1");
                 break;
         }
 
@@ -71,12 +72,11 @@ class Dungeons extends BaseScene {
             case 0:
                 //Aparecer en la entrada
                 if (gameMode == 2) {
-                    if (isOrange) { this.player0.x =  this.previousDungeonDoor.x + 64; } else { this.player0.x = this.previousDungeonDoor.x + 128; }
+                    if (isOrange) { this.player0.x = this.previousDungeonDoor.x + 64; } else { this.player0.x = this.previousDungeonDoor.x + 128; }
                 } else {
                     this.player0.x = this.previousDungeonDoor.x + 64;
                     this.player1.x = this.previousDungeonDoor.x + 128;
                 }
-        
                 break;
 
             case 1:
@@ -86,24 +86,22 @@ class Dungeons extends BaseScene {
                 } else {
                     this.player0.x = this.door1.x - 48;
                     this.player1.x = this.door1.x + 48;
-                    this.player0.y = this.door1.y;
-                    this.player1.y = this.door1.y;
                 }
-               
+
+                this.player0.y = this.door1.y;
+                this.player1.y = this.door1.y;
                 break;
 
             case 2:
                 //Aparecer en puerta 2
-
                 if (gameMode == 2) {
                     if (isOrange) { this.player0.x = this.door2.x - 48; } else { this.player0.x = this.door2.x + 48; }
                 } else {
                     this.player0.x = -80;
                     this.player1.x = -48;
-                    this.player0.y = this.door2.y;
-                    this.player1.y = this.door2.y;
                 }
-             
+                this.player0.y = this.door2.y;
+                this.player1.y = this.door2.y;
                 break;
 
             default:
@@ -130,7 +128,7 @@ class Dungeons extends BaseScene {
                     }
 
                     if (tile.index == 34 && !hasRelic && relicX == levelX && relicY == levelY) {
-                        this.relic = new Relic(this, i * 32, j * 32 - 48);
+                        this.relic = new Relic(this, i * 32 + 16, j * 32 - 16);
                     }
                 }
             }
