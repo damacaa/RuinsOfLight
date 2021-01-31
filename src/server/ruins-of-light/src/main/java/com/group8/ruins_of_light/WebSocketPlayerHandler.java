@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-//@EnableScheduling
 @CrossOrigin
 public class WebSocketPlayerHandler extends TextWebSocketHandler {
 
@@ -49,7 +48,9 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 		for (WSPlayer p1 : players.values()) {
 			if (p.roomId == p1.roomId && p != p1) {
 				p1.roomId = -1;
-				p1.session.sendMessage(new TextMessage(newNode.toString()));
+				if (p1.session.isOpen()) {
+					p1.session.sendMessage(new TextMessage(newNode.toString()));
+				}
 			}
 		}
 		if (waitList.contains(p)) {

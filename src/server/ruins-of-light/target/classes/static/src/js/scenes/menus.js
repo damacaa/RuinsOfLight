@@ -586,10 +586,7 @@ class Lobby extends BaseMenuScene {
         checkServer();
         inGame = false;
 
-        //SendPlayerInfo(this.player);
-
         if (joinedRoom) {
-            console.log(joinedRoom);
             this.fractionPlayers.text = "2/2 PLAYERS";
             this.LoadScene('altarRoom');
         }

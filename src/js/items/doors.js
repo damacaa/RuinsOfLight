@@ -1,21 +1,16 @@
+let minDoorDistance = 32;
 class SceneDoor extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, sceneKey, facingRight) {
         super(scene, x, y, 'puertaEntrada');
         scene.add.existing(this);
-        this.scene.physics.add.existing(this);
-
-        this.body.setAllowGravity(false);
-
-        this.setOrigin(0, 0);
-
-        this.body.setSize(8, 64);
+        this.scene.entities.push(this);
 
         if (facingRight) {
             this.flipX = false;
-            this.body.offset.x = 0;
+            this.setOrigin(0, 0.5);
         } else {
             this.flipX = true;
-            this.body.offset.x = 64 - 8;
+            this.setOrigin(1, 0.5);
         }
 
         this.scene = scene;
@@ -24,27 +19,30 @@ class SceneDoor extends Phaser.GameObjects.Sprite {
         this.open = true;
 
         this.setDepth(4);
-        this.scene.physics.add.overlap(this, scene.players, this.LoadTargetScene, null, scene);
     }
 
-    LoadTargetScene(door) {
-        if (!door.scene.fading) {
+    Update(){
+        if (this.open && (Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < minDoorDistance || Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.y, this.x, this.y) < minDoorDistance)) {
+            this.LoadTargetScene();
+        }
+    }
+
+    LoadTargetScene() {
+        if (!this.scene.fading) {
             levelX = 1;
             levelY = 1;
             whereAreTheyComingFrom = 0;
-            door.scene.LoadScene(door.targetScene);
+            this.scene.LoadScene(this.targetScene);
         }
     }
 
     Open() {
         this.setFrame(0);
-        this.body.enable = true;
         this.open = true;
     }
 
     Close() {
         this.setFrame(1);
-        this.body.enable = false;
         this.open = false;
     }
 
@@ -55,30 +53,26 @@ class DungeonDoor extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, dungeonId) {
         super(scene, x, y, 'puerta');
         scene.add.existing(this);
-        this.scene.physics.add.existing(this);
-
-        this.body.offset.x = 16;
-        this.body.offset.y = 64;
-
-        this.body.setSize(32, 32);
-        this.body.setAllowGravity(false);
+        this.scene.entities.push(this);
 
         this.scene = scene;
         this.targetDungeon = dungeonId;
 
         this.setDepth(0);
-        this.scene.physics.add.overlap(this, scene.players, this.LoadTargetScene, null, scene);
     }
 
-    LoadTargetScene(door) {
-        if (!door.scene.fading) {
-            let scene = door.scene.LoadScene('dungeon');
+    Update(){
+        if ((Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < minDoorDistance) || (Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.y, this.x, this.y) < minDoorDistance)) {
+            this.LoadTargetScene();
+        }
+    }
 
-            var fields = door.targetDungeon.split('_');
-
+    LoadTargetScene() {
+        if (!this.scene.fading) {
+            this.scene.LoadScene('dungeon');
+            var fields = this.targetDungeon.split('_');
             levelX = parseInt(fields[0]);
             levelY = parseInt(fields[1]);
-
             whereAreTheyComingFrom = 0;
         }
     }
@@ -89,25 +83,24 @@ class DungeonStairs extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, dungeonId) {
         super(scene, x, y, 'puertaEntrada');
         scene.add.existing(this);
-        this.scene.physics.add.existing(this);
+        this.scene.entities.push(this);
 
-        this.setOrigin(0, 0);
-        this.body.setSize(8, 64);
-        this.body.setAllowGravity(false);
-
-        //this.scene.entities.push(this);
+        this.setOrigin(0, 0.5);
 
         this.scene = scene;
         this.targetDungeon = dungeonId;
-        this.activated = false;
 
         this.setDepth(4);
-        this.scene.physics.add.overlap(this, scene.players, this.LoadTargetScene, null, scene);
     }
 
-    LoadTargetScene(door) {
-        if (!door.scene.fading) {
-            this.activated = true;
+    Update(){
+        if (Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < minDoorDistance || Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.y, this.x, this.y) < minDoorDistance) {
+            this.LoadTargetScene();
+        }
+    }
+
+    LoadTargetScene() {
+        if (!this.scene.fading) {
             levelX--;
 
             if (levelY % 2 == 0) {
@@ -118,7 +111,7 @@ class DungeonStairs extends Phaser.GameObjects.Sprite {
                 levelY = (levelY + 1) / 2;
             }
 
-            door.scene.LoadScene('dungeon');
+            this.scene.LoadScene('dungeon');
         }
     }
 }
