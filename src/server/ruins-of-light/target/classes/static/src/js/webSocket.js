@@ -22,7 +22,7 @@ function ConnectWebSocket() {
                     if (inGame && friend.scene == currentScene.sceneIdx + levelX.toString() + levelY.toString()) {
                         currentScene.player1.FakeUpdate(friend.x, friend.y, friend.health, friend.anim, friend.prog, friend.flipX, friend.date);
                         currentScene.player1.visible = true;
-                    }
+                    } else if (inGame) { currentScene.player1.visible = false; }
                     break;
                 case 2:
                     data = JSON.parse(msg.data);
@@ -52,12 +52,13 @@ function ConnectWebSocket() {
 
     pConnection.onclose = function () {
         console.log("Closing socket");
+        ConnectWebSocket();
     }
 }
 
 let lDate = 0;
 function SendPlayerInfo(plyr) {
-    if (gameMode == 2) {
+    if (pConnection.readyState == 1 && gameMode == 2) {
         let currentDate = new Date();
         let msg = {
             id: 1,
@@ -77,7 +78,7 @@ function SendPlayerInfo(plyr) {
 }
 
 function SendDamage(eId, damage, scene) {
-    if (gameMode == 2) {
+    if (pConnection.readyState == 1 && gameMode == 2) {
         if (eId > 1) {
             let msg = {
                 id: 2,
@@ -91,7 +92,7 @@ function SendDamage(eId, damage, scene) {
 }
 
 function SendRelicPos(rX, rY) {
-    if (gameMode == 2) {
+    if (pConnection.readyState == 1 && gameMode == 2) {
         let msg = {
             id: 3,
             x: rX,
@@ -102,8 +103,7 @@ function SendRelicPos(rX, rY) {
 }
 
 function SendNewEntity(scene, type, entityId, x, y) {
-    console.log("Sent:",entityId);
-    if (gameMode == 2) {
+    if (pConnection.readyState == 1 && gameMode == 2) {
         //Type: //1 arrow //
         let msg = {
             id: 4,
@@ -119,8 +119,7 @@ function SendNewEntity(scene, type, entityId, x, y) {
 }
 
 function SpawnReceivedEnemy(data) {
-    if (gameMode == 2) {
-        console.log("Received:",data.eId);
+    if (pConnection.readyState == 1 && gameMode == 2) {
         let newEnemy;
         switch (data.type) {
             case 1:
@@ -153,7 +152,7 @@ function SpawnReceivedEnemy(data) {
 }
 
 function JoinRoom() {
-    if (gameMode == 2) {
+    if (pConnection.readyState == 1 && gameMode == 2) {
         let msg = {
             id: 0,
             name: player.nick
@@ -163,7 +162,7 @@ function JoinRoom() {
 }
 
 function LeaveRoom() {
-    if (gameMode == 2) {
+    if (pConnection.readyState == 1 && gameMode == 2) {
         let msg = {
             id: -1,
             name: player.nick

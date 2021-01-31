@@ -12,8 +12,8 @@ class BossRoom extends BaseScene {
         this.LoadTileMap('bossRoom');
 
         //Crea puertas
-        this.dungeonDoor = new SceneDoor(this, 1184, 160, 'dungeon', false);
-        this.exitDoor = new SceneDoor(this, 32, 160, 'credits', true);
+        this.dungeonDoor = new SceneDoor(this, 1248, 192, 'dungeon', false);
+        this.exitDoor = new SceneDoor(this, 32, 192, 'credits', true);
         this.exitDoor.Close();
 
         //Crea enemigos
@@ -98,7 +98,7 @@ class BossRoom extends BaseScene {
             } else {
                 if (defeatedBosses == 2) {
                     if (!this.exitDoor.open) {
-                        createRecord(player.nick, "FRIEND", ((new Date() - startTime) / 1000));
+                        if(isOrange){createRecord(player.nick, friend.name, ((new Date() - startTime) / 1000));}
                         this.exitDoor.Open();
                     }
                 } else {

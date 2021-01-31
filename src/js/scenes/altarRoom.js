@@ -9,7 +9,6 @@ class AltarRoom extends BaseScene {
     }
 
     CreateStage() {
-
         if (gameMode == 2) {
             if (isOrange) { this.player0.x = 80; } else { this.player0.x = 100; }
         } else {
@@ -52,7 +51,7 @@ class AltarRoom extends BaseScene {
         });
 
         //Crea puertas
-        this.door = new SceneDoor(this, 384, 160, 'bossRoom');
+        this.door = new SceneDoor(this, 448, 192, 'bossRoom');
         this.door.Close();
 
         this.sound.stopAll();

@@ -7,14 +7,13 @@ class BossRoom extends BaseScene {
         if (gameMode == 1) { this.camera.startFollow(this.bowPlayer, true); } else { this.camera.startFollow(this.player0, true); }
 
         this.bg = this.add.sprite(0, -32, 'bossBackground').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
-        //this.bg = this.add.sprite(240 + 480, 135, 'intro').setOrigin(0.5, 0.5).setScrollFactor(.25).setDepth(-1).flipX = true;
 
         //Crea escenario
         this.LoadTileMap('bossRoom');
 
         //Crea puertas
-        this.dungeonDoor = new SceneDoor(this, 1184, 160, 'dungeon', false);
-        this.exitDoor = new SceneDoor(this, 32, 160, 'credits', true);
+        this.dungeonDoor = new SceneDoor(this, 1248, 192, 'dungeon', false);
+        this.exitDoor = new SceneDoor(this, 32, 192, 'credits', true);
         this.exitDoor.Close();
 
         //Crea enemigos
@@ -23,8 +22,6 @@ class BossRoom extends BaseScene {
 
         this.add.image(this.gorila.x + 8, this.gorila.y + 64 + 64 + 32, 'bossAltar').setDepth(0);
         this.add.image(this.parrot.x + 48, this.parrot.y + 64 + 19, 'bossAltar').setDepth(0);
-
-        new Spawner(this, 300, 100);
 
         if (!firstTimeBoss) {
             this.player0.x = this.dungeonDoor.x - 80;

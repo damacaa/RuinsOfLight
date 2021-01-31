@@ -1,36 +1,43 @@
 class Relic extends Phaser.GameObjects.Sprite {
-    
+
     constructor(scene, x, y) {
         super(scene, x, y, 'relic');
+        this.scene = scene;
         scene.add.existing(this);
-        this.scene.physics.add.existing(this);
-
-        this.body.setAllowGravity(false);
+        this.scene.entities.push(this);
 
         this.setDepth(0);
-        this.scene.physics.add.overlap(this, scene.players, this.GetRelic, null, scene);
-
-        this.setOrigin(0,0);
+        this.setOrigin(0.5, 0.5);
 
         this.scene.tweens.add({
             targets: this,
-            y: y - 5,
+            y: this.y - 5,
             duration: 1500,
             ease: 'Sine.easeInOut',
             yoyo: true,
             repeat: -1
         });
+
+        this.on = true;
     }
 
-    GetRelic(relic) {
-
-        if (defeatedBosses == 0) {
-            relic.scene.sound.play("effectGorilaRelic");
-        } else if (defeatedBosses == 1) {
-            relic.scene.sound.play("effectParrotRelic");
+    Update() {
+        if (this.on && (Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < 32 || Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.y, this.x, this.y) < 32)) {
+            this.GetRelic();
         }
-        relic.scene.camera.flash(1000);
-        relic.destroy();
+    }
+
+    GetRelic() {
+        if (defeatedBosses == 0) {
+            this.scene.sound.play("effectGorilaRelic");
+        } else if (defeatedBosses == 1) {
+            this.scene.sound.play("effectParrotRelic");
+        }
+        console.log("flasj")
+        this.scene.camera.flash(1000);
+        //this.enabled = false;
+        this.visible = false;
+        this.on = false;
         hasRelic = true;
     }
 }

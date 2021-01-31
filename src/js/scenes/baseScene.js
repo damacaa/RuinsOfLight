@@ -325,6 +325,8 @@ class BaseScene extends Phaser.Scene {
 
     LoadScene(key) {
         if (!this.fading) {
+            this.player0.body.setVelocityX(0);
+            if (gameMode != 2) { this.player1.body.setVelocityX(0); }
             this.fading = true;
             this.camera.fadeOut(500);
             switch (gameMode) {
