@@ -46,29 +46,29 @@ class BossRoom extends BaseScene {
             }
 
             this.RandomRelic();
+            if (!ui.mobile) {
+                this.controls0 = this.add.sprite(this.player0.x, this.player0.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
+                if (gameMode != 2) {
+                    this.controls1 = this.add.sprite(this.player1.x, this.player1.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
+                    this.tweens.add({
+                        targets: this.controls1,
+                        y: this.controls1.y - 5,
+                        duration: 1500,
+                        ease: 'Sine.easeInOut',
+                        yoyo: true,
+                        repeat: -1
+                    });
+                }
 
-            this.controls0 = this.add.sprite(this.player0.x, this.player0.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
-            if (gameMode != 2) {
-                this.controls1 = this.add.sprite(this.player1.x, this.player1.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
                 this.tweens.add({
-                    targets: this.controls1,
-                    y: this.controls1.y - 5,
+                    targets: this.controls0,
+                    y: this.controls0.y - 5,
                     duration: 1500,
                     ease: 'Sine.easeInOut',
                     yoyo: true,
                     repeat: -1
                 });
             }
-
-            this.tweens.add({
-                targets: this.controls0,
-                y: this.controls0.y - 5,
-                duration: 1500,
-                ease: 'Sine.easeInOut',
-                yoyo: true,
-                repeat: -1
-            });
-
             firstTimeBoss = false;
         }
 

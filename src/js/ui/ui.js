@@ -12,6 +12,8 @@ class UI extends BaseMenuScene {
 
         this.buttons = [];
         this.mobile = mobileAndTabletCheck();
+
+        this.playerInput = 0;
     }
 
     create() {
@@ -33,6 +35,9 @@ class UI extends BaseMenuScene {
     }
 
     update() {
+        if (inGame && this.mobile) {
+            currentScene.player0.Run(this.playerInput);
+        }
         if (this.text.active) {
             if (isOnline) {
                 if (players.length == 1) {
@@ -71,14 +76,35 @@ class UI extends BaseMenuScene {
             x = 410;
             y = 20;
 
-            this.left = this.add.sprite(0, 200, 'phoneInput').setFrame(0).setOrigin(0).setDepth(9).setInteractive();
+            this.left = this.add.sprite(20, 200, 'phoneInput').setFrame(0).setOrigin(0).setDepth(9).setInteractive();
             this.left.on('pointerdown', function (event) {
-                currentScene.player0.Run(-1);
+                this.playerInput = -1;
+            }, this);
+            this.left.on('pointerup', function (event) {
+                this.playerInput = 0;
             }, this);
 
-            this.right = this.add.sprite(50, 200, 'phoneInput').setFrame(1).setOrigin(0).setDepth(9).setInteractive();
-            this.jump = this.add.sprite(370, 200, 'phoneInput').setFrame(2).setOrigin(0).setDepth(9).setInteractive();
+            this.right = this.add.sprite(80, 200, 'phoneInput').setFrame(1).setOrigin(0).setDepth(9).setInteractive();
+            this.right.on('pointerdown', function (event) {
+                this.playerInput = 1;
+            }, this);
+            this.right.on('pointerup', function (event) {
+                this.playerInput = 0;
+            }, this);
+
+            this.jump = this.add.sprite(360, 200, 'phoneInput').setFrame(2).setOrigin(0).setDepth(9).setInteractive();
+            this.jump.on('pointerdown', function (event) {
+                currentScene.player0.Jump();
+            }, this);
+
             this.attack = this.add.sprite(420, 200, 'phoneInput').setFrame(3).setOrigin(0).setDepth(9).setInteractive();
+            this.attack.on('pointerdown', function (event) {
+                currentScene.player0.Attack();
+            }, this);
+            this.attack.on('pointerup', function (event) {
+                currentScene.player0.EnableAttack();
+            }, this);
+            
 
         } else {
             x = 410;
