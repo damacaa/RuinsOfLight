@@ -85,8 +85,8 @@ class BaseScene extends Phaser.Scene {
                 break;
             case 1:
                 //1 local multiplayer 
-                if (isOrange) { this.player1 = new Player(this, 192, 192, 'p1noWeapon', 'p1sword', 'p1bow', p1Health); } else {
-                    this.player1 = new Player(this, 192, 192, 'p0noWeapon', 'p0sword', 'p0bow', p1Health);
+                if (isOrange) { this.player1 = new Player(this, 0, 0, 'p1noWeapon', 'p1sword', 'p1bow', p1Health); } else {
+                    this.player1 = new Player(this, 0, 0, 'p0noWeapon', 'p0sword', 'p0bow', p1Health);
                 }
                 this.player1.SetWeapon(p1Weapon);
                 //Configura las cámaras

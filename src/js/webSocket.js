@@ -1,4 +1,3 @@
-
 let lastDate = 0;
 
 function ConnectWebSocket() {

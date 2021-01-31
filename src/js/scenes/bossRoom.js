@@ -24,31 +24,45 @@ class BossRoom extends BaseScene {
         this.add.image(this.parrot.x + 48, this.parrot.y + 64 + 19, 'bossAltar').setDepth(0);
 
         if (!firstTimeBoss) {
-            this.player0.x = this.dungeonDoor.x - 80;
-            this.player1.x = this.dungeonDoor.x - 48;
-            this.player0.y = this.dungeonDoor.y;
-            this.player1.y = this.dungeonDoor.y;
+            if (gameMode == 2) {
+                if (isOrange) { this.player0.x = this.dungeonDoor.x - 80; } else { this.player0.x = this.dungeonDoor.x - 48; }
+            } else {
+                this.player0.x = this.dungeonDoor.x - 80;
+                this.player1.x = this.dungeonDoor.x - 48;
+                this.player0.y = this.dungeonDoor.y;
+                this.player1.y = this.dungeonDoor.y;
+            }
 
             this.player0.flipX = true;
             this.player1.flipX = true;
         } else {
+            if (gameMode == 2) {
+                if (isOrange) { this.player0.x = this.exitDoor.x + 80; } else { this.player0.x = this.exitDoor.x + 48; }
+            } else {
+                this.player0.x = this.exitDoor.x + 80;
+                this.player1.x = this.exitDoor.x + 48;
+                this.player0.y = this.exitDoor.y;
+                this.player1.y = this.exitDoor.y;
+            }
+
             this.RandomRelic();
 
             this.controls0 = this.add.sprite(this.player0.x, this.player0.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
-            this.controls1 = this.add.sprite(this.player1.x, this.player1.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
+            if (gameMode != 2) {
+                this.controls1 = this.add.sprite(this.player1.x, this.player1.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
+                this.tweens.add({
+                    targets: this.controls1,
+                    y: this.controls1.y - 5,
+                    duration: 1500,
+                    ease: 'Sine.easeInOut',
+                    yoyo: true,
+                    repeat: -1
+                });
+            }
 
             this.tweens.add({
                 targets: this.controls0,
                 y: this.controls0.y - 5,
-                duration: 1500,
-                ease: 'Sine.easeInOut',
-                yoyo: true,
-                repeat: -1
-            });
-
-            this.tweens.add({
-                targets: this.controls1,
-                y: this.controls1.y - 5,
                 duration: 1500,
                 ease: 'Sine.easeInOut',
                 yoyo: true,
@@ -98,7 +112,7 @@ class BossRoom extends BaseScene {
             } else {
                 if (defeatedBosses == 2) {
                     if (!this.exitDoor.open) {
-                        if(isOrange){createRecord(player.nick, friend.name, ((new Date() - startTime) / 1000));}
+                        if (isOrange) { createRecord(player.nick, friend.name, ((new Date() - startTime) / 1000)); }
                         this.exitDoor.Open();
                     }
                 } else {

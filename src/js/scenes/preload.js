@@ -247,6 +247,13 @@ class Preload extends Phaser.Scene {
             }
             );
 
+            this.load.spritesheet('phoneInput',
+                'resources/img/Interfaz/Mobile/CellPhoneControls.png', {
+                frameWidth: 48,
+                frameHeight: 30
+            }
+            );
+
             this.load.image('title', 'resources/img/Interfaz/Menu/Title.png');
             this.load.image('newGame', 'resources/img/Interfaz/Menu/Buttons1.png');
             this.load.image('credits', 'resources/img/Interfaz/Menu/Buttons2.png');
