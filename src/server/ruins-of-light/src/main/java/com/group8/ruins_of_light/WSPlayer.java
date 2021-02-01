@@ -1,7 +1,5 @@
 package com.group8.ruins_of_light;
 
-import java.io.IOException;
-
 import org.springframework.web.socket.WebSocketSession;
 
 public class WSPlayer {
@@ -11,8 +9,8 @@ public class WSPlayer {
 	public int lastTime;
 	public Vector2 lastPosition;
 	public int roomId;
-
-	public boolean online;
+	
+	public int cheats = 0;
 
 	WSPlayer(WebSocketSession wbs) {
 		name = "";

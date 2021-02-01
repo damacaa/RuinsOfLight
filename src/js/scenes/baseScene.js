@@ -19,7 +19,7 @@ function ResetGame() {
     firstTimeBoss = true;
     defeatedBosses = 0;
 
-    godMode = true;
+    godMode = false;
     skip = false;
 
     loadRecords();

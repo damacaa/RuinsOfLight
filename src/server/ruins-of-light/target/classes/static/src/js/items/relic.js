@@ -22,22 +22,21 @@ class Relic extends Phaser.GameObjects.Sprite {
     }
 
     Update() {
-        if (this.on && (Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < 32 || Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.y, this.x, this.y) < 32)) {
-            this.GetRelic();
+        if (this.on && Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < 32) {
+            this.GetRelic(true);
         }
     }
 
-    GetRelic() {
+    GetRelic(inThisClient) {
         if (defeatedBosses == 0) {
             this.scene.sound.play("effectGorilaRelic");
         } else if (defeatedBosses == 1) {
             this.scene.sound.play("effectParrotRelic");
         }
-        console.log("flasj")
         this.scene.camera.flash(1000);
-        //this.enabled = false;
         this.visible = false;
         this.on = false;
         hasRelic = true;
+        if(inThisClient){WsGetRelic();}
     }
 }

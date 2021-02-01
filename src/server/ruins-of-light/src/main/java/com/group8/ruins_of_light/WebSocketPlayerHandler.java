@@ -32,15 +32,12 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		WSPlayer p = new WSPlayer(session);
 		players.put(session.getId(), p);
-		for (WSPlayer wp : waitList) {
-			System.out.println(wp.name);
-		}
 	}
 
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		WSPlayer p = players.get(session.getId());
-		System.out.println("Session closed: " + p.name);
+		System.out.println("Sesión cerrada: " + p.name);
 
 		// Saca al jugador de la partida
 		ObjectNode newNode = mapper.createObjectNode();
@@ -67,9 +64,6 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 			// Ready to join room
 			WSPlayer p1 = players.get(session.getId());
 			p1.name = node.get("name").asText();
-
-			System.out.println(p1.name + " intenta unirse a una sala");
-
 			if (waitList.size() > 0) {
 				System.out.println("Hay suficiente gente: " + waitList.toString());
 				// Find friend
@@ -105,6 +99,11 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 			}
 		} else if (node.get("id").asInt() == -1) {
 			WSPlayer p = players.get(session.getId());
+			for (WSPlayer p1 : players.values()) {
+				if (p.roomId == p1.roomId && p != p1) {
+					p1.roomId = -1;
+				}
+			}
 			p.roomId = -1;
 		} else {
 			sendOtherParticipants(session, node);
@@ -118,69 +117,83 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 
 		ObjectNode newNode = mapper.createObjectNode();
 
-		newNode.put("id", node.get("id").asInt());
-		switch (node.get("id").asInt()) {
-		case 1:
-			// Posicion jugador
-			int time = node.get("date").asInt() - players.get(sId).lastTime;
-			if (time > 0) {
-				float x = Float.parseFloat(node.get("x").asText());
-				float y = Float.parseFloat(node.get("y").asText());
+		if (player.roomId == -1) {
+			newNode.put("id", -1);
+			player.session.sendMessage(new TextMessage(newNode.toString()));
+		} else {
+			newNode.put("id", node.get("id").asInt());
+			switch (node.get("id").asInt()) {
+			case 1:
+				// Posicion jugador
+				int time = node.get("date").asInt() - players.get(sId).lastTime;
+				if (time > 0) {
+					float x = Float.parseFloat(node.get("x").asText());
+					float y = Float.parseFloat(node.get("y").asText());
 
-				if (players.get(sId).lastPosition.distance(x, y) < 200 * time) {
+//					Queda pendiente la comprobación de teletransportación o velocidad excesiva
+//					if (players.get(sId).lastPosition.distance(x, y) < 2 * time) {
+//						if (player.cheats > 0) {
+//							player.cheats--;
+//						}
+//					} else { // Trampas?
+//						System.out.println(player.name + " está haciendo trampas.");
+//						if (player.cheats > 0) {
+//							player.roomId = -1;
+//						} else {
+//							player.cheats++;
+//						}
+//					}
 
-				} else { // Trampas?
-					// System.out.println(node.get("name").asInt() + " está haciendo trampas.");
+					player.lastTime = time;
+					player.lastPosition.x = x;
+					player.lastPosition.y = y;
+
+					players.get(sId).lastTime = node.get("date").asInt();
+					newNode.put("name", node.get("name").asText());
+					newNode.put("x", x);
+					newNode.put("y", y);
+					newNode.put("health", node.get("health").asInt());
+					newNode.put("anim", node.get("anim").asText());
+					newNode.put("prog", node.get("prog").asText());
+					newNode.put("flipX", node.get("flipX").asBoolean());
+					newNode.put("scene", node.get("scene").asText());
+					newNode.put("date", node.get("date").asInt());
+
+				} else {
+					envia = false;
+					System.out.println(node.get("date").asInt() - players.get(sId).lastTime);
 				}
-
-				players.get(sId).lastTime = node.get("date").asInt();
-				newNode.put("name", node.get("name").asText());
-				newNode.put("x", x);
-				newNode.put("y", y);
-				newNode.put("health", node.get("health").asInt());
-				newNode.put("anim", node.get("anim").asText());
-				newNode.put("prog", node.get("prog").asText());
-				newNode.put("flipX", node.get("flipX").asBoolean());
+				break;
+			case 2:
+				// Daño recibido
+				newNode.put("eId", node.get("eId").asInt());
+				newNode.put("damage", node.get("damage").asInt());
 				newNode.put("scene", node.get("scene").asText());
-				newNode.put("date", node.get("date").asInt());
-				/*
-				 * if (players.get(sId).lastPosition.distance(x, y) < 200 * time) {
-				 * 
-				 * } else { // Trampas?
-				 * System.out.println(node.get("name").asInt()+" está haciendo trampas."); }
-				 */
-			} else {
-				envia = false;
-				System.out.println(node.get("date").asInt() - players.get(sId).lastTime);
+				break;
+			case 3:
+				// Reliquia creada
+				newNode.put("x", node.get("x").asInt());
+				newNode.put("y", node.get("y").asInt());
+				break;
+			case 4:
+				// Entidad creada
+				newNode.put("eId", node.get("eId").asInt());
+				newNode.put("type", node.get("type").asInt());
+				newNode.put("x", node.get("x").asInt());
+				newNode.put("y", node.get("y").asInt());
+				newNode.put("scene", node.get("scene").asText());
+				break;
+			case 5:
+				// Reliquia obtenida
+			default:
+				// code block
 			}
-			break;
-		case 2:
-			// Daño recibido
-			newNode.put("eId", node.get("eId").asInt());
-			newNode.put("damage", node.get("damage").asInt());
-			newNode.put("scene", node.get("scene").asText());
-			break;
-		case 3:
-			// Reliquia creada
-			newNode.put("x", node.get("x").asInt());
-			newNode.put("y", node.get("y").asInt());
-			break;
-		case 4:
-			// Entidad creada
-			newNode.put("eId", node.get("eId").asInt());
-			newNode.put("type", node.get("type").asInt());
-			newNode.put("x", node.get("x").asInt());
-			newNode.put("y", node.get("y").asInt());
-			newNode.put("scene", node.get("scene").asText());
-			break;
-		default:
-			// code block
-		}
 
-		if (envia) {
-			for (WSPlayer p : players.values()) {
-				if (player.roomId == p.roomId && player != p) {
-					p.session.sendMessage(new TextMessage(newNode.toString()));
+			if (envia) {
+				for (WSPlayer p : players.values()) {
+					if (player.roomId == p.roomId && player != p) {
+						p.session.sendMessage(new TextMessage(newNode.toString()));
+					}
 				}
 			}
 		}

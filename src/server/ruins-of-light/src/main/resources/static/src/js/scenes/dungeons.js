@@ -63,7 +63,6 @@ class Dungeons extends BaseScene {
                 }
                 break;
             default:
-                this.previousDungeonDoor = new DungeonStairs(this, player0.x, player0.y, "1_1");
                 break;
         }
 
@@ -71,24 +70,34 @@ class Dungeons extends BaseScene {
         switch (whereAreTheyComingFrom) {
             case 0:
                 //Aparecer en la entrada
-                this.player0.x = this.previousDungeonDoor.x + 64;
-                this.player1.x = this.previousDungeonDoor.x + 128;
+                if (gameMode == 2) {
+                    if (isOrange) { this.player0.x = this.previousDungeonDoor.x + 64; } else { this.player0.x = this.previousDungeonDoor.x + 128; }
+                } else {
+                    this.player0.x = this.previousDungeonDoor.x + 64;
+                    this.player1.x = this.previousDungeonDoor.x + 128;
+                }
                 break;
 
             case 1:
                 //Aparecer en puerta 1
-                this.player0.x = this.door1.x - 48;
-                this.player1.x = this.door1.x + 48;
+                if (gameMode == 2) {
+                    if (isOrange) { this.player0.x = this.door1.x - 48; } else { this.player0.x = this.door1.x + 48; }
+                } else {
+                    this.player0.x = this.door1.x - 48;
+                    this.player1.x = this.door1.x + 48;
+                }
 
                 this.player0.y = this.door1.y;
                 this.player1.y = this.door1.y;
                 break;
-
             case 2:
                 //Aparecer en puerta 2
-                this.player0.x = this.door2.x - 48;
-                this.player1.x = this.door2.x + 48;
-
+                if (gameMode == 2) {
+                    if (isOrange) { this.player0.x = this.door2.x - 48; } else { this.player0.x = this.door2.x + 48; }
+                } else {
+                    this.player0.x = this.door2.x - 80;
+                    this.player1.x = this.door2.x - 48;
+                }
                 this.player0.y = this.door2.y;
                 this.player1.y = this.door2.y;
                 break;
@@ -123,9 +132,9 @@ class Dungeons extends BaseScene {
             }
         }
 
-        if (relicX == levelX && relicY == levelY) {
+        if (relicX == levelX && relicY == levelY && !hasRelic) {
             this.dog.FindWay(this.map, this.relic.x, this.relic.y);
-        } else {
+        } else if (!hasRelic) {
             //Must choose door1 or door2
             let tempX = relicX;
             let tempY = relicY;
@@ -153,7 +162,7 @@ class Dungeons extends BaseScene {
     }
 
     UpdateStage() {
-        if (hasRelic && skip && !this.previousDungeonDoor.open) {
+        if (hasRelic && levelX == 1 && levelY == 1 && !this.previousDungeonDoor.open) {
             this.previousDungeonDoor.Open();
             ui.camera.flash(1000);
         }

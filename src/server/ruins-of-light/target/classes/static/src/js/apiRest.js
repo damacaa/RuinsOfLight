@@ -146,12 +146,12 @@ function checkServer() {
             loadPayers();
             checkChat();
         }
-        if (inGame && gameMode == 2) { SendPlayerInfo(currentScene.player0); }
-
+        if (pConnection && pConnection.readyState == 1 && inGame && gameMode == 2) { SendPlayerInfo(currentScene.player0); }
     } else if (gameMode == 2) {
         if (new Date() - lastTimeChecked > checkServerWait) {
             lastTimeChecked = new Date();
             joinGame();
+            console.log("Rejoining...");
         }
     }
 }
