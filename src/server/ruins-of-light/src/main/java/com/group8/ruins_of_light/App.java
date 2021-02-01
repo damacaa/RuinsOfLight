@@ -20,7 +20,7 @@ public class App implements WebSocketConfigurer
 {
     public static void main( String[] args )
     {
-    	//createWindow();//Crear una ventana permite cerrar el servidor al cerrar dicha ventana
+    	createWindow();//Crear una ventana permite cerrar el servidor al cerrar dicha ventana
         SpringApplication.run(App.class, args);    
     }
     

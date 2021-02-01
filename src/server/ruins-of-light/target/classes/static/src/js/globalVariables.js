@@ -51,10 +51,8 @@ let joining = false;
 let origin = window.location.origin; //url in browser
 //let origin = "http://localhost:8080"; //local
 let wsOrigin = origin.split("/")[2];//ngrok
-//let wsOrigin = "localhost:8080";
 
 //WEBSOCKET
 let pConnection;
 let friend = null;
-//let friends = [];
 let friendIsOnline = false;

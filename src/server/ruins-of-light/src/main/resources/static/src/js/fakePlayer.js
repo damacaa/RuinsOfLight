@@ -191,7 +191,7 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
         this.onFloor = false;
         this.weapon = 0;
         this.setDepth(3);
-        this.speed = 200;
+        this.speed = 100;
 
         this.nextX = x;
         this.nextY = y;
@@ -211,17 +211,21 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
         this.health = h;
         ui.healthBar.Update();
 
+
         if (anim && this.anims.currentAnim.key && anim != this.anims.currentAnim.key) {
             this.anims.play(anim, true);
             this.anims.setProgress(prog);
         }
         this.flipX = flipX;
 
+        /////////////////////////////////////
         let currentDate = new Date();
         currentDate = (currentDate.getHours() * 1000000) + (currentDate.getMinutes() * 10000) + (currentDate.getSeconds() * 100) + currentDate.getMilliseconds();
 
+
+
         this.delay = Math.max(1, currentDate - this.lastUpdate);
-        this.speed = Math.min(30 / this.delay, 1);
+        this.speed = Math.min(0.75 / this.delay, 1);
 
         this.lastUpdate = date;
         /*
@@ -274,15 +278,15 @@ class FakePlayer extends Phaser.GameObjects.Sprite {
     }
 
     Update(time, delta) {
-        if (this.health <= 0) {
+        if (this.health < 0) {
             this.scene.LoadScene('gameOver');
         }
 
         this.x += this.speed * (this.nextX - this.x);
         this.y += this.speed * (this.nextY - this.y);
 
-        /*this.x += 200 * delta / 1000 * Math.round(Math.min(Math.max((this.nextX - this.x),-1),1));
-        this.y += 200 * delta / 1000 * Math.round(Math.min(Math.max((this.nextY - this.y),-1),1));*/
+        /*this.x += this.speed * delta * 0.1 * Math.round(Math.min(Math.max((this.nextX - this.x), -1), 1));
+        this.y += this.speed * delta * 0.1 * Math.round(Math.min(Math.max((this.nextY - this.y), -1), 1));*/
 
         if (Number.isNaN(this.x) || Number.isNaN(this.y)) {
             this.x = this.nextX;

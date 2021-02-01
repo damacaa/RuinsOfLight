@@ -63,7 +63,6 @@ class Dungeons extends BaseScene {
                 }
                 break;
             default:
-                this.previousDungeonDoor = new DungeonStairs(this, player0.x, player0.y, "1_1");
                 break;
         }
 
@@ -133,7 +132,7 @@ class Dungeons extends BaseScene {
             }
         }
 
-        if (relicX == levelX && relicY == levelY) {
+        if (relicX == levelX && relicY == levelY && !hasRelic) {
             this.dog.FindWay(this.map, this.relic.x, this.relic.y);
         } else if (!hasRelic) {
             //Must choose door1 or door2
@@ -163,7 +162,7 @@ class Dungeons extends BaseScene {
     }
 
     UpdateStage() {
-        if (hasRelic && skip && !this.previousDungeonDoor.open) {
+        if (hasRelic && levelX == 1 && levelY == 1 && !this.previousDungeonDoor.open) {
             this.previousDungeonDoor.Open();
             ui.camera.flash(1000);
         }

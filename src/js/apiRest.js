@@ -151,6 +151,7 @@ function checkServer() {
         if (new Date() - lastTimeChecked > checkServerWait) {
             lastTimeChecked = new Date();
             joinGame();
+            console.log("Rejoining...");
         }
     }
 }

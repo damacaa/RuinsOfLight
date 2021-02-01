@@ -21,7 +21,7 @@ class SceneDoor extends Phaser.GameObjects.Sprite {
         this.setDepth(4);
     }
 
-    Update(){
+    Update() {
         if (this.open && (Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < minDoorDistance || Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.y, this.x, this.y) < minDoorDistance)) {
             this.LoadTargetScene();
         }
@@ -59,10 +59,11 @@ class DungeonDoor extends Phaser.GameObjects.Sprite {
         this.targetDungeon = dungeonId;
 
         this.setDepth(0);
+        this.open = true;
     }
 
-    Update(){
-        if ((Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < minDoorDistance) || (Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.y, this.x, this.y) < minDoorDistance)) {
+    Update() {
+        if (Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < minDoorDistance) {
             this.LoadTargetScene();
         }
     }
@@ -75,6 +76,13 @@ class DungeonDoor extends Phaser.GameObjects.Sprite {
             levelY = parseInt(fields[1]);
             whereAreTheyComingFrom = 0;
         }
+    }
+
+    Open() {
+        this.open = true;
+    }
+    Close() {
+        this.open = false;
     }
 }
 
@@ -91,9 +99,10 @@ class DungeonStairs extends Phaser.GameObjects.Sprite {
         this.targetDungeon = dungeonId;
 
         this.setDepth(4);
+        this.open = true;
     }
 
-    Update(){
+    Update() {
         if (Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < minDoorDistance || Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.y, this.x, this.y) < minDoorDistance) {
             this.LoadTargetScene();
         }
@@ -113,6 +122,12 @@ class DungeonStairs extends Phaser.GameObjects.Sprite {
 
             this.scene.LoadScene('dungeon');
         }
+    }
+    Open() {
+        this.open = true;
+    }
+    Close() {
+        this.open = false;
     }
 }
 

@@ -32,7 +32,7 @@ class AltarRoom extends BaseScene {
         if (!ui.mobile) {
             this.controls0 = this.add.sprite(this.player0.x - 30, this.player0.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
             if (gameMode != 2) {
-                this.controls1 = this.add.sprite(this.player1.x + 30, this.player1.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
+                this.controls1 = this.add.sprite(this.player0.x + 62, this.player0.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
                 this.tweens.add({
                     targets: this.controls1,
                     y: this.controls1.y - 5,

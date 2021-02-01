@@ -37,6 +37,7 @@ public class PlayerController {
 	@PostMapping("join/")
 	@ResponseStatus(HttpStatus.CREATED)
 	public boolean unirsePartida(@RequestBody Player p) {
+		CheckPlayers();
 		if (players.size() < maxPlayers) {
 			for (Player pl : players) {
 				if (pl.getNick().equals(p.getNick())) {

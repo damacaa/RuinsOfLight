@@ -9,9 +9,10 @@ class BaseMenuScene extends Phaser.Scene {
     create() {
         inGame = false;
         currentScene = this;
-        this.scene.launch('ui');
         this.EnableFullScreen();
         this.loading = false;
+
+        if(ui){ui.EnableMenuUI();}
 
         this.SetUp();
     }
@@ -239,8 +240,9 @@ class MainMenu extends BaseMenuScene {
     }
 
     SetUp() {
-        if(gameMode == 2){LeaveRoom()}
-        
+        this.scene.launch('ui');
+        if (gameMode == 2) { LeaveRoom(); }
+
 
         if (!this.scale.isFullscreen) {
             //this.scale.startFullscreen();
@@ -409,7 +411,7 @@ class Credits extends BaseMenuScene {
     }
 
     SetUp() {
-        if(gameMode == 2){LeaveRoom()};
+        if (gameMode == 2) { LeaveRoom() };
         this.anims.create({
             key: 'credits',
             frames: this.anims.generateFrameNumbers('endCredits', { start: 0, end: 70 }),
@@ -440,7 +442,7 @@ class GameOver extends BaseMenuScene {
     }
 
     SetUp() {
-        if(gameMode == 2){LeaveRoom()};
+        if (gameMode == 2) { LeaveRoom() };
         this.camera = this.cameras.main;
 
         this.gO = this.add.image(240, 135, 'gameOver').setOrigin(0.5, 0.5);
@@ -600,6 +602,7 @@ class ErrorJoining extends BaseMenuScene {
     }
 
     SetUp() {
+        isOnline = false;
 
         this.background = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
         this.titleEJ = this.add.text(55, 70, "Can't connect to server", {
@@ -685,5 +688,7 @@ class ErrorJoining extends BaseMenuScene {
         let idx = 0;
         let b = this.add.sprite(bttn[idx].x, bttn[idx].y, 'block').setOrigin(0.5).setVisible(false);
     }
+
+    update(){}
 
 }
