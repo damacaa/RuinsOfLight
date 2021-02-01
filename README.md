@@ -1,5 +1,7 @@
 # RuinsOfLight
 
+VIDEO YOUTUBE: https://youtu.be/w5UHlaXmtc4
+
 Juego online cooperativo para dos personas en el que los dos jugadores exploran las ruinas de una antigua civilización enfrentándose a los guardianes de dicha civilización.
 
 Integrantes:
