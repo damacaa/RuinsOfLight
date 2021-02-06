@@ -12,7 +12,7 @@ class BaseMenuScene extends Phaser.Scene {
         this.EnableFullScreen();
         this.loading = false;
 
-        if(ui){ui.EnableMenuUI();}
+        if (ui) { ui.EnableMenuUI(); }
 
         this.SetUp();
     }
@@ -59,6 +59,7 @@ class InputName extends BaseMenuScene {
     }
 
     SetUp() {
+        currentScene = this;
         this.bground = this.add.sprite(0, 0, 'endCredits').setFrame(10).setOrigin(0);
 
         this.loading = false;
@@ -225,6 +226,24 @@ class InputName extends BaseMenuScene {
 
         let index = 0;
         let block = this.add.sprite(buttons[index].x, buttons[index].y, 'block').setOrigin(0.5);
+
+        this.serverText = this.add.text(240, 245, origin, {
+            fontFamily: 'm3x6',
+            fontSize: '32px',
+            color: '#eeeeba',
+            align: 'center'
+        }).setOrigin(0.5).setInteractive();
+
+        this.serverText.on('pointerdown', function (event) {
+            let input = prompt("Enter server url");
+            if (input && input != "" && input.startsWith("https://")) {
+                origin = input;
+                wsOrigin = origin.split("/")[2];//ngrok
+                this.serverText.text = origin;
+            }else{
+                alert("Invalid url");
+            }
+        }, this);
     }
 
     update(time, delta) {
@@ -689,6 +708,6 @@ class ErrorJoining extends BaseMenuScene {
         let b = this.add.sprite(bttn[idx].x, bttn[idx].y, 'block').setOrigin(0.5).setVisible(false);
     }
 
-    update(){}
+    update() { }
 
 }

@@ -18,9 +18,10 @@ import javax.swing.*;
 @CrossOrigin
 public class App implements WebSocketConfigurer
 {
+	//https://www.callicoder.com/deploy-host-spring-boot-apps-on-heroku/#:~:text=Deploy%20the%20jar%20file%20on%20Heroku&text=But%20the%20spring%20boot%20application%20listens%20on%20port%208080%20by%20default.
     public static void main( String[] args )
     {
-    	createWindow();//Crear una ventana permite cerrar el servidor al cerrar dicha ventana
+    	//createWindow();//Crear una ventana permite cerrar el servidor al cerrar dicha ventana
         SpringApplication.run(App.class, args);    
     }
     

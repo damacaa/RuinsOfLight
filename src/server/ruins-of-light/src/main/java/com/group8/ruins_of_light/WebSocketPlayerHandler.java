@@ -154,7 +154,7 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 					newNode.put("y", y);
 					newNode.put("health", node.get("health").asInt());
 					newNode.put("anim", node.get("anim").asText());
-					newNode.put("prog", node.get("prog").asText());
+					newNode.put("prog", node.get("prog").asDouble());
 					newNode.put("flipX", node.get("flipX").asBoolean());
 					newNode.put("scene", node.get("scene").asText());
 					newNode.put("date", node.get("date").asInt());

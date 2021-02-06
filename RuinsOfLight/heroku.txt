@@ -1,0 +1,3 @@
+Heroku pasos
+git commit -am "nombreCommit"
+git push heroku master
