@@ -74,7 +74,7 @@ class Dog extends Phaser.GameObjects.Sprite {
       for (let j = 0; j < rows; j++) {
         let tile = world.getTileAt(i, j);
         if (tile) {
-          cells[i][j] = new Cell(tile.index, i, j);
+          cells[i][j] = new Cell(tile.index, i, j);//!!!!!!!!!!!!
         } else {
           cells[i][j] = new Cell(0, i, j);
         }

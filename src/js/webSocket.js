@@ -1,5 +1,5 @@
 function ConnectWebSocket() {
-	pConnection = new WebSocket('ws://' + wsOrigin + '/player');//https://stackoverflow.com/questions/59359280/react-app-error-failed-to-construct-websocket-an-insecure-websocket-connecti
+	pConnection = new WebSocket('wss://' + wsOrigin + '/player');//https://stackoverflow.com/questions/59359280/react-app-error-failed-to-construct-websocket-an-insecure-websocket-connecti
 
 	pConnection.onerror = function () {
 		console.log("WS error: " + e);
