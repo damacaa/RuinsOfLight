@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Move element &apos;pom.xml&apos; to &apos;spring-boot-example-sts&apos;&#x0D;&#x0A;- Original project: &apos;spring-boot-example-sts&apos;&#x0D;&#x0A;- Destination element: &apos;spring-boot-example-sts&apos;&#x0D;&#x0A;- Original element: &apos;pom.xml&apos;&#x0D;&#x0A;- Update references to refactored element" description="Move file" destination="=spring-boot-example-sts" element1="spring-boot-example-sts/pom.xml" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.move" policy="org.eclipse.jdt.ui.moveResources" qualified="false" references="true" stamp="1609417064052" units="0" version="1.0"/>
-</session>
