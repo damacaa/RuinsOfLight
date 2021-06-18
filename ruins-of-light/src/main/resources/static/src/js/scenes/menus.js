@@ -270,7 +270,7 @@ class MainMenu extends BaseMenuScene {
 
         this.camera = this.cameras.main;
 
-        this.title = this.add.image(240, 10, 'title').setOrigin(0.5,0).setDepth(10);
+        this.title = this.add.image(240, 10, 'title').setOrigin(0.5, 0).setDepth(10);
         this.bg = this.add.sprite(240, 135, 'intro').setOrigin(0.5, 0.5);
 
         this.singlePlayer = this.add.text(240, 100, 'Single player', {

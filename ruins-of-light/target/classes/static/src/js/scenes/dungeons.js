@@ -24,9 +24,9 @@ class Dungeons extends BaseScene {
 
         this.previousDungeonDoor;
 
-        for (let index = 0; index < this.map.width * 32; index += 159) {
+        /*for (let index = 0; index < this.map.width * 32; index += 159) {
             this.add.sprite(index, 0, 'background').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
-        }
+        }*/
 
 
         //Añade a cada nivel las puertas
@@ -159,6 +159,9 @@ class Dungeons extends BaseScene {
 
         this.sound.stopAll();
         this.musicBGDungeon = this.sound.play("music", { loop: true }, { volume: 2 });
+        if (gameMode == 1) {
+            this.EnableSplitScreen();
+        }
     }
 
     UpdateStage() {

@@ -17,28 +17,29 @@ class UI extends BaseMenuScene {
     }
 
     create() {
-		this.input.addPointer(3);
-		
+        this.input.addPointer(3);
+
         ui = this;
 
         this.camera = this.cameras.main;
 
         this.healthBar = new PlayerHealthBar(this, 10, 10, 'vidas').setScrollFactor(0).setOrigin(0, 0);
 
-        this.text = this.add.text(460, 250, "", {
+        this.playerList = this.add.text(460, 250, "", {
             fontFamily: '"PressStart2P-Regular"',
-            fontSize: '7px',
+            fontSize: '8px',
             color: '#eeeeba',
             align: 'left'
-        }).setDepth(10).setOrigin(1, 1).setScrollFactor(0).setLineSpacing(4);
+        }).setDepth(10).setOrigin(1, 1).setScrollFactor(0).setLineSpacing(4).setResolution(3);
+        this.playerList.active = false;
 
         //Chat
         let x = 420;
-        let y = 10;
+        let y = 206;
         for (let i = 0; i < 9; i++) {
             let b = this.add.sprite(x, y, 'emoji').setFrame(i).setOrigin(0).setDepth(9).setInteractive().setVisible(false);
             b.on('pointerdown', function (event) {
-                createChat(i, currentScene.sceneIdx.toString() + levelX.toString() + levelY.toString(), currentScene.player0.x, currentScene.player0.y);
+                wsCreateChat(i, currentScene.sceneIdx.toString() + levelX.toString() + levelY.toString(), currentScene.player0.x, currentScene.player0.y);
             }, this);
             this.buttons.push(b);
 
@@ -51,7 +52,7 @@ class UI extends BaseMenuScene {
         }
 
 
-        this.fullscreen = this.add.sprite(10, 244, 'fullscreen').setOrigin(0).setDepth(9).setInteractive().setVisible(true);
+        this.fullscreen = this.add.sprite(10, 244, 'fullscreen').setDepth(9).setInteractive().setVisible(true);
         this.fullscreen.on('pointerdown', function (event) {
             if (this.scale.isFullscreen) {
                 this.scale.stopFullscreen();
@@ -60,6 +61,9 @@ class UI extends BaseMenuScene {
                 this.scale.startFullscreen();
             }
         }, this);
+        this.fullscreen.setOrigin(1,0);
+        this.fullscreen.x = 470;
+        this.fullscreen.y = 10;
 
         if (this.mobile) {
             this.left = this.add.sprite(20, 200, 'phoneInput').setFrame(0).setOrigin(0).setDepth(9).setInteractive().setVisible(false);
@@ -97,27 +101,27 @@ class UI extends BaseMenuScene {
         if (inGame && this.mobile) {
             currentScene.player0.Run(this.playerInput);
         }
-        if (this.text.active) {
+        if (this.playerList.active) {
             if (isOnline) {
                 if (players.length == 1) {
-                    this.text.text = players.length + " player online:";
+                    this.playerList.text = players.length + " player online:";
                 } else {
-                    this.text.text = players.length + " players online:";
+                    this.playerList.text = players.length + " players online:";
                 }
 
                 for (let i = 0; i < Math.min(players.length, this.maxNames); i++) {
-                    this.text.text += "\n   " + players[i].nick;
+                    this.playerList.text += "\n   " + players[i].nick;
                     if (players[i].nick == player.nick) {
-                        this.text.text += " (You)";
+                        this.playerList.text += " (You)";
                     }
                 }
 
                 let excess = players.length - this.maxNames;
                 if (excess > 0) {
-                    this.text.text += "\nAnd " + excess + " others."
+                    this.playerList.text += "\nAnd " + excess + " others."
                 }
             } else {
-                this.text.text = "Offline";
+                this.playerList.text = "Offline";
             }
         }
     }
@@ -136,33 +140,35 @@ class UI extends BaseMenuScene {
             this.attack.setVisible(true);
         }
 
-        for (let b of this.buttons) {
-            b.setVisible(true);
+        if (gameMode == 2 || true) {
+            for (let b of this.buttons) {
+                b.setVisible(true);
+            }
         }
 
-        this.fullscreen.x = 395;
+        this.fullscreen.setOrigin(1,0);
+        this.fullscreen.x = 470;
         this.fullscreen.y = 10;
 
-        this.text.setOrigin(0, 0);
-        this.text.x = 20;
-        this.text.y = 30;
-        this.maxNames = 4;
+        this.playerList.visible = false;
+
 
         this.healthBar.setVisible(true);
     }
 
     EnableMenuUI() {
-        this.text.setOrigin(1, 1);
-        this.text.x = 460;
-        this.text.y = 260;
-        this.maxNames = 15;
+        /*this.playerList.setOrigin(1, 1);
+        this.playerList.x = 460;
+        this.playerList.y = 260;
+        this.maxNames = 15;*/
 
         for (let b of this.buttons) {
             b.setVisible(false);
         }
 
+        /*this.fullscreen.setOrigin(0);
         this.fullscreen.x = 10;
-        this.fullscreen.y = 244;
+        this.fullscreen.y = 244;*/
 
         this.healthBar.setVisible(false);
         if (this.mobile) {

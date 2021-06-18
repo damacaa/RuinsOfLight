@@ -28,6 +28,7 @@ let inGame = false;
 
 let sceneCount = 0;
 let currentScene;
+let currentIdx;
 
 let gamepad;
 

@@ -1,8 +1,8 @@
 class Message extends Phaser.GameObjects.Sprite {
 
-    constructor(scene, x, y, player, value, date) {
+    constructor(scene,value, x, y, player, date) {
         super(scene, x, y, 'emoji');
-        this.player = player;
+        //this.player = player;
         this.value = value;
 
         /*scene.add.text(x, y-8, player, {

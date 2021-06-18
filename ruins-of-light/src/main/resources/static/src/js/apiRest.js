@@ -13,7 +13,7 @@ function loadRecords() {
 }
 
 //Load players from server
-function loadPayers() {
+/*function loadPayers() {
 	if (isOnline) {
 		$.ajax({
 			method: "GET",
@@ -29,7 +29,7 @@ function loadPayers() {
 			console.log("Error")
 		})
 	}
-}
+}*/
 
 //Create record in server
 function createRecord(name1, name2, score) {
@@ -143,18 +143,16 @@ function checkServer() {
 		if (new Date() - lastTimeChecked > checkServerWait) {
 			lastTimeChecked = new Date();
 			checkPlayer();
-			/*loadPayers();
-			checkChat();*/
 		}
 		if (pConnection && pConnection.readyState == 1 && inGame && gameMode == 2) { SendPlayerInfo(currentScene.player0); }
 	} else if (gameMode == 2) {
 		currentScene.LoadScene('errorJ');
-	}
-	/*else {
+	} else {
+		//Intenta reconectar
 		if (new Date() - lastTimeChecked > checkServerWait) {
 			lastTimeChecked = new Date();
 			joinGame();
 			console.log("Rejoining...");
 		}
-	}*/
+	}
 }

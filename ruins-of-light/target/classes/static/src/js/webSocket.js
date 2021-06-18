@@ -1,3 +1,14 @@
+const ID_LEAVE = -1;
+const ID_JOIN = 0;
+const ID_UPDATE_PLAYER = 1;
+const ID_CHANGE_SCENE = 6;
+const ID_MESSAGE = 7;
+const ID_NEW_ENEMY = 4;
+const ID_DAMAGE = 2;
+const ID_NEW_RELIC = 3;
+const ID_GET_RELIC = 5;
+
+
 function ConnectWebSocket() {
 	pConnection = new WebSocket(wsOrigin + '/player');//https://stackoverflow.com/questions/59359280/react-app-error-failed-to-construct-websocket-an-insecure-websocket-connecti
 
@@ -8,40 +19,39 @@ function ConnectWebSocket() {
 
 	pConnection.onmessage = function (msg) {
 		if (gameMode == 2) {
+			let data = JSON.parse(msg.data);
 			switch (JSON.parse(msg.data).id) {
-				case 0:
-					data = JSON.parse(msg.data);
+				case ID_JOIN:
 					joinedRoom = true;
 					isOrange = data.isOrange;
 					console.log("Sala: " + data.room);
 					break;
-				case 1:
-					friend = JSON.parse(msg.data);
-					if (inGame && friend.scene == currentScene.sceneIdx + levelX.toString() + levelY.toString()) {
-						currentScene.player1.FakeUpdate(friend.x, friend.y, friend.health, friend.anim, friend.prog, friend.flipX, friend.date);
+				case ID_UPDATE_PLAYER:
+					if (inGame && data.scene == currentIdx) {
+						currentScene.player1.FakeUpdate(data.x, data.y, data.health, data.anim, data.prog, data.flipX, data.date);
 						currentScene.player1.visible = true;
 					} else if (inGame) { currentScene.player1.visible = false; }
 					break;
-				case 2:
-					data = JSON.parse(msg.data);
+				case ID_DAMAGE:
 					currentScene.DamageEntity(data.eId, data.damage);
 					break;
-				case 3:
-					data = JSON.parse(msg.data);
+				case ID_NEW_RELIC:
 					relicX = data.x;
 					relicY = data.y;
 					break;
-				case 4:
-					data = JSON.parse(msg.data);
-					if (data.scene == currentScene.sceneIdx + levelX.toString() + levelY.toString()) { SpawnReceivedEnemy(data); }
+				case ID_NEW_ENEMY:
+					if (data.scene == currentIdx) { SpawnReceivedEnemy(data); }
 					break;
-				case 5:
+				case ID_GET_RELIC:
 					if (currentScene.relic) {
 						currentScene.relic.GetRelic(false);
 					} else { hasRelic = true; }
 					break;
-				case -1:
+				case ID_LEAVE:
 					if (inGame) { currentScene.LoadScene('gameOver'); }
+					break;
+				case ID_MESSAGE:
+					if (data.scene == currentIdx) { currentScene.DrawMessage(data.value, data.x, data.y); }
 					break;
 				default:
 					break;
@@ -50,12 +60,14 @@ function ConnectWebSocket() {
 	}
 
 	pConnection.onopen = function () {
-		gameMode = 2;
+		isOnline = true;
 	}
 
 	pConnection.onclose = function () {
 		console.log("Closing socket");
-		currentScene.LoadScene('errorJ');
+		if (gameMode == 2) {
+			currentScene.LoadScene('errorJ');
+		}
 	}
 }
 
@@ -87,7 +99,7 @@ function SendDamage(eId, damage, scene) {
 				id: 2,
 				eId: eId,
 				damage: damage,
-				scene: scene.sceneIdx + levelX.toString() + levelY.toString()
+				scene: currentIdx
 			}
 			pConnection.send(JSON.stringify(msg));
 		}
@@ -114,7 +126,7 @@ function SendNewEntity(scene, type, entityId, x, y) {
 			eId: entityId,
 			x: x,
 			y: y,
-			scene: scene.sceneIdx + levelX.toString() + levelY.toString()
+			scene: currentIdx
 		}
 
 		pConnection.send(JSON.stringify(msg));
@@ -181,4 +193,13 @@ function WsGetRelic() {
 		}
 		pConnection.send(JSON.stringify(msg));
 	}
+}
+
+function wsCreateChat(value, scene, x, y) {
+	if (gameMode == 2 && pConnection.readyState == 1) {
+		currentScene.DrawMessage(value, x, y);
+
+		let chat = { id: ID_MESSAGE, scene: scene, value: value, x: x, y: y }
+		pConnection.send(JSON.stringify(chat));
+	};
 }

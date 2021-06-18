@@ -125,14 +125,13 @@ window.onload = function () {
                 //debug: true
             }
         }, fps: {
-            target: 30,
+            target: 60,
             forceSetTimeOut: true
         },
         scene: [Preload, InputName, ErrorJoining, MainMenu, Lobby, AltarRoom, BossRoom, Dungeons, GameOver, Credits, LeaderBoard, UI]
     }
 
     loadFont("PressStart2P-Regular", "resources/fonts/PressStart2P-Regular.ttf");
-    loadFont("m3x6", "resources/fonts/m3x6.ttf");
 
     game = new Phaser.Game(config);
 

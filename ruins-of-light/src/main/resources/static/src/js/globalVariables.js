@@ -49,15 +49,15 @@ let joined = false;
 let joinedRoom = false;
 let joining = false;
 
-let origin = "https://ruins-of-light.herokuapp.com" //heroku server
+//let origin = "https://ruins-of-light.herokuapp.com" //heroku server
 //let origin = window.location.origin; //url in browser
-//let origin = "http://localhost:8080"; //local
-let wsOrigin = "";//ngrok
+let origin = "http://localhost:8080"; //local
+let wsOrigin = "";
 
 if (origin.startsWith("https://")) {
-	wsOrigin = "wss://" + origin.split("/")[2];//ngrok
+	wsOrigin = "wss://" + origin.split("/")[2];
 } else if (origin.startsWith("http://")) {
-	wsOrigin = "ws://" + origin.split("/")[2];//ngrok
+	wsOrigin = "ws://" + origin.split("/")[2];
 }
 
 //WEBSOCKET

@@ -4,9 +4,9 @@ function loadRecords() {
 		$.ajax({
 			method: "GET",
 			url: origin + '/records/'
-		}).done(function(result) {
+		}).done(function (result) {
 			records = result;
-		}).fail(function(jqXHR, textStatus, errorThrown) {
+		}).fail(function (jqXHR, textStatus, errorThrown) {
 			console.log("Error")
 		})
 	}
@@ -18,14 +18,14 @@ function loadPayers() {
 		$.ajax({
 			method: "GET",
 			url: origin + '/players/'
-		}).done(function(result) {
+		}).done(function (result) {
 			players = result;
 			//https://stackoverflow.com/questions/23921683/javascript-move-an-item-of-an-array-to-the-front
-			players.sort(function(x, y) { return x.nick == player.nick ? -1 : y.nick == player.nick ? 1 : 0; });
+			players.sort(function (x, y) { return x.nick == player.nick ? -1 : y.nick == player.nick ? 1 : 0; });
 			for (const p of players) {
 				if (friend && friend.name == p.name) { friendIsOnline = true; break; }
 			}
-		}).fail(function(jqXHR, textStatus, errorThrown) {
+		}).fail(function (jqXHR, textStatus, errorThrown) {
 			console.log("Error")
 		})
 	}
@@ -48,9 +48,9 @@ function createRecord(name1, name2, score) {
 			headers: {
 				"Content-Type": "application/json"
 			}
-		}).done(function(recordReceived) {
+		}).done(function (recordReceived) {
 			console.log("Record created: " + JSON.stringify(recordReceived));
-		}).fail(function(jqXHR, textStatus, errorThrown) {
+		}).fail(function (jqXHR, textStatus, errorThrown) {
 			console.log("No ha creado el record")
 		})
 	}
@@ -68,7 +68,7 @@ function joinGame(doneFunc, failFunc) {
 			headers: {
 				"Content-Type": "application/json"
 			}
-		}).done(function(hasJoined) {
+		}).done(function (hasJoined) {
 			if (hasJoined) {
 				console.log("Conectado correctamente a: " + origin);
 				ConnectWebSocket();
@@ -78,10 +78,10 @@ function joinGame(doneFunc, failFunc) {
 			joined = hasJoined;
 			isOnline = hasJoined;
 			if (doneFunc) { doneFunc(); }
-		}).fail(function(jqXHR, textStatus, errorThrown) {
+		}).fail(function (jqXHR, textStatus, errorThrown) {
 			console.log("No se ha podido conectar con: " + origin);
 			if (failFunc) { failFunc(); }
-		}).always(function() {
+		}).always(function () {
 			joining = false;
 		})
 	}
@@ -98,15 +98,15 @@ function checkPlayer() {
 			headers: {
 				"Content-Type": "application/json"
 			}
-		}).done(function(hasChecked) {
+		}).done(function (hasChecked) {
 			isOnline = hasChecked;
-		}).fail(function() {
+		}).fail(function () {
 			isOnline = false;
 		})
 	}
 }
 
-function checkChat() {
+/*function checkChat() {
 	if (isOnline) {
 		$.ajax({
 			method: "GET",
@@ -118,9 +118,9 @@ function checkChat() {
 			}
 		})
 	}
-}
+}*/
 
-function createChat(value, scene, x, y) {
+/*function createChat(value, scene, x, y) {
 	if (isOnline) {
 		let chat = { playerNick: player.nick, scene: scene, value: value, date: new Date(), x: x, y: y };
 		$.ajax({
@@ -134,7 +134,7 @@ function createChat(value, scene, x, y) {
 		}).done(function() {
 		})
 	}
-}
+}*/
 
 let checkServerWait = 1000;
 //Check players every x seconds
@@ -143,8 +143,8 @@ function checkServer() {
 		if (new Date() - lastTimeChecked > checkServerWait) {
 			lastTimeChecked = new Date();
 			checkPlayer();
-			loadPayers();
-			checkChat();
+			/*loadPayers();
+			checkChat();*/
 		}
 		if (pConnection && pConnection.readyState == 1 && inGame && gameMode == 2) { SendPlayerInfo(currentScene.player0); }
 	} else if (gameMode == 2) {
