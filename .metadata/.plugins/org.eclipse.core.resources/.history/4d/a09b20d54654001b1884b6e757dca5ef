@@ -1,0 +1,33 @@
+package com.group8.ruins_of_light;
+
+public class Player {
+
+	private String nick;
+
+	private java.util.Date date = new java.util.Date();
+
+	public Player() {
+		System.out.println(date);
+	}
+
+	public Player(String nick) {
+		this.nick = nick;
+		System.out.println(date);
+	}
+
+	public String getNick() {
+		return nick;
+	}
+
+	public void setNick(String nick) {
+		this.nick = nick;
+	}
+
+	public java.util.Date getDate() {
+		return date;
+	}
+
+	public void setDate(java.util.Date date) {
+		this.date = date;
+	}
+}
